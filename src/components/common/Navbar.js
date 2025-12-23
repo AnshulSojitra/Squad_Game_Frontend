@@ -12,7 +12,7 @@ export default function Navbar() {
 
           {/* Links */}
           <div className="hidden md:flex space-x-6">
-            <Link to="/" className="nav-link">
+            <Link to="/AdminLogin" className="nav-link">
               Home
             </Link>
             <Link to="/dashboard" className="nav-link">
