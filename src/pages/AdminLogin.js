@@ -1,7 +1,10 @@
 import { useState } from "react";
 import Input from "../components/common/Input";
+import { useNavigate } from "react-router-dom";
+
 
 export default function AdminLogin() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -27,6 +30,7 @@ export default function AdminLogin() {
         user login API
       }
     */
+    navigate("/dashboard");
   };
 
   return (

@@ -21,17 +21,11 @@
 import { BrowserRouter } from "react-router-dom";
 import "./App.css";
 import { AppRoutes } from "./routes/AppRoutes";
-import AdminSidebar from "./components/AdminSidebar";
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="flex">
-        <AdminSidebar />
-        <main className="flex-1 min-h-screen bg-gray-100">
-          <AppRoutes />
-        </main>
-      </div>
+      <AppRoutes />
     </BrowserRouter>
   );
 }
