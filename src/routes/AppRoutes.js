@@ -9,12 +9,13 @@ import { AdminLayout } from "../components/AdminLayout";
 export const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/adminlogin" element={<AdminLogin />} />
-      <Route path="/admin" element={<AdminLayout />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/games" element={<Games />} />
-      <Route path="/grounds" element={<Grounds />} />
-      <Route path="/bookings" element={<Bookings />} />
+      <Route path="/admin" element={<AdminLogin />} />
+      <Route path="/" element={<AdminLayout />}>
+        <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin/games" element={<Games />} />
+        <Route path="/admin/grounds" element={<Grounds />} />
+        <Route path="/admin/bookings" element={<Bookings />} />
+      </Route>
     </Routes>
   );
 };

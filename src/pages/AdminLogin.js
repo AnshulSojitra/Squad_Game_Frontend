@@ -1,7 +1,10 @@
 import { useState } from "react";
 import Input from "../components/common/Input";
+import { useNavigate } from "react-router-dom";
+
 
 export default function AdminLogin() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -27,14 +30,13 @@ export default function AdminLogin() {
         user login API
       }
     */
+    navigate("/dashboard");
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold text-center mb-6">
-          Login
-        </h2>
+        <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
 
         <form onSubmit={handleLogin}>
           <Input
