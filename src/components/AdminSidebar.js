@@ -1,15 +1,26 @@
 import { Link } from "react-router-dom";
 
-const AdminSidebar = () => (
-  <aside className="w-64 bg-gray-900 text-white">
-    <h1 className="text-xl font-bold p-4">Admin Panel</h1>
-    <nav className="flex flex-col gap-2 p-4">
-      <Link to="/admin/dashboard">Dashboard</Link>
-      <Link to="/admin/games">Games</Link>
-      <Link to="/admin/grounds">Grounds</Link>
-      <Link to="/admin/bookings">Bookings</Link>
-    </nav>
-  </aside>
-);
+export default function Sidebar() {
+  return (
+    <aside className="w-64 h-screen bg-gray-900 text-white">
+      <div className="p-4 text-xl font-bold border-b border-gray-700">
+        Dashboard
+      </div>
 
-export default AdminSidebar;
+      <nav className="p-4 flex flex-col gap-4">
+        <Link to="/" className="sidebar-link">
+          Home
+        </Link>
+        <Link to="/dashboard" className="sidebar-link">
+          Dashboard
+        </Link>
+        <Link to="/users" className="sidebar-link">
+          Users
+        </Link>
+        <Link to="/settings" className="sidebar-link">
+          Settings
+        </Link>
+      </nav>
+    </aside>
+  );
+}
