@@ -6,6 +6,11 @@ const Dashboard = () => {
     { title: "Total Bookings", value: 21 },
   ];
 
+  const handleGames = () => {
+    // Navigate to games management page
+    window.location.href = "/admin/games";
+  }
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
@@ -25,7 +30,7 @@ const Dashboard = () => {
         <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-blue-100 p-4 rounded cursor-pointer">
+          <div className="bg-blue-100 p-4 rounded cursor-pointer" onClick={handleGames}>
             Manage Games
           </div>
           <div className="bg-green-100 p-4 rounded cursor-pointer">

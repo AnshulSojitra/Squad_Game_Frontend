@@ -8,16 +8,16 @@ export default function Sidebar() {
       </div>
 
       <nav className="p-4 flex flex-col gap-4">
-        <Link to="/AdminLogin" className="sidebar-link">
+        <Link to="/admin/AdminLogin" className="sidebar-link">
           Home
         </Link>
-        <Link to="/dashboard" className="sidebar-link">
+        <Link to="/admin/dashboard" className="sidebar-link">
           Dashboard
         </Link>
-        <Link to="/users" className="sidebar-link">
+        <Link to="/admin/users" className="sidebar-link">
           Users
         </Link>
-        <Link to="/settings" className="sidebar-link">
+        <Link to="/admin/settings" className="sidebar-link">
           Settings
         </Link>
       </nav>
