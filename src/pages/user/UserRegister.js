@@ -1,12 +1,13 @@
 import { useState } from "react";
 import Input from "../../components/common/Input";
-import { userLogin } from "../../services/api";
+import { userRegister } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
-export default function UserLogin() {
+export default function UserRegister() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
+    name: "",
     email: "",
     password: "",
   });
@@ -18,20 +19,16 @@ export default function UserLogin() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const res = await userLogin(form);
-
-      // Save user token
-      localStorage.setItem("userToken", res.data.token);
-
-      navigate("/user/home");
+      await userRegister(form);
+      navigate("/user/login");
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid credentials");
+      setError(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -41,14 +38,21 @@ export default function UserLogin() {
     <div className="min-h-screen flex items-center justify-center bg-gray-900">
       <div className="bg-white p-8 rounded-xl w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6">
-          User Login
+          User Registration
         </h2>
 
         {error && (
           <p className="text-red-600 text-sm text-center mb-4">{error}</p>
         )}
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleRegister}>
+          <Input
+            label="Full Name"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+          />
+
           <Input
             label="Email"
             type="email"
@@ -70,7 +74,7 @@ export default function UserLogin() {
             disabled={loading}
             className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
       </div>

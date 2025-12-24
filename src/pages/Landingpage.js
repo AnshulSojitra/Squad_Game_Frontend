@@ -95,7 +95,7 @@ export default function LandingPage() {
           Join Game Squad and make game booking effortless.
         </p>
         <button
-          onClick={() => navigate("/user/login")}
+          onClick={() => navigate("/user/UserRegister")}
           className="bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
         >
           Get Started
