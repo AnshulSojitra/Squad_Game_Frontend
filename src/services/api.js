@@ -9,9 +9,9 @@ const api = axios.create({
 
 
 // CREATE - Register Admin
-export const registerAdmin = (data) => {
-  return api.post("/admin/register", data);
-};
+// export const registerAdmin = (data) => {
+//   return api.post("/admin/register", data);
+// };
 
 // READ - Login Admin
 export const loginAdmin = (data) => {
@@ -26,6 +26,25 @@ export const updateAdmin = (id, data) => {
 // DELETE - Delete Admin
 export const deleteAdmin = (id) => {
   return api.delete(`/admin/${id}`);
+};
+
+/* ================= USER APIs ================= */
+
+// CREATE - User Registration
+export const userRegister = (data) => {
+  return api.post("/user/register", data);
+};
+
+// READ - User Login
+export const userLogin = (data) => {
+  return api.post("/user/login", data);
+};
+
+// READ - Get user bookings
+export const getMyBookings = (token) => {
+  return api.get("/user/bookings", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 };
 
 

@@ -6,6 +6,9 @@ import { Grounds } from "../pages/admin/Grounds";
 import { Bookings } from "../pages/admin/Bookings";
 import { AdminLayout } from "../components/AdminLayout";
 import LandingPage from "../pages/Landingpage";
+import UserLogin from "../pages/user/UserLogin";
+import UserRegister from "../pages/user/UserRegister";
+import Home from "../pages/user/Home";
 
 export const AppRoutes = () => {
   return (
@@ -22,7 +25,12 @@ export const AppRoutes = () => {
     <Routes>
       {/* Public */}
       <Route path="/" element={<LandingPage />} />
-      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/user/login" element={<UserLogin />} />
+      <Route path="/user/UserRegister" element={<UserRegister />} />
+      <Route path="/user/home" element={<Home />} />
+
+      // Admin Login without sidebar
+       <Route path="/admin/login" element={<AdminLogin />} />
 
       {/* Admin */}
       <Route path="/admin" element={<AdminLayout />}>
