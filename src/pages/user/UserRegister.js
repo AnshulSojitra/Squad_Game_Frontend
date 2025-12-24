@@ -76,6 +76,16 @@ export default function UserRegister() {
           >
             {loading ? "Registering..." : "Register"}
           </button>
+          <div className="text-sm text-center mt-4">
+            Already have an account?{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/user/login")}
+              className="text-indigo-600 hover:underline"
+            >
+              Login here
+            </button>
+          </div>
         </form>
       </div>
     </div>

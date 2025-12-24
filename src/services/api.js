@@ -47,5 +47,71 @@ export const getMyBookings = (token) => {
   });
 };
 
+// ADD GROUND
+export const addGround = (formData) => {
+  return api.post("/admin/grounds", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
+  });
+};
+
+// GET all grounds
+export const getGrounds = () => {
+  return api.get("/admin/grounds", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
+  });
+};
+
+// DELETE ground
+export const deleteGround = (id) => {
+  return api.delete(`/admin/grounds/${id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
+  });
+};
+
+// GET single ground (for edit)
+export const getGroundById = (id) => {
+  return api.get(`/admin/grounds/${id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
+  });
+};
+
+// UPDATE ground
+export const updateGround = (id, formData) => {
+  return api.put(`/admin/grounds/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
+  });
+};
+
+// CREATE BOOKING
+export const createBooking = (data) => {
+  return api.post("/user/bookings", data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+    },
+  });
+};
+
+// GET BOOKINGS (My Bookings)
+export const getUserBookings = () => {
+  return api.get("/user/bookings", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+    },
+  });
+};
+
+
 
 export default api;

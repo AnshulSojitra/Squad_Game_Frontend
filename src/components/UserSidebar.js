@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-export default function Sidebar() {
+export default function UserSidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -12,10 +12,9 @@ export default function Sidebar() {
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         {!collapsed && (
-          <span className="text-lg font-bold">Dashboard</span>
+          <span className="text-lg font-bold">User Panel</span>
         )}
 
-        {/* Toggle Button */}
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="text-gray-300 hover:text-white"
@@ -24,34 +23,34 @@ export default function Sidebar() {
         </button>
       </div>
 
-      {/* Navigation */}
+      {/* Links */}
       <nav className="p-4 flex flex-col gap-4">
         <Link
-          to="/admin/dashboard"
+          to="/user/home"
           className="flex items-center gap-3 hover:bg-gray-800 p-2 rounded"
         >
-          📊 {!collapsed && "Dashboard"}
+          🏠 {!collapsed && "Home"}
         </Link>
 
         <Link
-          to="/admin/bookings"
+          to="/user/mybooking"
           className="flex items-center gap-3 hover:bg-gray-800 p-2 rounded"
         >
-          📅 {!collapsed && "Bookings"}
+          📅 {!collapsed && "My Booking"}
         </Link>
 
         <Link
-          to="/admin/games"
+          to="/user/bookingslot"
+          className="flex items-center gap-3 hover:bg-gray-800 p-2 rounded"
+        >
+          ⏱ {!collapsed && "Booking Slots"}
+        </Link>
+
+        <Link
+          to="/user/games"
           className="flex items-center gap-3 hover:bg-gray-800 p-2 rounded"
         >
           🎮 {!collapsed && "Games"}
-        </Link>
-
-        <Link
-          to="/admin/grounds"
-          className="flex items-center gap-3 hover:bg-gray-800 p-2 rounded"
-        >
-          🏟 {!collapsed && "Grounds"}
         </Link>
       </nav>
     </aside>

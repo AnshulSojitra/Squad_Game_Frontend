@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 const Dashboard = () => {
+  const navigate = useNavigate();
   // Mock stats (replace with API later)
   const stats = [
     { title: "Total Games", value: 3 },
@@ -13,7 +15,18 @@ const Dashboard = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
+      {/* HEADER ROW */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+
+        {/* Add Ground Button (TOP RIGHT) */}
+        <button
+          onClick={() => navigate("/admin/addground")}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition"
+        >
+          ➕ Add Ground
+        </button>
+      </div>
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
