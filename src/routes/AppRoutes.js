@@ -4,7 +4,7 @@ import Dashboard from "../pages/admin/Dashboard";
 import { Games } from "../pages/admin/Games";
 import Grounds from "../pages/admin/Grounds";
 import { Bookings } from "../pages/admin/Bookings";
-import { AdminLayout } from "../components/AdminLayout";
+import AdminLayout from "../components/AdminLayout";
 import LandingPage from "../pages/Landingpage";
 import UserLogin from "../pages/user/UserLogin";
 import UserRegister from "../pages/user/UserRegister";
@@ -13,6 +13,7 @@ import Mybooking from "../pages/user/Mybooking";
 import Bookingslot from "../pages/user/Bookingslot";
 import UserLayout from "../components/UserLayout";
 import AddGround from "../pages/admin/AddGround";
+
 
 
 
@@ -46,7 +47,7 @@ export const AppRoutes = () => {
       </Route>
       // Admin Login without sidebar
        <Route path="/admin/login" element={<AdminLogin />} />
-       <Route path="/admin/addground" element={<AddGround />} />
+       
 
       {/* Admin */}
       <Route path="/admin" element={<AdminLayout />}>
@@ -54,6 +55,7 @@ export const AppRoutes = () => {
         <Route path="games" element={<Games />} />
         <Route path="grounds" element={<Grounds />} />
         <Route path="bookings" element={<Bookings />} />
+        <Route path="addground" element={<AddGround />} />
       </Route>
     </Routes>
 
