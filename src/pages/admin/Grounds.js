@@ -78,16 +78,16 @@ const paginatedGrounds = filteredGrounds.slice(
 
   
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this ground?")) return;
+  // const handleDelete = async (id) => {
+  //   if (!window.confirm("Are you sure you want to delete this ground?")) return;
 
-    try {
-      await deleteGround(id);
-      setGrounds(grounds.filter((g) => g._id !== id));
-    } catch (err) {
-      alert("Failed to delete ground");
-    }
-  };
+  //   try {
+  //     await deleteGround(id);
+  //     setGrounds(grounds.filter((g) => g._id !== id));
+  //   } catch (err) {
+  //     alert("Failed to delete ground");
+  //   }
+  // };
 
   if (loading) {
     return <p className="text-gray-600">Loading grounds...</p>;
@@ -96,11 +96,11 @@ const paginatedGrounds = filteredGrounds.slice(
   return (
     <div>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      {/* <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Grounds</h1>
 
         <button
-          onClick={() => navigate("/admin/add-ground")}
+          onClick={() => navigate("/admin/addground")}
           className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg"
         >
           ➕ Add Ground
@@ -113,7 +113,21 @@ const paginatedGrounds = filteredGrounds.slice(
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="border rounded-lg px-3 py-2 mb-4"
-        />
+        /> */}
+
+        {/* HEADER ROW */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold"> Grounds </h1>
+
+        {/* Add Ground Button (TOP RIGHT) */}
+        <button
+          onClick={() => navigate("/admin/addground")}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition"
+        >
+          ➕ Add Ground
+        </button>
+      </div>
+
 
 
       {/* Table */}
@@ -171,7 +185,7 @@ const paginatedGrounds = filteredGrounds.slice(
 
                     {/* Delete */}
                     <button
-                      onClick={() => handleDelete(ground._id)}
+                      // onClick={() => handleDelete(ground._id)}
                       className="text-red-600 hover:underline"
                     >
                       Delete

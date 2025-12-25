@@ -17,3 +17,21 @@ code {
 @tailwind components;
 /* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind utilities;
+.input-style {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.input-style:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+.label-style {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+}

@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 const api = axios.create({
   baseURL: "http://localhost:5000/api", // your backend base URL
   headers: {
@@ -40,6 +41,9 @@ export const userLogin = (data) => {
   return api.post("/user/login", data);
 };
 
+
+
+
 // READ - Get user bookings
 export const getMyBookings = (token) => {
   return api.get("/user/bookings", {
@@ -47,52 +51,71 @@ export const getMyBookings = (token) => {
   });
 };
 
-// ADD GROUND
-export const addGround = (formData) => {
-  return api.post("/admin/grounds", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
-  });
-};
+// // ADD GROUND
+// export const addGround = (formData) => {
+//   return api.post("/admin/grounds", formData, {
+//     headers: {
+//       "Content-Type": "multipart/form-data",
+//       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+//     },
+//   });
+// };
 
-// GET all grounds
-export const getGrounds = () => {
-  return api.get("/admin/grounds", {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
-  });
-};
 
-// DELETE ground
-export const deleteGround = (id) => {
-  return api.delete(`/admin/grounds/${id}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
-  });
-};
 
-// GET single ground (for edit)
-export const getGroundById = (id) => {
-  return api.get(`/admin/grounds/${id}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
-  });
-};
+// // GET all grounds
+// export const getGrounds = () => {
+//   return api.get("/admin/grounds", {
+//     headers: {
+//       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+//     },
+//   });
+// };
 
-// UPDATE ground
-export const updateGround = (id, formData) => {
-  return api.put(`/admin/grounds/${id}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
+// // DELETE ground
+// export const deleteGround = (id) => {
+//   return api.delete(`/admin/grounds/${id}`, {
+//     headers: {
+//       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+//     },
+//   });
+// };
+
+// // GET single ground (for edit)
+// export const getGroundById = (id) => {
+//   return api.get(`/admin/grounds/${id}`, {
+//     headers: {
+//       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+//     },
+//   });
+// };
+
+// // UPDATE ground
+// export const updateGround = (id, formData) => {
+//   return api.put(`/admin/grounds/${id}`, formData, {
+//     headers: {
+//       "Content-Type": "multipart/form-data",
+//       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+//     },
+//   });
+// };
+
+
+/* -------- GROUNDS -------- */
+
+// Add ground
+export const addGround = (data) =>
+  api.post("/grounds", data, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
-};
+
+// Get all grounds
+export const getGrounds = () => api.get("/grounds");
+
+// Get single ground
+export const getGroundById = (id) => api.get(`/grounds/${id}`);
+
+/* -------- BOOKINGS -------- */
 
 // CREATE BOOKING
 export const createBooking = (data) => {
