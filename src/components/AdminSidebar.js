@@ -1,59 +1,35 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
-export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+export default function AdminSidebar({ isCollapsed }) {
+  const location = useLocation();
+
+  const menuItem = (to, icon, label) => (
+    <Link
+      to={to}
+      className={`flex items-center gap-3 p-2 rounded hover:bg-gray-800
+      ${location.pathname === to ? "bg-gray-800" : ""}`}
+    >
+      <span className="text-lg">{icon}</span>
+      {!isCollapsed && <span>{label}</span>}
+    </Link>
+  );
 
   return (
-    <aside
-      className={`h-screen bg-gray-900 text-white transition-all duration-300 
-      ${collapsed ? "w-16" : "w-64"}`}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-700">
-        {!collapsed && (
+    <div className="h-full">
+      {/* Sidebar Header */}
+      <div className="p-4 border-b border-gray-700">
+        {!isCollapsed && (
           <span className="text-lg font-bold">Dashboard</span>
         )}
-
-        {/* Toggle Button */}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-gray-300 hover:text-white"
-        >
-          ☰
-        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="p-4 flex flex-col gap-4">
-        <Link
-          to="/admin/dashboard"
-          className="flex items-center gap-3 hover:bg-gray-800 p-2 rounded"
-        >
-          📊 {!collapsed && "Dashboard"}
-        </Link>
-
-        <Link
-          to="/admin/bookings"
-          className="flex items-center gap-3 hover:bg-gray-800 p-2 rounded"
-        >
-          📅 {!collapsed && "Bookings"}
-        </Link>
-
-        <Link
-          to="/admin/games"
-          className="flex items-center gap-3 hover:bg-gray-800 p-2 rounded"
-        >
-          🎮 {!collapsed && "Games"}
-        </Link>
-
-        <Link
-          to="/admin/grounds"
-          className="flex items-center gap-3 hover:bg-gray-800 p-2 rounded"
-        >
-          🏟 {!collapsed && "Grounds"}
-        </Link>
+      <nav className="p-4 flex flex-col gap-3">
+        {menuItem("/admin/dashboard", "📊", "Dashboard")}
+        {menuItem("/admin/bookings", "📅", "Bookings")}
+        {menuItem("/admin/games", "🎮", "Games")}
+        {menuItem("/admin/grounds", "🏟", "Grounds")}
       </nav>
-    </aside>
+    </div>
   );
 }

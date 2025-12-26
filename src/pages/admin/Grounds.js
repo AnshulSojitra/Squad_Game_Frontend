@@ -151,7 +151,7 @@ export default function Grounds() {
                   <td className="p-3 text-center">{ground.game}</td>
                   <td className="p-3 text-center">₹{ground.pricePerSlot}</td>
                   <td className="p-3 text-center">
-                    {ground.openingTime} - {ground.closingTime}
+                    {ground.OpeningTime} - {ground.ClosingTime}
                   </td>
                   <td className="p-3 text-center">{ground.contactNo}</td>
                   <td className="p-3">

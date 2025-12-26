@@ -237,10 +237,12 @@ export default function AddGround() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800">
-      <div className="w-full max-w-2xl p-8 bg-white shadow-xl rounded-2xl">
-        <h2 className="mb-1 text-2xl font-bold text-center">Add Ground</h2>
-        <p className="mb-6 text-sm text-center text-gray-500">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 px-4">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8">
+        <h2 className="text-2xl font-bold text-center mb-1">
+          Add Ground
+        </h2>
+        <p className="text-sm text-gray-500 text-center mb-6">
           Enter ground details carefully
         </p>
 
@@ -322,31 +324,31 @@ export default function AddGround() {
           {/* Country / State / City */}
           <label className="block mb-1 text-sm font-medium">Location</label>
           <select
-            name="country"
-            className="input-style"
-            onChange={handleCountryChange}
-          >
-            <option value="">Select Country</option>
-            {countries.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+                name="country"
+                className="input-style"
+                onChange={handleCountryChange}
+              >
+                <option value="">Select Country</option>
+                {countries.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+           </select>
 
           <select
-            name="state"
-            className="input-style"
-            onChange={handleStateChange}
-            disabled={!states.length}
-          >
-            <option value="">Select State</option>
-            {states.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
+          name="state"
+          className="input-style"
+          onChange={handleStateChange}
+          disabled={!states.length}
+         >
+          <option value="">Select State</option>
+          {states.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.name}
+            </option>
+          ))}
+        </select>
 
           <select
             name="city"

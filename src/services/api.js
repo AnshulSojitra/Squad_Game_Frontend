@@ -61,16 +61,10 @@ export const addGround = (formData) => {
 };
 
 // Get all grounds
-// export const getGrounds = () => api.get("/admin/grounds");
-export const getGrounds = () => {
-  const token = localStorage.getItem("adminToken");
+export const getGrounds = () => api.get("admin/grounds");
 
-  return api.get("/admin/grounds", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-};
+// Get single ground
+export const getGroundById = (id) => api.get(`admin/grounds/${id}`);
 
 // Get single ground
 export const getGroundById = (id) => api.get(`/admin/grounds/${id}`);
