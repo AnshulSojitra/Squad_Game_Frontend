@@ -1,13 +1,11 @@
 import axios from "axios";
 
-
 const api = axios.create({
   baseURL: "http://localhost:5000/api", // your backend base URL
   headers: {
     "Content-Type": "application/json",
   },
 });
-
 
 // CREATE - Register Admin
 // export const registerAdmin = (data) => {
@@ -41,9 +39,6 @@ export const userLogin = (data) => {
   return api.post("/user/login", data);
 };
 
-
-
-
 // READ - Get user bookings
 export const getMyBookings = (token) => {
   return api.get("/user/bookings", {
@@ -60,8 +55,6 @@ export const getMyBookings = (token) => {
 //     },
 //   });
 // };
-
-
 
 // // GET all grounds
 // export const getGrounds = () => {
@@ -100,7 +93,6 @@ export const getMyBookings = (token) => {
 //   });
 // };
 
-
 /* -------- GROUNDS -------- */
 
 // Add ground
@@ -121,7 +113,6 @@ export const getGrounds = () => api.get("admin/grounds");
 // Get single ground
 export const getGroundById = (id) => api.get(`admin/grounds/${id}`);
 
-
 // LOCATION APIs
 export const getCountries = () => api.get("/location/countries");
 
@@ -130,9 +121,6 @@ export const getStatesByCountry = (countryId) =>
 
 export const getCitiesByState = (stateId) =>
   api.get(`/location/cities/${stateId}`);
-
-
-
 
 /* -------- BOOKINGS -------- */
 
@@ -153,7 +141,5 @@ export const getUserBookings = () => {
     },
   });
 };
-
-
 
 export default api;
