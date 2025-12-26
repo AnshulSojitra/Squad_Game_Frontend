@@ -131,7 +131,7 @@ const paginatedGrounds = filteredGrounds.slice(
 
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow overflow-x-auto">
+      <div className="bg-white rounded-xl shadow overflow-x-auto text-black">
         <table className="w-full text-sm">
           <thead className="bg-gray-100 text-gray-700">
             <tr>
@@ -140,8 +140,8 @@ const paginatedGrounds = filteredGrounds.slice(
               <th className="p-3">Price/hr</th>
               <th className="p-3">Timing</th>
               <th className="p-3">Contact</th>
-              <th className="p-3 text-center">Actions</th>
-              <th className="p-3">Image</th>
+              <th className="p-3 text-center">Image</th>
+              <th className="p-3">Actions</th>
             </tr>
           </thead>
 
@@ -159,7 +159,7 @@ const paginatedGrounds = filteredGrounds.slice(
                   <td className="p-3 text-center">{ground.game}</td>
                   <td className="p-3 text-center">₹{ground.pricePerSlot}</td>
                   <td className="p-3 text-center">
-                    {ground.OpeningTime} - {ground.ClosingTime}
+                    {ground.openingTime} - {ground.closingTime}
                   </td>
                   <td className="p-3 text-center">{ground.contactNo}</td>
                   <td className="p-3">
@@ -202,7 +202,7 @@ const paginatedGrounds = filteredGrounds.slice(
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
-            className="px-3 py-1 border rounded"
+            className="px-3 py-1 border rounded text-black"
           >
             Prev
           </button>
@@ -210,7 +210,7 @@ const paginatedGrounds = filteredGrounds.slice(
           <button
             disabled={page * pageSize >= filteredGrounds.length}
             onClick={() => setPage(page + 1)}
-            className="px-3 py-1 border rounded"
+            className="px-3 py-1 border rounded text-black"
           >
             Next
           </button>
