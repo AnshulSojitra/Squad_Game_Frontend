@@ -115,6 +115,19 @@ export const getGrounds = () => api.get("/grounds");
 // Get single ground
 export const getGroundById = (id) => api.get(`/grounds/${id}`);
 
+
+// LOCATION APIs
+export const getCountries = () => api.get("/location/countries");
+
+export const getStatesByCountry = (countryId) =>
+  api.get(`/location/states/${countryId}`);
+
+export const getCitiesByState = (stateId) =>
+  api.get(`/location/cities/${stateId}`);
+
+
+
+
 /* -------- BOOKINGS -------- */
 
 // CREATE BOOKING
