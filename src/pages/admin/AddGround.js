@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { addGround } from "../../services/api"; // make sure this import exists
+import { getCountries, getStatesByCountry, getCitiesByState } from "../../services/api";
 
 
 export default function AddGround() {
@@ -17,7 +18,9 @@ export default function AddGround() {
     slots: [],
   });
 
-  
+  const [errors, setErrors] = useState({});
+
+
   const [images, setImages] = useState([]);
 
   const [startTime, setStartTime] = useState("");
@@ -32,6 +35,11 @@ export default function AddGround() {
   const [slotEnd, setSlotEnd] = useState("");
 
   const [slots, setSlots] = useState([]);
+
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+
 
 
 
@@ -99,61 +107,98 @@ useEffect(() => {
   const slots = generateSlots(startTime, endTime);
   setGeneratedSlots(slots);
   setSelectedSlots([]);
+   getCountries().then((res) => setCountries(res.data));
 }, [startTime, endTime]);
 
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  setForm({ ...form, [e.target.name]: e.target.value });
+  setErrors({ ...errors, [e.target.name]: "" });
+};
+
+
+const handleCountryChange = async (e) => {
+  const countryId = e.target.value;
+  setForm({ ...form, country: countryId, state: "", city: "" });
+  setStates([]);
+  setCities([]);
+
+  const res = await getStatesByCountry(countryId);
+  setStates(res.data);
+};
+
+
+const handleStateChange = async (e) => {
+  const stateId = e.target.value;
+  setForm({ ...form, state: stateId, city: "" });
+  setCities([]);
+
+  const res = await getCitiesByState(stateId);
+  setCities(res.data);
+};
+
 
 
   const handleImages = (e) => {
     setImages(Array.from(e.target.files));
   };
 
-    const validateForm = () => {
-      if (!form.groundName || form.groundName.length < 3) {
-        alert("Ground name must be at least 3 characters");
-        return false;
-      }
 
-      if (!/^\d{10}$/.test(form.contact)) {
-        alert("Contact number must be 10 digits");
-        return false;
-      }
+      const validateForm = () => {
+        const newErrors = {};
 
-      if (!form.pricePerHour || Number(form.pricePerHour) <= 0) {
-        alert("Price per slot must be greater than 0");
-        return false;
-      }
+        if (!form.groundName || form.groundName.length < 3) {
+          newErrors.groundName = "Ground name must be at least 3 characters";
+        }
 
-      if (!form.game) {
-        alert("Please select a game type");
-        return false;
-      }
+        if (!/^\d{10}$/.test(form.contact)) {
+          newErrors.contact = "Contact number must be 10 digits";
+        }
 
-      if (!form.addressName || !form.country || !form.state || !form.city) {
-        alert("Please complete the address fields");
-        return false;
-      }
+        if (!form.pricePerHour || Number(form.pricePerHour) <= 0) {
+          newErrors.pricePerHour = "Price must be greater than 0";
+        }
 
-      if (!openingTime || !closingTime) {
-        alert("Opening and closing time are required");
-        return false;
-      }
+        if (!form.game) {
+          newErrors.game = "Please select a game type";
+        }
 
-      if (slots.length === 0) {
-        alert("Please add at least one time slot");
-        return false;
-      }
+        if (!form.addressName) {
+          newErrors.addressName = "Ground / House name is required";
+        }
 
-      if (images.length === 0) {
-        alert("Please upload at least one image");
-        return false;
-      }
+        if (!form.country) {
+          newErrors.country = "Country is required";
+        }
 
-      return true;
-    };
+        if (!form.state) {
+          newErrors.state = "State is required";
+        }
+
+        if (!form.city) {
+          newErrors.city = "City is required";
+        }
+
+        if (!openingTime) {
+          newErrors.openingTime = "Opening time is required";
+        }
+
+        if (!closingTime) {
+          newErrors.closingTime = "Closing time is required";
+        }
+
+        if (slots.length === 0) {
+          newErrors.slots = "Please add at least one slot";
+        }
+
+        if (images.length === 0) {
+          newErrors.images = "Please upload at least one image";
+        }
+
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
+      };
 
 
   
@@ -223,6 +268,9 @@ const handleSubmit = async (e) => {
             className="input-style"
             onChange={handleChange}
           />
+          {errors.groundName && (
+            <p className="text-red-500 text-xs mt-1">{errors.groundName}</p>
+          )}
 
           {/* Contact */}
           <label className="block text-sm font-medium mb-1">Contact Number</label>
@@ -233,6 +281,9 @@ const handleSubmit = async (e) => {
             className="input-style"
             onChange={handleChange}
           />
+          {errors.contact && (
+            <p className="text-red-500 text-xs mt-1">{errors.contact}</p>
+          )}
 
           {/* Price */}
           <label className="block text-sm font-medium mb-1">Price per Slot (₹)</label>
@@ -243,6 +294,9 @@ const handleSubmit = async (e) => {
             className="input-style"
             onChange={handleChange}
           />
+          {errors.pricePerHour && (
+            <p className="text-red-500 text-xs mt-1">{errors.pricePerHour}</p>
+          )}
 
           {/* Game Type */}
           <label className="block text-sm font-medium mb-1">Game Type</label>
@@ -257,6 +311,9 @@ const handleSubmit = async (e) => {
             <option value="Football">Football</option>
             <option value="Basketball">Basketball</option>
           </select>
+          {errors.game && (
+              <p className="text-red-500 text-xs mt-1">{errors.game}</p>
+            )}
 
           {/* Address */}
           <label className="block text-sm font-medium mb-1">Address</label>
@@ -278,17 +335,49 @@ const handleSubmit = async (e) => {
 
           {/* Country / State / City */}
           <label className="block text-sm font-medium mb-1">Location</label>
-          <select name="country" className="input-style">
-            <option value="">Select Country</option>
-          </select>
+          <select
+                name="country"
+                className="input-style"
+                onChange={handleCountryChange}
+              >
+                <option value="">Select Country</option>
+                {countries.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+           </select>
 
-          <select name="state" className="input-style">
-            <option value="">Select State</option>
-          </select>
+          <select
+          name="state"
+          className="input-style"
+          onChange={handleStateChange}
+          disabled={!states.length}
+         >
+          <option value="">Select State</option>
+          {states.map((s) => (
+            <option key={s._id} value={s._id}>
+              {s.name}
+            </option>
+          ))}
+        </select>
 
-          <select name="city" className="input-style">
+          <select
+            name="city"
+            className="input-style"
+            onChange={(e) =>
+              setForm({ ...form, city: e.target.value })
+            }
+            disabled={!cities.length}
+          >
             <option value="">Select City</option>
+            {cities.map((c) => (
+              <option key={c._id} value={c._id}>
+                {c.name}
+              </option>
+            ))}
           </select>
+
 
           {/* Time Slots */}
           <div>
@@ -302,6 +391,9 @@ const handleSubmit = async (e) => {
                     onChange={(e) => setOpeningTime(e.target.value)}
                     className="input-style"
                   />
+                  {errors.openingTime && (
+                    <p className="text-red-500 text-xs mt-1">{errors.openingTime}</p>
+                  )}
                 </div>
 
                 <div>
@@ -312,6 +404,9 @@ const handleSubmit = async (e) => {
                     onChange={(e) => setClosingTime(e.target.value)}
                     className="input-style"
                   />
+                  {errors.openingTime && (
+                  <p className="text-red-500 text-xs mt-1">{errors.openingTime}</p>
+                )}
                 </div>
               </div>
 
@@ -328,6 +423,7 @@ const handleSubmit = async (e) => {
                       onChange={(e) => setSlotStart(e.target.value)}
                       className="input-style"
                     />
+                    
                   </div>
 
                   <div>
@@ -347,6 +443,10 @@ const handleSubmit = async (e) => {
                   >
                     Add Slot
                   </button>
+                  {errors.slots && (
+                      <p className="text-red-500 text-xs mt-1">{errors.slots}</p>
+                    )}
+
                 </div>
               </div>
 
@@ -391,6 +491,10 @@ const handleSubmit = async (e) => {
             onChange={handleImages}
             className="input-style"
           />
+          {errors.images && (
+            <p className="text-red-500 text-xs mt-1">{errors.images}</p>
+          )}
+
 
           {images.length > 0 && (
             <div className="grid grid-cols-3 gap-3 mt-3">
