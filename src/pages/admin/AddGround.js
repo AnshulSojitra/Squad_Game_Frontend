@@ -249,7 +249,7 @@ const handleSubmit = async (e) => {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 px-4">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8">
         <h2 className="text-2xl font-bold text-center mb-1">
           Add Ground
@@ -342,7 +342,7 @@ const handleSubmit = async (e) => {
               >
                 <option value="">Select Country</option>
                 {countries.map((c) => (
-                  <option key={c._id} value={c._id}>
+                  <option key={c.id} value={c.id}>
                     {c.name}
                   </option>
                 ))}
@@ -356,7 +356,7 @@ const handleSubmit = async (e) => {
          >
           <option value="">Select State</option>
           {states.map((s) => (
-            <option key={s._id} value={s._id}>
+            <option key={s.id} value={s.id}>
               {s.name}
             </option>
           ))}
@@ -372,7 +372,7 @@ const handleSubmit = async (e) => {
           >
             <option value="">Select City</option>
             {cities.map((c) => (
-              <option key={c._id} value={c._id}>
+              <option key={c.id} value={c.id}>
                 {c.name}
               </option>
             ))}

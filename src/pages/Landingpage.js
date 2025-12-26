@@ -30,7 +30,7 @@ export default function LandingPage() {
           </button>
 
           <button
-            onClick={() => navigate("/admin/login")}
+            onClick={() => navigate("/login")}
             className="bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-lg font-semibold transition"
           >
             Login as Admin

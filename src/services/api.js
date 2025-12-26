@@ -104,16 +104,22 @@ export const getMyBookings = (token) => {
 /* -------- GROUNDS -------- */
 
 // Add ground
-export const addGround = (data) =>
-  api.post("/grounds", data, {
-    headers: { "Content-Type": "multipart/form-data" },
+export const addGround = (formData) => {
+  const token = localStorage.getItem("adminToken");
+
+  return api.post("/admin/grounds", formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
   });
+};
 
 // Get all grounds
-export const getGrounds = () => api.get("/grounds");
+export const getGrounds = () => api.get("admin/grounds");
 
 // Get single ground
-export const getGroundById = (id) => api.get(`/grounds/${id}`);
+export const getGroundById = (id) => api.get(`admin/grounds/${id}`);
 
 
 // LOCATION APIs

@@ -157,11 +157,11 @@ const paginatedGrounds = filteredGrounds.slice(
                 <tr key={ground._id} className="border-t">
                   <td className="p-3 font-medium">{ground.name}</td>
                   <td className="p-3 text-center">{ground.game}</td>
-                  <td className="p-3 text-center">₹{ground.pricePerHour}</td>
+                  <td className="p-3 text-center">₹{ground.pricePerSlot}</td>
                   <td className="p-3 text-center">
-                    {ground.startTime} - {ground.endTime}
+                    {ground.OpeningTime} - {ground.ClosingTime}
                   </td>
-                  <td className="p-3 text-center">{ground.contact}</td>
+                  <td className="p-3 text-center">{ground.contactNo}</td>
                   <td className="p-3">
                     <img
                       src={`http://localhost:5000/uploads/${ground.image}`}
