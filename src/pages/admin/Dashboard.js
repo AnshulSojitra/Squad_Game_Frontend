@@ -31,7 +31,7 @@ const Dashboard = () => {
       {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((item, index) => (
-          <div key={index} className="bg-white rounded-lg shadow p-6">
+          <div key={index} className="bg-white rounded-lg shadow p-6 text-black">
             <p className="text-gray-500">{item.title}</p>
             <p className="text-3xl font-bold mt-2">{item.value}</p>
           </div>
@@ -43,13 +43,13 @@ const Dashboard = () => {
         <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-blue-100 p-4 rounded cursor-pointer" onClick={handleGames}>
+          <div className="bg-blue-100 p-4 rounded cursor-pointer text-black" onClick={handleGames}>
             Manage Games
           </div>
-          <div className="bg-green-100 p-4 rounded cursor-pointer">
+          <div className="bg-green-100 p-4 rounded cursor-pointer text-black">
             Manage Grounds
           </div>
-          <div className="bg-purple-100 p-4 rounded cursor-pointer">
+          <div className="bg-purple-100 p-4 rounded cursor-pointer text-black">
             View Bookings
           </div>
         </div>

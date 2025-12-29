@@ -249,7 +249,7 @@ const handleSubmit = async (e) => {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 px-4 text-black">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8">
         <h2 className="text-2xl font-bold text-center mb-1">
           Add Ground

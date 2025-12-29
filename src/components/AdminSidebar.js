@@ -1,7 +1,16 @@
 import { Link, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export default function AdminSidebar({ isCollapsed }) {
   const location = useLocation();
+
+  const linkClass = ({ isActive }) =>
+    `flex items-center px-4 py-2 rounded-lg transition-all duration-200
+     ${
+       isActive
+         ? "border-l-4 border-white bg-gray-800 text-white"
+         : "text-gray-300 hover:bg-gray-700 hover:text-white"
+     }`;
 
   const menuItem = (to, icon, label) => (
     <Link
@@ -25,10 +34,21 @@ export default function AdminSidebar({ isCollapsed }) {
 
       {/* Navigation */}
       <nav className="p-4 flex flex-col gap-3">
-        {menuItem("/admin/dashboard", "📊", "Dashboard")}
-        {menuItem("/admin/bookings", "📅", "Bookings")}
-        {menuItem("/admin/games", "🎮", "Games")}
-        {menuItem("/admin/grounds", "🏟", "Grounds")}
+       <NavLink to="/admin/dashboard" className={linkClass}>
+          Dashboard
+        </NavLink>
+
+        <NavLink to="/admin/bookings" className={linkClass}>
+          Bookings
+        </NavLink>
+
+        <NavLink to="/admin/games" className={linkClass}>
+          Games
+        </NavLink>
+
+        <NavLink to="/admin/grounds" className={linkClass}>
+          Grounds
+        </NavLink>
       </nav>
     </div>
   );

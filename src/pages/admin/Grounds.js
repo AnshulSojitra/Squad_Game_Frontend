@@ -132,8 +132,8 @@ export default function Grounds() {
               <th className="p-3">Price/hr</th>
               <th className="p-3">Timing</th>
               <th className="p-3">Contact</th>
-              <th className="p-3 text-center">Actions</th>
-              <th className="p-3">Image</th>
+              <th className="p-3 text-center">Image</th>
+              <th className="p-3">Actions</th>
             </tr>
           </thead>
 
@@ -197,7 +197,7 @@ export default function Grounds() {
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
-            className="px-3 py-1 border rounded"
+            className="px-3 py-1 border rounded text-black"
           >
             Prev
           </button>
@@ -205,7 +205,7 @@ export default function Grounds() {
           <button
             disabled={page * pageSize >= filteredGrounds.length}
             onClick={() => setPage(page + 1)}
-            className="px-3 py-1 border rounded"
+            className="px-3 py-1 border rounded text-black"
           >
             Next
           </button>
