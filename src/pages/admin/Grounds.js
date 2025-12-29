@@ -197,7 +197,7 @@ export default function Grounds() {
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
-            className="px-3 py-1 border rounded text-black"
+            className="px-3 py-1 text-black border rounded"
           >
             Prev
           </button>
@@ -205,7 +205,7 @@ export default function Grounds() {
           <button
             disabled={page * pageSize >= filteredGrounds.length}
             onClick={() => setPage(page + 1)}
-            className="px-3 py-1 border rounded text-black"
+            className="px-3 py-1 text-black border rounded"
           >
             Next
           </button>
