@@ -116,7 +116,7 @@ export default function Grounds() {
         {/* Add Ground Button (TOP RIGHT) */}
         <button
           onClick={() => navigate("/admin/addground")}
-          className="px-5 py-2 font-medium text-white transition bg-indigo-600 rounded-lg hover:bg-indigo-700"
+          className="px-5 py-2 font-medium transition bg-indigo-600 rounded-lg hover:bg-indigo-700"
         >
           ➕ Add Ground
         </button>
@@ -146,7 +146,7 @@ export default function Grounds() {
               </tr>
             ) : (
               grounds.map((ground) => (
-                <tr key={ground._id} className="border-t">
+                <tr key={ground._id} className="text-black border-t">
                   <td className="p-3 font-medium">{ground.name}</td>
                   <td className="p-3 text-center">{ground.game}</td>
                   <td className="p-3 text-center">₹{ground.pricePerSlot}</td>
