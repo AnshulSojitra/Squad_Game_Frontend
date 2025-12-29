@@ -3,6 +3,7 @@ import { getGrounds, deleteGround } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { getGroundById } from "../../services/api";
+import ConfirmModal from "../../components/common/ConfirmModal";
 
 export default function Grounds() {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ export default function Grounds() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedGroundId, setSelectedGroundId] = useState(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -72,16 +75,40 @@ export default function Grounds() {
     page * pageSize
   );
 
-  // const handleDelete = async (id) => {
-  //   if (!window.confirm("Are you sure you want to delete this ground?")) return;
+  const openDeleteModal = (id) => {
+    setSelectedGroundId(id);
+    setShowConfirm(true);
+  };
 
-  //   try {
-  //     await deleteGround(id);
-  //     setGrounds(grounds.filter((g) => g._id !== id));
-  //   } catch (err) {
-  //     alert("Failed to delete ground");
-  //   }
-  // };
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteGround(selectedGroundId);
+      setGrounds((prev) => prev.filter((g) => g.id !== selectedGroundId));
+    } catch (err) {
+      alert("Failed to delete ground");
+    } finally {
+      setShowConfirm(false);
+      setSelectedGroundId(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirm(false);
+    setSelectedGroundId(null);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this ground?")) return;
+
+    try {
+      await deleteGround(id);
+
+      // remove from UI
+      setGrounds((prev) => prev.filter((g) => g.id !== id));
+    } catch (err) {
+      alert("Failed to delete ground");
+    }
+  };
 
   if (loading) {
     return <p className="text-gray-600">Loading grounds...</p>;
@@ -180,8 +207,8 @@ export default function Grounds() {
 
                     {/* Delete */}
                     <button
-                      // onClick={() => handleDelete(ground._id)}
                       className="text-red-600 hover:underline"
+                      onClick={() => openDeleteModal(ground.id)}
                     >
                       Delete
                     </button>
@@ -211,6 +238,13 @@ export default function Grounds() {
           </button>
         </div>
       </div>
+      <ConfirmModal
+        isOpen={showConfirm}
+        title="Delete Ground"
+        message="Are you sure you want to delete this ground? This action cannot be undone."
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </div>
   );
 }

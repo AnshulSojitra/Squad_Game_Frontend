@@ -120,6 +120,15 @@ export const getGrounds = () => {
 // Get single ground
 export const getGroundById = (id) => api.get(`admin/grounds/${id}`);
 
+//Delete ground
+export const deleteGround = (id) => {
+  return api.delete(`/admin/grounds/${id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
+  });
+};
+
 // LOCATION APIs
 export const getCountries = () => api.get("/location/countries");
 
