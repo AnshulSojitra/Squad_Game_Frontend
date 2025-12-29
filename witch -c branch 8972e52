@@ -1,0 +1,33 @@
+[33m63ccf3c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m trash
+[33m8972e52[m[33m ([m[1;31morigin/main[m[33m)[m modal
+[33m1223975[m commit
+[33mc9d0df7[m img
+[33m1eb22b5[m Merge pull request #8 from AnshulSojitra/abc
+[33m0d9e210[m Merge branch 'main' into abc
+[33m5a53d2a[m[33m ([m[1;31morigin/abc[m[33m, [m[1;32mabc[m[33m)[m img
+[33mfdc9393[m getting and adding grounds through api
+[33m8b959f2[m commit
+[33m3b96e84[m[33m ([m[1;31morigin/niraj[m[33m, [m[1;32mnxyz[m[33m)[m protected routes
+[33m07fcacf[m Merge branch 'main' of https://github.com/AnshulSojitra/Squad_Game_Frontend
+[33m35ad83a[m country state and city api and validadion
+[33m2e3cb3f[m Merge pull request #6 from AnshulSojitra/niraj
+[33m2c011f8[m ground form changes and api with validadion
+[33mc825b97[m Merge pull request #5 from AnshulSojitra/niraj
+[33ma33bb44[m Merge branch 'main' of https://github.com/AnshulSojitra/Squad_Game_Frontend into niraj
+[33m23346eb[m admin ground form , admin ground ,with user api  and user bookingslots , user mybooking
+[33m21df752[m Merge pull request #4 from AnshulSojitra/niraj
+[33m88c5823[m user register with api
+[33m954d5da[m Merge pull request #3 from AnshulSojitra/niraj
+[33m5369665[m used axios in admin login
+[33ma97c2d6[m Merge pull request #2 from AnshulSojitra/Anshul
+[33m485a1e4[m[33m ([m[1;31morigin/Anshul[m[33m, [m[1;32mAnshul[m[33m)[m commit
+[33m8434e00[m coomit before merge
+[33m23c85f1[m login page navigation
+[33m9f79a4d[m Merge pull request #1 from AnshulSojitra/dashboard
+[33m958be67[m Merge branch 'main' into dashboard
+[33mf7c7f09[m[33m ([m[1;31morigin/dashboard[m[33m)[m navbar and dashboard
+[33mf7c4563[m added the login page and tailwind css
+[33m4d65abf[m admin panel
+[33mc9080b3[m admin panel
+[33m81e78e2[m folder structure updated
+[33m60638be[m Initial commit

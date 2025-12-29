@@ -240,7 +240,7 @@ export default function Grounds() {
       </div>
       <ConfirmModal
         isOpen={showConfirm}
-        title="Delete Ground"
+        title="Delete Ground?"
         message="Are you sure you want to delete this ground? This action cannot be undone."
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}

@@ -10,7 +10,7 @@ export default function ConfirmModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="w-full max-w-sm p-6 bg-white shadow-lg rounded-xl">
-        <h3 className="mb-2 text-lg font-semibold">{title}</h3>
+        <h3 className="mb-2 text-lg font-semibold text-black">{title}</h3>
         <p className="mb-6 text-gray-600">{message}</p>
 
         <div className="flex justify-end gap-3">
