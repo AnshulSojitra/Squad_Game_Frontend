@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // your backend base URL
+  baseURL: process.env.REACT_APP_API_BASE_URL, // your backend base URL
   headers: {
     "Content-Type": "application/json",
   },
@@ -11,6 +11,15 @@ const api = axios.create({
 // export const registerAdmin = (data) => {
 //   return api.post("/admin/register", data);
 // };
+
+// Attach token automatically
+api.interceptors.request.use((req) => {
+  const token = localStorage.getItem("adminToken");
+  if (token) {
+    req.headers.Authorization = `Bearer ${token}`;
+  }
+  return req;
+});
 
 // READ - Login Admin
 export const loginAdmin = (data) => {
@@ -112,6 +121,7 @@ export const getGrounds = () => {
   const token = localStorage.getItem("adminToken");
   return api.get("/admin/grounds", {
     headers: {
+      
       Authorization: `Bearer ${token}`,
     },
   });
@@ -128,6 +138,15 @@ export const deleteGround = (id) => {
     },
   });
 };
+
+// Update ground
+export const updateGround = (id, formData) =>
+  api.put(`/admin/grounds/${id}`, formData, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
 // LOCATION APIs
 export const getCountries = () => api.get("/location/countries");

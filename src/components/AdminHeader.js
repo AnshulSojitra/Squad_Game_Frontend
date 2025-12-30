@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function AdminHeader({ isCollapsed, setIsCollapsed }) {
+export default function AdminHeader() {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -29,12 +29,6 @@ export default function AdminHeader({ isCollapsed, setIsCollapsed }) {
     <header className="h-16 bg-white border-b shadow-sm flex items-center justify-between px-6">
       {/* Left */}
       <div className="flex items-center gap-4">
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-xl text-gray-700 hover:text-black"
-        >
-          ☰
-        </button>
 
         <h1 className="text-lg font-semibold">Squad Game Admin</h1>
       </div>

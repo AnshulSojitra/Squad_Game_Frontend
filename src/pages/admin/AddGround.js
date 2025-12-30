@@ -1,7 +1,10 @@
-import { useState } from "react";
-import { useEffect } from "react";
-import { addGround } from "../../services/api"; // make sure this import exists
+import { useState , useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { addGround , updateGround , getGroundById } from "../../services/api"; // make sure this import exists
 import { getCountries, getStatesByCountry, getCitiesByState } from "../../services/api";
+import { useSearchParams } from "react-router-dom";
+
+
 
 
 export default function AddGround() {
@@ -10,7 +13,7 @@ export default function AddGround() {
     contact: "",
     pricePerHour: "",
     game: "",
-    addressName: "",
+    addressName: "" ,
     area: "",
     country: "",
     state: "",
@@ -19,7 +22,7 @@ export default function AddGround() {
   });
 
   const [errors, setErrors] = useState({});
-
+  const navigate = useNavigate();
 
   const [images, setImages] = useState([]);
 
@@ -40,6 +43,11 @@ export default function AddGround() {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
 
+
+  const [searchParams] = useSearchParams();
+  const groundId = searchParams.get("id");
+  const isEdit = Boolean(groundId);
+  const id = searchParams.get("id");
 
 
 
@@ -103,12 +111,50 @@ const handleAddSlot = () => {
 
 
 
+// useEffect(() => {
+//   const slots = generateSlots(startTime, endTime);
+//   setGeneratedSlots(slots);
+//   setSelectedSlots([]);
+//    getCountries().then((res) => setCountries(res.data));
+// }, [startTime, endTime]);
+
+// 1. Load countries once
 useEffect(() => {
-  const slots = generateSlots(startTime, endTime);
-  setGeneratedSlots(slots);
-  setSelectedSlots([]);
-   getCountries().then((res) => setCountries(res.data));
-}, [startTime, endTime]);
+  getCountries().then((res) => setCountries(res.data));
+}, []);
+
+// 2. Load ground data only in edit mode
+useEffect(() => {
+  if (!groundId) return; // ADD mode → do nothing
+
+  const fetchGround = async () => {
+    try {
+      const res = await getGroundById(groundId);
+      const g = res.data;
+
+      setForm({
+        groundName: g.name,
+        contact: g.contactNo,
+        pricePerHour: g.pricePerSlot,
+        game: g.game,
+        addressName: g.area,
+        area: g.area,
+        country: g.country,
+        state: g.state,
+        city: g.city,
+        slots: g.slots || [],
+      });
+
+      setOpeningTime(g.openingTime);
+      setClosingTime(g.closingTime);
+      setSlots(g.slots || []);
+    } catch (err) {
+      alert("Failed to load ground details");
+    }
+  };
+
+  fetchGround();
+}, [groundId]);
 
 
   const handleChange = (e) => {
@@ -200,7 +246,6 @@ const handleStateChange = async (e) => {
         return Object.keys(newErrors).length === 0;
       };
 
-
   
 
 const handleSubmit = async (e) => {
@@ -237,9 +282,14 @@ const handleSubmit = async (e) => {
     });
 
     // API call
-    await addGround(formData);
-
-    alert("Ground added successfully!");
+    if (isEdit) {
+      await updateGround(groundId, formData);
+      alert("Ground updated successfully");
+    } else {
+      await addGround(formData);
+      alert("Ground added successfully");
+    }
+    navigate("/admin/grounds");
   } catch (err) {
     console.error(err);
     alert("Failed to add ground");

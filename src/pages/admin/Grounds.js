@@ -155,6 +155,7 @@ export default function Grounds() {
           <thead className="text-gray-700 bg-gray-100">
             <tr>
               <th className="p-3 text-left">Name</th>
+              <th className="p-3">Address</th>
               <th className="p-3">Game</th>
               <th className="p-3">Price/hr</th>
               <th className="p-3">Timing</th>
@@ -175,6 +176,20 @@ export default function Grounds() {
               grounds.map((ground) => (
                 <tr key={ground._id} className="text-black border-t">
                   <td className="p-3 font-medium">{ground.name}</td>
+                  {/* <td className="p-3 text-sm text-center max-w-xs break-words">
+                    {[
+                      ground.addressName,
+                      ground.area,
+                      ground.city,
+                      ground.state,
+                      ground.country,
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </td> */}
+                   <td className="p-3">
+                    {ground.area}, {ground.city}, {ground.state}, {ground.country}
+                  </td>
                   <td className="p-3 text-center">{ground.game}</td>
                   <td className="p-3 text-center">₹{ground.pricePerSlot}</td>
                   <td className="p-3 text-center">
@@ -197,9 +212,7 @@ export default function Grounds() {
                   <td className="flex justify-center gap-3 p-3">
                     {/* Edit */}
                     <button
-                      onClick={() =>
-                        navigate(`/admin/add-ground?id=${ground._id}`)
-                      }
+                      onClick={() => navigate(`/admin/addground?id=${ground.id}`)}
                       className="text-blue-600 hover:underline"
                     >
                       Edit

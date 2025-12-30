@@ -1,29 +1,22 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import AdminSidebar from "./AdminSidebar";
-import AdminHeader from "./AdminHeader";
+import AdminSidebar from "../components/AdminSidebar";
+import AdminHeader from "../components/AdminHeader";
 
 export default function AdminLayout() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Sidebar */}
-      <aside
-        className={`bg-gray-900 text-white transition-all duration-300 
-        ${isCollapsed ? "w-16" : "w-64"} flex-shrink-0`}
-      >
-        <AdminSidebar isCollapsed={isCollapsed} />
-      </aside>
+      <AdminSidebar
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+      />
 
-      {/* Right Side */}
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <AdminHeader
-          isCollapsed={isCollapsed}
-          setIsCollapsed={setIsCollapsed}
-        />
+      <div className="flex-1 flex flex-col">
+        <AdminHeader />
 
-        <main className="flex-1 overflow-y-auto bg-gray-900 p-6 text-white">
+        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800 p-6 text-white">
           <Outlet />
         </main>
       </div>

@@ -1,55 +1,82 @@
-import { Link, useLocation } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 
-export default function AdminSidebar({ isCollapsed }) {
-  const location = useLocation();
-
-  const linkClass = ({ isActive }) =>
-    `flex items-center px-4 py-2 rounded-lg transition-all duration-200
-     ${
-       isActive
-         ? "border-l-4 border-white bg-gray-800 text-white"
-         : "text-gray-300 hover:bg-gray-700 hover:text-white"
-     }`;
-
-  const menuItem = (to, icon, label) => (
-    <Link
-      to={to}
-      className={`flex items-center gap-3 p-2 rounded hover:bg-gray-800
-      ${location.pathname === to ? "bg-gray-800" : ""}`}
-    >
-      <span className="text-lg">{icon}</span>
-      {!isCollapsed && <span>{label}</span>}
-    </Link>
-  );
-
+export default function AdminSidebar({ collapsed, setCollapsed }) {
   return (
-    <div className="h-full">
-      {/* Sidebar Header */}
-      <div className="p-4 border-b border-gray-700">
-        {!isCollapsed && (
+    <aside
+      className={`bg-[#0b1220] text-white transition-all duration-300
+      ${collapsed ? "w-16" : "w-64"}
+      flex-shrink-0`}
+    >
+      {/* Top Section */}
+      <div className="h-16 flex items-center justify-between px-3 border-b border-white/10">
+        {!collapsed && (
           <span className="text-lg font-bold">Dashboard</span>
         )}
+
+        {/* Toggle Button */}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="text-xl font-bold focus:outline-none"
+        >
+          ☰
+        </button>
       </div>
 
-      {/* Navigation */}
-      <nav className="p-4 flex flex-col gap-3">
-       <NavLink to="/admin/dashboard" className={linkClass}>
-          Dashboard
-        </NavLink>
+      {/* Menu */}
+      <nav className="mt-4 space-y-1 px-2">
+  <SidebarItem
+    to="/admin/dashboard"
+    label="📊 Dashboard"
+    emoji="📊"
+    collapsed={collapsed}
+  />
 
-        <NavLink to="/admin/bookings" className={linkClass}>
-          Bookings
-        </NavLink>
+  <SidebarItem
+    to="/admin/bookings"
+    label="📅 Bookings"
+    emoji="📅"
+    collapsed={collapsed}
+  />
 
-        <NavLink to="/admin/games" className={linkClass}>
-          Games
-        </NavLink>
+  <SidebarItem
+    to="/admin/games"
+    label="🎮 Games"
+    emoji="🎮"
+    collapsed={collapsed}
+  />
 
-        <NavLink to="/admin/grounds" className={linkClass}>
-          Grounds
-        </NavLink>
-      </nav>
-    </div>
+  <SidebarItem
+    to="/admin/grounds"
+    label="🏟️ Grounds"
+    emoji="🏟️"
+    collapsed={collapsed}
+  />
+</nav>
+
+    </aside>
+  );
+}
+function SidebarItem({ to, label,emoji, collapsed }) {
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        `
+        flex items-center justify-center
+        ${collapsed ? "px-0" : "px-4 justify-start"}
+        py-3 rounded-lg transition-all
+
+        ${isActive
+          ? "bg-white/10 border-l-4 border-white"
+          : "hover:bg-white/5"}
+        `
+      }
+    >
+       {collapsed ? (
+        <span className="text-xl">{emoji}</span>
+      ) : (
+        <span className="text-sm">{label}</span>
+      )}
+    </NavLink>
   );
 }
