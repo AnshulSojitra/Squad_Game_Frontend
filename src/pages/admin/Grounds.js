@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { getGrounds, deleteGround } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
-import { getGroundById } from "../../services/api";
+import { getGroundById ,updateGround } from "../../services/api";
 import ConfirmModal from "../../components/common/ConfirmModal";
+const IMAGE_BASE=process.env.REACT_APP_IMAGE_URL
+
 
 export default function Grounds() {
   const navigate = useNavigate();
@@ -17,15 +19,15 @@ export default function Grounds() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedGroundId, setSelectedGroundId] = useState(null);
 
-  const [form, setForm] = useState({
-    name: "",
-    address: "",
-    contact: "",
-    startTime: "",
-    endTime: "",
-    pricePerHour: "",
-    game: "",
-  });
+  // const [form, setForm] = useState({
+  //   name: "",
+  //   address: "",
+  //   contact: "",
+  //   startTime: "",
+  //   endTime: "",
+  //   pricePerHour: "",
+  //   game: "",
+  // });
 
   const fetchGrounds = async () => {
     try {
@@ -42,28 +44,28 @@ export default function Grounds() {
     fetchGrounds();
   }, []);
 
-  useEffect(() => {
-    if (groundId) {
-      const fetchGround = async () => {
-        try {
-          const res = await getGroundById(groundId);
-          setForm({
-            name: res.data.name,
-            address: res.data.address,
-            contact: res.data.contact,
-            startTime: res.data.startTime,
-            endTime: res.data.endTime,
-            pricePerHour: res.data.pricePerHour,
-            game: res.data.game,
-          });
-        } catch (err) {
-          alert("Failed to load ground");
-        }
-      };
+  // useEffect(() => {
+  //   if (groundId) {
+  //     const fetchGround = async () => {
+  //       try {
+  //         const res = await getGroundById(groundId);
+  //         setForm({
+  //           name: res.data.name,
+  //           address: res.data.address,
+  //           contact: res.data.contact,
+  //           startTime: res.data.startTime,
+  //           endTime: res.data.endTime,
+  //           pricePerHour: res.data.pricePerHour,
+  //           game: res.data.game,
+  //         });
+  //       } catch (err) {
+  //         alert("Failed to load ground");
+  //       }
+  //     };
 
-      fetchGround();
-    }
-  }, [groundId]);
+  //     fetchGround();
+  //   }
+  // }, [groundId]);
 
   // Filtering and Pagination
   const filteredGrounds = grounds.filter((g) =>
@@ -149,88 +151,89 @@ export default function Grounds() {
         </button>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto bg-white shadow rounded-xl">
-        <table className="w-full text-sm">
-          <thead className="text-gray-700 bg-gray-100">
-            <tr>
-              <th className="p-3 text-left">Name</th>
-              <th className="p-3">Address</th>
-              <th className="p-3">Game</th>
-              <th className="p-3">Price/hr</th>
-              <th className="p-3">Timing</th>
-              <th className="p-3">Contact</th>
-              <th className="p-3 text-center">Image</th>
-              <th className="p-3">Actions</th>
-            </tr>
-          </thead>
+            <div className="overflow-x-auto bg-white shadow rounded-xl">
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {grounds.length === 0 ? (
+          <p className="col-span-full text-center text-gray-400">
+            No grounds available
+          </p>
+        ) : (
+          grounds.map((ground) => (
+            <div
+              key={ground.id}
+              className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden"
+            >
+              {/* Image */}
+              <div className="h-40 w-full bg-gray-100">
+                <img
+                  src={
+                    ground.images?.[0]
+                      ? `${IMAGE_BASE}${ground.images[0].imageUrl}`
+                      : "/placeholder.png"
+                  }
+                  alt={ground.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-          <tbody>
-            {grounds.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="p-4 text-center text-gray-500">
-                  No grounds available
-                </td>
-              </tr>
-            ) : (
-              grounds.map((ground) => (
-                <tr key={ground._id} className="text-black border-t">
-                  <td className="p-3 font-medium">{ground.name}</td>
-                  {/* <td className="p-3 text-sm text-center max-w-xs break-words">
-                    {[
-                      ground.addressName,
-                      ground.area,
-                      ground.city,
-                      ground.state,
-                      ground.country,
-                    ]
-                      .filter(Boolean)
-                      .join(", ")}
-                  </td> */}
-                   <td className="p-3">
-                    {ground.area}, {ground.city}, {ground.state}, {ground.country}
-                  </td>
-                  <td className="p-3 text-center">{ground.game}</td>
-                  <td className="p-3 text-center">₹{ground.pricePerSlot}</td>
-                  <td className="p-3 text-center">
-                    {ground.openingTime} - {ground.closingTime}
-                  </td>
-                  <td className="p-3 text-center">{ground.contactNo}</td>
-                  <td className="p-3">
-                    <img
-                      // src={`http://localhost:5000${ground.images[0]?.imageUrl}`}
-                      src={
-                        ground.images?.[0]
-                          ? `http://localhost:5000${ground.images[0].imageUrl}`
-                          : "/placeholder.png"
-                      }
-                      alt={ground.name}
-                      className="object-cover w-16 h-12 rounded"
-                    />
-                  </td>
+              {/* Content */}
+              <div className="p-4 space-y-2">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {ground.name}
+                </h3>
 
-                  <td className="flex justify-center gap-3 p-3">
-                    {/* Edit */}
-                    <button
-                      onClick={() => navigate(`/admin/addground?id=${ground.id}`)}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Edit
-                    </button>
+                <p className="text-sm text-gray-500">
+                  {[
+                    ground.area,
+                    ground.city,
+                    ground.state,
+                    ground.country,
+                  ]
+                    .filter(Boolean)
+                    .join(", ")}
+                </p>
 
-                    {/* Delete */}
-                    <button
-                      className="text-red-600 hover:underline"
-                      onClick={() => openDeleteModal(ground.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                <div className="flex flex-wrap gap-2 text-sm mt-2">
+                  <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded">
+                    {ground.game}
+                  </span>
+
+                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded">
+                    ₹{ground.pricePerSlot}/hr
+                  </span>
+                </div>
+
+                <p className="text-sm text-gray-600">
+                  ⏰ {ground.openingTime} – {ground.closingTime}
+                </p>
+
+                <p className="text-sm text-gray-600">
+                  📞 {ground.contactNo}
+                </p>
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-between items-center border-t px-4 py-3">
+                <button
+                  onClick={() =>
+                    navigate(`/admin/addground?id=${ground.id}`)
+                  }
+                  className="text-blue-600 hover:underline text-sm"
+                >
+                  Edit
+                </button>
+
+                <button
+                  onClick={() => openDeleteModal(ground.id)}
+                  className="text-red-600 hover:underline text-sm"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
 
         {/* Pagination Controls */}
         <div className="flex justify-end gap-2 mt-4">

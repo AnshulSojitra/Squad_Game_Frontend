@@ -13,7 +13,7 @@ export default function AddGround() {
     contact: "",
     pricePerHour: "",
     game: "",
-    addressName: "" ,
+    // addressName: "" ,
     area: "",
     country: "",
     state: "",
@@ -48,7 +48,6 @@ export default function AddGround() {
   const groundId = searchParams.get("id");
   const isEdit = Boolean(groundId);
   const id = searchParams.get("id");
-
 
 
   const generateSlots = (start, end) => {
@@ -104,7 +103,12 @@ const handleAddSlot = () => {
     return;
   }
 
-  setSlots([...slots, { start: slotStart, end: slotEnd }]);
+  // setSlots([...slots, { start: slotStart, end: slotEnd }]);
+   setSlots((prev) => [
+    ...prev,
+    { start: slotStart, end: slotEnd }
+  ]);
+
   setSlotStart("");
   setSlotEnd("");
 };
@@ -124,30 +128,29 @@ useEffect(() => {
 }, []);
 
 // 2. Load ground data only in edit mode
+
 useEffect(() => {
-  if (!groundId) return; // ADD mode → do nothing
+  if (!groundId) return;
 
   const fetchGround = async () => {
     try {
       const res = await getGroundById(groundId);
-      const g = res.data;
 
       setForm({
-        groundName: g.name,
-        contact: g.contactNo,
-        pricePerHour: g.pricePerSlot,
-        game: g.game,
-        addressName: g.area,
-        area: g.area,
-        country: g.country,
-        state: g.state,
-        city: g.city,
-        slots: g.slots || [],
+        groundName: res.data.name,
+        contact: res.data.contactNo,
+        pricePerHour: res.data.pricePerSlot,
+        game: res.data.game,
+        // addressName: res.data.address,
+        area: res.data.area,
+        country: res.data.country,
+        state: res.data.state,
+        city: res.data.city,
       });
 
-      setOpeningTime(g.openingTime);
-      setClosingTime(g.closingTime);
-      setSlots(g.slots || []);
+      setOpeningTime(res.data.openingTime);
+      setClosingTime(res.data.closingTime);
+      setSlots(JSON.parse(res.data.slots || "[]"));
     } catch (err) {
       alert("Failed to load ground details");
     }
@@ -209,9 +212,9 @@ const handleStateChange = async (e) => {
           newErrors.game = "Please select a game type";
         }
 
-        if (!form.addressName) {
-          newErrors.addressName = "Ground / House name is required";
-        }
+        // if (!form.addressName) {
+        //   newErrors.addressName = "Ground / House name is required";
+        // }
 
         if (!form.country) {
           newErrors.country = "Country is required";
@@ -257,13 +260,13 @@ const handleSubmit = async (e) => {
     const formData = new FormData();
 
     // Basic fields
-    formData.append("groundName", form.groundName);
-    formData.append("contact", form.contact);
-    formData.append("pricePerHour", form.pricePerHour);
+    formData.append("name", form.groundName);
+    formData.append("contactNo", form.contact);
+    formData.append("pricePerSlot", form.pricePerHour);
     formData.append("game", form.game);
 
     // Address fields
-    formData.append("addressName", form.addressName);
+    // formData.append("addressName", form.addressName);
     formData.append("area", form.area);
     formData.append("country", form.country);
     formData.append("state", form.state);
@@ -280,6 +283,12 @@ const handleSubmit = async (e) => {
     images.forEach((img) => {
       formData.append("images", img);
     });
+
+
+          console.log("FORM DATA VALUES:");
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
 
     // API call
     if (isEdit) {
@@ -367,13 +376,13 @@ const handleSubmit = async (e) => {
 
           {/* Address */}
           <label className="block text-sm font-medium mb-1">Address</label>
-          <input
+          {/* <input
             type="text"
             name="addressName"
             placeholder="Ground / House Name"
             className="input-style"
             onChange={handleChange}
-          />
+          /> */}
           <label className="block text-sm font-medium mb-1">Area</label>
           <input
             type="text"

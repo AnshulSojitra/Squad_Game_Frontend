@@ -2,6 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL, // your backend base URL
+  // baseURL: "https://indissolubly-unadmonitory-pinkie.ngrok-free.dev/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -111,6 +112,7 @@ export const addGround = (formData) => {
   return api.post("/admin/grounds", formData, {
     headers: {
       Authorization: `Bearer ${token}`,
+      "ngrok-skip-browser-warning": "true",
       "Content-Type": "multipart/form-data",
     },
   });
@@ -121,8 +123,8 @@ export const getGrounds = () => {
   const token = localStorage.getItem("adminToken");
   return api.get("/admin/grounds", {
     headers: {
-      
       Authorization: `Bearer ${token}`,
+      "ngrok-skip-browser-warning": "true"
     },
   });
 };
@@ -135,6 +137,7 @@ export const deleteGround = (id) => {
   return api.delete(`/admin/grounds/${id}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      "ngrok-skip-browser-warning": "true",
     },
   });
 };
@@ -144,18 +147,25 @@ export const updateGround = (id, formData) =>
   api.put(`/admin/grounds/${id}`, formData, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      "ngrok-skip-browser-warning": "true",
       "Content-Type": "multipart/form-data",
     },
   });
 
 // LOCATION APIs
-export const getCountries = () => api.get("/location/countries");
+export const getCountries = () => api.get("/location/countries", {
+  headers:{"ngrok-skip-browser-warning": "true",}
+});
 
 export const getStatesByCountry = (countryId) =>
-  api.get(`/location/states/${countryId}`);
+  api.get(`/location/states/${countryId}`, {
+  headers:{"ngrok-skip-browser-warning": "true",}
+});
 
 export const getCitiesByState = (stateId) =>
-  api.get(`/location/cities/${stateId}`);
+  api.get(`/location/cities/${stateId}`, {
+  headers:{"ngrok-skip-browser-warning": "true",}
+});
 
 /* -------- BOOKINGS -------- */
 
