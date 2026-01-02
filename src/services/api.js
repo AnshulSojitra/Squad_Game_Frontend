@@ -4,6 +4,7 @@ const api = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL, // your backend base URL
   // baseURL: "https://indissolubly-unadmonitory-pinkie.ngrok-free.dev/api",
   headers: {
+    "ngrok-skip-browser-warning": "true",
     "Content-Type": "application/json",
   },
 });
@@ -56,53 +57,6 @@ export const getMyBookings = (token) => {
   });
 };
 
-// // ADD GROUND
-// export const addGround = (formData) => {
-//   return api.post("/admin/grounds", formData, {
-//     headers: {
-//       "Content-Type": "multipart/form-data",
-//       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-//     },
-//   });
-// };
-
-// // GET all grounds
-// export const getGrounds = () => {
-//   return api.get("/admin/grounds", {
-//     headers: {
-//       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-//     },
-//   });
-// };
-
-// // DELETE ground
-// export const deleteGround = (id) => {
-//   return api.delete(`/admin/grounds/${id}`, {
-//     headers: {
-//       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-//     },
-//   });
-// };
-
-// // GET single ground (for edit)
-// export const getGroundById = (id) => {
-//   return api.get(`/admin/grounds/${id}`, {
-//     headers: {
-//       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-//     },
-//   });
-// };
-
-// // UPDATE ground
-// export const updateGround = (id, formData) => {
-//   return api.put(`/admin/grounds/${id}`, formData, {
-//     headers: {
-//       "Content-Type": "multipart/form-data",
-//       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-//     },
-//   });
-// };
-
 /* -------- GROUNDS -------- */
 
 // Add ground
@@ -130,7 +84,14 @@ export const getGrounds = () => {
 };
 
 // Get single ground
-export const getGroundById = (id) => api.get(`admin/grounds/${id}`);
+export const getGroundById = (id) => {
+  return api.get(`/admin/grounds/${id}`,{
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
+};
 
 //Delete ground
 export const deleteGround = (id) => {

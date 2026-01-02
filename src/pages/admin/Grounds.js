@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { getGroundById ,updateGround } from "../../services/api";
 import ConfirmModal from "../../components/common/ConfirmModal";
+
 const IMAGE_BASE=process.env.REACT_APP_IMAGE_URL
 
 
@@ -19,54 +20,32 @@ export default function Grounds() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedGroundId, setSelectedGroundId] = useState(null);
 
-  // const [form, setForm] = useState({
-  //   name: "",
-  //   address: "",
-  //   contact: "",
-  //   startTime: "",
-  //   endTime: "",
-  //   pricePerHour: "",
-  //   game: "",
-  // });
 
   const fetchGrounds = async () => {
     try {
       const res = await getGrounds();
       setGrounds(res.data);
+      console.log(
+  "FINAL IMAGE URL 👉",
+  grounds.images?.[0]
+    ? `${IMAGE_BASE}${grounds.images[0].imageUrl}`
+    : "NO IMAGE"
+);
     } catch (err) {
       alert("Failed to fetch grounds");
     } finally {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchGrounds();
+    
+
   }, []);
 
-  // useEffect(() => {
-  //   if (groundId) {
-  //     const fetchGround = async () => {
-  //       try {
-  //         const res = await getGroundById(groundId);
-  //         setForm({
-  //           name: res.data.name,
-  //           address: res.data.address,
-  //           contact: res.data.contact,
-  //           startTime: res.data.startTime,
-  //           endTime: res.data.endTime,
-  //           pricePerHour: res.data.pricePerHour,
-  //           game: res.data.game,
-  //         });
-  //       } catch (err) {
-  //         alert("Failed to load ground");
-  //       }
-  //     };
-
-  //     fetchGround();
-  //   }
-  // }, [groundId]);
-
+    
   // Filtering and Pagination
   const filteredGrounds = grounds.filter((g) =>
     g.name.toLowerCase().includes(search.toLowerCase())
@@ -115,28 +94,12 @@ export default function Grounds() {
   if (loading) {
     return <p className="text-gray-600">Loading grounds...</p>;
   }
+  
+    
 
   return (
     <div>
-      {/* Header */}
-      {/* <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Grounds</h1>
 
-        <button
-          onClick={() => navigate("/admin/addground")}
-          className="px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
-        >
-          ➕ Add Ground
-        </button>
-      </div>
-
-        <input
-          type="text"
-          placeholder="Search by ground name..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="px-3 py-2 mb-4 border rounded-lg"
-        /> */}
 
       {/* HEADER ROW */}
       <div className="flex items-center justify-between mb-6">
@@ -151,29 +114,31 @@ export default function Grounds() {
         </button>
       </div>
 
-            <div className="overflow-x-auto bg-white shadow rounded-xl">
+            <div className="overflow-x-auto bg-gray shadow rounded-xl">
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {grounds.length === 0 ? (
-          <p className="col-span-full text-center text-gray-400">
-            No grounds available
-          </p>
-        ) : (
-          grounds.map((ground) => (
-            <div
-              key={ground.id}
-              className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden"
-            >
-              {/* Image */}
-              <div className="h-40 w-full bg-gray-100">
-                <img
-                  src={
-                    ground.images?.[0]
-                      ? `${IMAGE_BASE}${ground.images[0].imageUrl}`
-                      : "/placeholder.png"
-                  }
-                  alt={ground.name}
-                  className="w-full h-full object-cover"
-                />
+              {grounds.length === 0 ? (
+                <p className="col-span-full text-center text-gray-400">
+                  No grounds available
+                </p>
+              ) : (
+                grounds.map((ground) => (
+                // console.log("GROUND OBJECT 👉", ground);
+                <div
+                  key={ground.id}
+                  className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden"
+                >
+                  
+                  {/* Image */}
+                  <div className="h-40 w-full bg-gray-100">
+                    <img
+                      src={
+                        ground.images?.[0]
+                          ? `${IMAGE_BASE}${ground.images[0].imageUrl}`
+                          : "/placeholder.png"
+                      }
+                      alt={ground.name}
+                      className="w-full h-full object-cover"
+                    />
               </div>
 
               {/* Content */}
@@ -214,14 +179,27 @@ export default function Grounds() {
 
               {/* Actions */}
               <div className="flex justify-between items-center border-t px-4 py-3">
-                <button
+                {/* <button
                   onClick={() =>
-                    navigate(`/admin/addground?id=${ground.id}`)
+                    navigate(`/admin/addground?id=${ground._id}`)
                   }
                   className="text-blue-600 hover:underline text-sm"
                 >
                   Edit
+                </button> */}
+                <button 
+                  onClick={() => {
+                    if (!ground.id) {
+                      console.error("Ground ID missing", ground);
+                      return;
+                    }
+                    navigate(`/admin/addground?id=${ground.id}`);
+                  }}
+                  className="text-blue-600 hover:underline text-sm"
+                >
+                  Edit
                 </button>
+
 
                 <button
                   onClick={() => openDeleteModal(ground.id)}
@@ -231,6 +209,7 @@ export default function Grounds() {
                 </button>
               </div>
             </div>
+            
           ))
         )}
       </div>
@@ -240,7 +219,7 @@ export default function Grounds() {
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
-            className="px-3 py-1 text-black border rounded"
+            className="px-3 py-1 text-black border rounded text-white"
           >
             Prev
           </button>
@@ -248,7 +227,7 @@ export default function Grounds() {
           <button
             disabled={page * pageSize >= filteredGrounds.length}
             onClick={() => setPage(page + 1)}
-            className="px-3 py-1 text-black border rounded"
+            className="px-3 py-1 text-black border rounded text-white"
           >
             Next
           </button>

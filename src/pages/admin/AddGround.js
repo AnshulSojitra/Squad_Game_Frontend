@@ -13,7 +13,6 @@ export default function AddGround() {
     contact: "",
     pricePerHour: "",
     game: "",
-    // addressName: "" ,
     area: "",
     country: "",
     state: "",
@@ -25,19 +24,14 @@ export default function AddGround() {
   const navigate = useNavigate();
 
   const [images, setImages] = useState([]);
-
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [generatedSlots, setGeneratedSlots] = useState([]);
-  const [selectedSlots, setSelectedSlots] = useState([]);
   
   const [openingTime, setOpeningTime] = useState("");
   const [closingTime, setClosingTime] = useState("");
+  const [slots, setSlots] = useState([]);
 
   const [slotStart, setSlotStart] = useState("");
   const [slotEnd, setSlotEnd] = useState("");
 
-  const [slots, setSlots] = useState([]);
 
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -49,32 +43,6 @@ export default function AddGround() {
   const isEdit = Boolean(groundId);
   const id = searchParams.get("id");
 
-
-  const generateSlots = (start, end) => {
-  if (!start || !end) return [];
-
-  const slots = [];
-  let startDate = new Date(`1970-01-01T${start}`);
-  let endDate = new Date(`1970-01-01T${end}`);
-
-  if (endDate <= startDate) return [];
-
-  while (startDate < endDate) {
-    let next = new Date(startDate);
-    next.setHours(startDate.getHours() + 1);
-
-    if (next > endDate) break;
-
-    slots.push(
-      `${startDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - 
-       ${next.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
-    );
-
-    startDate = next;
-  }
-
-  return slots;
-};
 
 
 const handleAddSlot = () => {
@@ -114,54 +82,62 @@ const handleAddSlot = () => {
 };
 
 
-
-// useEffect(() => {
-//   const slots = generateSlots(startTime, endTime);
-//   setGeneratedSlots(slots);
-//   setSelectedSlots([]);
-//    getCountries().then((res) => setCountries(res.data));
-// }, [startTime, endTime]);
-
 // 1. Load countries once
 useEffect(() => {
   getCountries().then((res) => setCountries(res.data));
 }, []);
 
-// 2. Load ground data only in edit mode
+
 
 useEffect(() => {
   if (!groundId) return;
 
-  const fetchGround = async () => {
-    try {
-      const res = await getGroundById(groundId);
+  const fetchGroundForEdit = async () => {
+    const res = await getGroundById(groundId);
+    const g = res.data;
 
-      setForm({
-        groundName: res.data.name,
-        contact: res.data.contactNo,
-        pricePerHour: res.data.pricePerSlot,
-        game: res.data.game,
-        // addressName: res.data.address,
-        area: res.data.area,
-        country: res.data.country,
-        state: res.data.state,
-        city: res.data.city,
-      });
+    console.log("EDIT DATA", res.data);
+console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
+    setForm({
+      groundName: g.name,
+      contact: g.contactNo,
+      pricePerHour: g.pricePerSlot,
+      game: g.game,
+      area: g.area,
+      country: g.country,
+      state: g.state,
+      city: g.city,
+    });
 
-      setOpeningTime(res.data.openingTime);
-      setClosingTime(res.data.closingTime);
-      setSlots(JSON.parse(res.data.slots || "[]"));
-    } catch (err) {
-      alert("Failed to load ground details");
-    }
+    setOpeningTime(g.openingTime);
+    setClosingTime(g.closingTime);
+    setSlots(
+        (g.Slots || []).map(slot => ({
+          start: slot.startTime,
+          end: slot.endTime,
+        }))
+      );
+      
+      setImages(g.images);
+      
+
+// Load states and cities based on existing data
+    const statesRes = await getStatesByCountry(g.country);
+    setStates(statesRes.data);
+
+    const citiesRes = await getCitiesByState(g.state);
+    setCities(citiesRes.data);
   };
 
-  fetchGround();
+console.log("EDIT MODE:", groundId);
+
+
+  fetchGroundForEdit();
 }, [groundId]);
 
 
   const handleChange = (e) => {
-  setForm({ ...form, [e.target.name]: e.target.value });
+  // setForm({ ...form, [e.target.name]: e.target.value });
   setErrors({ ...errors, [e.target.name]: "" });
 };
 
@@ -171,6 +147,7 @@ const handleCountryChange = async (e) => {
   setForm({ ...form, country: countryId, state: "", city: "" });
   setStates([]);
   setCities([]);
+  
 
   const res = await getStatesByCountry(countryId);
   setStates(res.data);
@@ -188,9 +165,13 @@ const handleStateChange = async (e) => {
 
 
 
-  const handleImages = (e) => {
-    setImages(Array.from(e.target.files));
-  };
+  // setExistingImages(g.images || []);
+
+
+const handleImages = (e) => {
+  const files = Array.from(e.target.files);
+  setImages(files);
+};
 
 
       const validateForm = () => {
@@ -212,10 +193,7 @@ const handleStateChange = async (e) => {
           newErrors.game = "Please select a game type";
         }
 
-        // if (!form.addressName) {
-        //   newErrors.addressName = "Ground / House name is required";
-        // }
-
+       
         if (!form.country) {
           newErrors.country = "Country is required";
         }
@@ -240,9 +218,6 @@ const handleStateChange = async (e) => {
           newErrors.slots = "Please add at least one slot";
         }
 
-        if (images.length === 0) {
-          newErrors.images = "Please upload at least one image";
-        }
 
         setErrors(newErrors);
 
@@ -280,18 +255,23 @@ const handleSubmit = async (e) => {
     formData.append("slots", JSON.stringify(slots));
 
     // Images (multiple)
-    images.forEach((img) => {
-      formData.append("images", img);
-    });
+    // images.forEach((img) => {
+    //   formData.append("images", img);
+    // });
+    if (images.length > 0) {
+      images.forEach(img => {
+    formData.append("images", img);
+  });
+}
 
 
-          console.log("FORM DATA VALUES:");
+    console.log("FORM DATA VALUES:");
       for (let pair of formData.entries()) {
         console.log(pair[0], pair[1]);
       }
 
     // API call
-    if (isEdit) {
+    if (groundId) {
       await updateGround(groundId, formData);
       alert("Ground updated successfully");
     } else {
@@ -304,7 +284,6 @@ const handleSubmit = async (e) => {
     alert("Failed to add ground");
   }
 };
-
 
 
   return (
@@ -325,7 +304,10 @@ const handleSubmit = async (e) => {
             name="groundName"
             placeholder="Ground Name"
             className="input-style"
-            onChange={handleChange}
+            value={form.groundName}
+             onChange={(e) =>
+              setForm({ ...form, groundName: e.target.value })
+            }
           />
           {errors.groundName && (
             <p className="text-red-500 text-xs mt-1">{errors.groundName}</p>
@@ -338,7 +320,10 @@ const handleSubmit = async (e) => {
             name="contact"
             placeholder="Contact Number"
             className="input-style"
-            onChange={handleChange}
+            value={form.contact}
+            onChange={(e) =>
+              setForm({ ...form, contact: e.target.value })
+            }
           />
           {errors.contact && (
             <p className="text-red-500 text-xs mt-1">{errors.contact}</p>
@@ -351,7 +336,10 @@ const handleSubmit = async (e) => {
             name="pricePerHour"
             placeholder="Price per slot (₹)"
             className="input-style"
-            onChange={handleChange}
+            value={form.pricePerHour}
+            onChange={(e) =>
+              setForm({ ...form, pricePerHour: e.target.value })
+            }
           />
           {errors.pricePerHour && (
             <p className="text-red-500 text-xs mt-1">{errors.pricePerHour}</p>
@@ -362,7 +350,10 @@ const handleSubmit = async (e) => {
           <select
             name="game"
             className="input-style"
-            onChange={handleChange}
+            onChange={(e) =>
+              setForm({ ...form, game: e.target.value })
+            }
+            value={form.game}
           >
             <option value="">Select Game</option>
             <option value="Cricket">Cricket</option>
@@ -376,20 +367,16 @@ const handleSubmit = async (e) => {
 
           {/* Address */}
           <label className="block text-sm font-medium mb-1">Address</label>
-          {/* <input
-            type="text"
-            name="addressName"
-            placeholder="Ground / House Name"
-            className="input-style"
-            onChange={handleChange}
-          /> */}
           <label className="block text-sm font-medium mb-1">Area</label>
           <input
             type="text"
             name="area"
             placeholder="Area Name"
             className="input-style"
-            onChange={handleChange}
+            value={form.area}
+            onChange={(e) =>
+              setForm({ ...form, area: e.target.value })
+            }
           />
 
           {/* Country / State / City */}
@@ -398,6 +385,7 @@ const handleSubmit = async (e) => {
                 name="country"
                 className="input-style"
                 onChange={handleCountryChange}
+                value={form.country}
               >
                 <option value="">Select Country</option>
                 {countries.map((c) => (
@@ -411,6 +399,7 @@ const handleSubmit = async (e) => {
           name="state"
           className="input-style"
           onChange={handleStateChange}
+          value={form.state}
           disabled={!states.length}
          >
           <option value="">Select State</option>
@@ -428,6 +417,7 @@ const handleSubmit = async (e) => {
               setForm({ ...form, city: e.target.value })
             }
             disabled={!cities.length}
+            value={form.city}
           >
             <option value="">Select City</option>
             {cities.map((c) => (
@@ -515,19 +505,21 @@ const handleSubmit = async (e) => {
                   <p className="text-sm font-medium mb-2">Created Slots</p>
 
                   <div className="space-y-2">
-                    {slots.map((slot, index) => (
+                    {slots.map((slots, index) => (
                       <div
                         key={index}
                         className="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-lg"
                       >
                         <span className="text-sm">
-                          {slot.start} - {slot.end}
+                          {slots.start} - {slots.end}
                         </span>
 
                         <button
                           type="button"
-                          onClick={() =>
-                            setSlots(slots.filter((_, i) => i !== index))
+                          onClick={() =>{
+                            console.log("slot.................",slots)
+                            
+                            setSlots(slots.filter((_, i) => i !== index))}
                           }
                           className="text-red-500 text-xs"
                         >
@@ -555,7 +547,7 @@ const handleSubmit = async (e) => {
           )}
 
 
-          {images.length > 0 && (
+          {/* {images.length > 0 && (
             <div className="grid grid-cols-3 gap-3 mt-3">
               {images.map((img, index) => (
                 <img
@@ -566,7 +558,35 @@ const handleSubmit = async (e) => {
                 />
               ))}
             </div>
-          )}
+          )} */}
+
+          {isEdit && images.length > 0 && (
+              <div className="grid grid-cols-3 gap-3 mt-3">
+                {images.map((img) => (
+                  <img
+                    key={img.id}
+                    
+                    src={`https://imgs.search.brave.com/jtENFihhAr-Ew6NvAfw7SmtHrVacGvyNgo280nYKv70/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvaGQvY2xv/dWR5LWJsdWUtcy0y/dnIxbTJrNTU0cGM0/ZWRoLmpwZw`}
+                    className="h-24 w-full object-cover rounded-lg border"
+                    alt="preview"
+                    />
+                ))}
+              </div>
+            )}
+            
+            {/* {images.length > 0 && (
+              <div className="grid grid-cols-3 gap-3 mt-3">
+                {images.map((img, index) => (
+                  <img
+                    key={index}
+                    src={`${process.env.REACT_APP_IMAGE_URL}${img.imageUrl}`}
+                    alt="preview"
+                    className="h-24 w-full object-cover rounded-lg border"
+                  />
+                ))}
+              </div>
+            )} */}
+
 
 
           {/* Submit */}
@@ -574,10 +594,10 @@ const handleSubmit = async (e) => {
             type="submit"
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium"
           >
-            Add Ground
+             {groundId ? "Update Ground" : "Add Ground"}
           </button>
         </form>
       </div>
     </div>
   );
-}
+};
