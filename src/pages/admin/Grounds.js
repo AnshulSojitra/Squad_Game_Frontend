@@ -19,6 +19,27 @@ export default function Grounds() {
   const [page, setPage] = useState(1);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedGroundId, setSelectedGroundId] = useState(null);
+  const PAGE_SIZE = 6; // show 6 grounds per page
+  const [currentPage, setCurrentPage] = useState(1);
+ 
+// Filtering and Pagination
+const filteredGrounds = grounds
+  .filter((g) =>
+    g.name.toLowerCase().includes(search.toLowerCase())
+  )
+  .sort((a, b) =>
+    a.name.toLowerCase().startsWith(search.toLowerCase()) ? -1 : 1
+  );
+
+ const totalPages = Math.ceil(filteredGrounds.length / PAGE_SIZE);
+
+
+  
+
+const paginatedGrounds = filteredGrounds.slice(
+  (currentPage - 1) * PAGE_SIZE,
+  currentPage * PAGE_SIZE
+);
 
 
   const fetchGrounds = async () => {
@@ -41,20 +62,7 @@ export default function Grounds() {
 
   useEffect(() => {
     fetchGrounds();
-    
-
   }, []);
-
-    
-  // Filtering and Pagination
-  const filteredGrounds = grounds.filter((g) =>
-    g.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const paginatedGrounds = filteredGrounds.slice(
-    (page - 1) * pageSize,
-    page * pageSize
-  );
 
   const openDeleteModal = (id) => {
     setSelectedGroundId(id);
@@ -104,7 +112,18 @@ export default function Grounds() {
       {/* HEADER ROW */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold"> Grounds </h1>
-
+      <div className="mb-6 flex justify-between items-center">
+          <input
+            type="text"
+            placeholder="Search ground by name..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1); // reset page when searching
+            }}
+            className="w-80 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
+          />
+        </div>
         {/* Add Ground Button (TOP RIGHT) */}
         <button
           onClick={() => navigate("/admin/addground")}
@@ -116,12 +135,12 @@ export default function Grounds() {
 
             <div className="overflow-x-auto bg-gray shadow rounded-xl">
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {grounds.length === 0 ? (
+              {filteredGrounds.length === 0 ? (
                 <p className="col-span-full text-center text-gray-400">
                   No grounds available
                 </p>
               ) : (
-                grounds.map((ground) => (
+                paginatedGrounds.map((ground) => (
                 // console.log("GROUND OBJECT 👉", ground);
                 <div
                   key={ground.id}
@@ -131,11 +150,7 @@ export default function Grounds() {
                   {/* Image */}
                   <div className="h-40 w-full bg-gray-100">
                     <img
-                      src={
-                        ground.images?.[0]
-                          ? `${IMAGE_BASE}${ground.images[0].imageUrl}`
-                          : "/placeholder.png"
-                      }
+                      src={`${process.env.REACT_APP_IMAGE_URL}${ground.images[0].imageUrl}`}
                       alt={ground.name}
                       className="w-full h-full object-cover"
                     />
@@ -164,7 +179,7 @@ export default function Grounds() {
                   </span>
 
                   <span className="px-2 py-1 bg-green-100 text-green-700 rounded">
-                    ₹{ground.pricePerSlot}/hr
+                    ₹{ground.pricePerSlot}/Slot
                   </span>
                 </div>
 
@@ -179,14 +194,6 @@ export default function Grounds() {
 
               {/* Actions */}
               <div className="flex justify-between items-center border-t px-4 py-3">
-                {/* <button
-                  onClick={() =>
-                    navigate(`/admin/addground?id=${ground._id}`)
-                  }
-                  className="text-blue-600 hover:underline text-sm"
-                >
-                  Edit
-                </button> */}
                 <button 
                   onClick={() => {
                     if (!ground.id) {
@@ -215,23 +222,38 @@ export default function Grounds() {
       </div>
 
         {/* Pagination Controls */}
-        <div className="flex justify-end gap-2 mt-4">
+        <div className="flex justify-center items-center gap-3 mt-6">
           <button
-            disabled={page === 1}
-            onClick={() => setPage(page - 1)}
-            className="px-3 py-1 text-black border rounded text-white"
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded bg-gray-700 text-white disabled:opacity-50"
           >
             Prev
           </button>
 
+          {Array.from({ length: totalPages }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentPage(index + 1)}
+              className={`px-3 py-1 rounded ${
+                currentPage === index + 1
+                  ? "bg-indigo-600 text-white"
+                  : "bg-gray-200"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+
           <button
-            disabled={page * pageSize >= filteredGrounds.length}
-            onClick={() => setPage(page + 1)}
-            className="px-3 py-1 text-black border rounded text-white"
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded bg-gray-700 text-white disabled:opacity-50"
           >
             Next
           </button>
         </div>
+
       </div>
       <ConfirmModal
         isOpen={showConfirm}

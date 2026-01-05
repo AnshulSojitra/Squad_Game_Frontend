@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { addGround , updateGround , getGroundById } from "../../services/api"; // make sure this import exists
 import { getCountries, getStatesByCountry, getCitiesByState } from "../../services/api";
 import { useSearchParams } from "react-router-dom";
-
+import Toast from "../../components/common/Toast";
 
 
 
@@ -22,8 +22,6 @@ export default function AddGround() {
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-
-  const [images, setImages] = useState([]);
   
   const [openingTime, setOpeningTime] = useState("");
   const [closingTime, setClosingTime] = useState("");
@@ -43,6 +41,21 @@ export default function AddGround() {
   const isEdit = Boolean(groundId);
   const id = searchParams.get("id");
 
+  const [images, setImages] = useState([]);           // new uploaded files
+  const [existingImages, setExistingImages] = useState([]); // images from backend
+  const IMAGE_BASE = process.env.REACT_APP_IMAGE_URL;
+  const [toast, setToast] = useState({
+  show: false,
+  type: "success",
+  message: "",
+});
+
+
+
+
+const showToast = (type, message) => {
+  setToast({ show: true, type, message });
+};
 
 
 const handleAddSlot = () => {
@@ -74,12 +87,23 @@ const handleAddSlot = () => {
   // setSlots([...slots, { start: slotStart, end: slotEnd }]);
    setSlots((prev) => [
     ...prev,
-    { start: slotStart, end: slotEnd }
+    {
+      id: Date.now(), // ✅ temp unique id
+      start: slotStart,
+      end: slotEnd,
+    },
   ]);
 
   setSlotStart("");
   setSlotEnd("");
 };
+
+const removeSlot = (indexToRemove) => {
+  setSlots(prevSlots =>
+    prevSlots.filter((_, index) => index !== indexToRemove)
+  );
+};
+
 
 
 // 1. Load countries once
@@ -95,6 +119,15 @@ useEffect(() => {
   const fetchGroundForEdit = async () => {
     const res = await getGroundById(groundId);
     const g = res.data;
+    const normalizedSlots = Array.isArray(g.slots)
+      ? g.slots.map((s) => ({
+      id: s.id,               // backend id
+      start: s.startTime,
+      end: s.endTime,
+    }))
+  : [];
+
+setSlots(normalizedSlots);
 
     console.log("EDIT DATA", res.data);
 console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
@@ -119,7 +152,8 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
       );
       
       setImages(g.images);
-      
+    setExistingImages(g.images || []);
+  
 
 // Load states and cities based on existing data
     const statesRes = await getStatesByCountry(g.country);
@@ -127,9 +161,13 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
 
     const citiesRes = await getCitiesByState(g.state);
     setCities(citiesRes.data);
+
+    
   };
 
 console.log("EDIT MODE:", groundId);
+console.log("SLOTS STATE 👉", slots, Array.isArray(slots));
+
 
 
   fetchGroundForEdit();
@@ -163,9 +201,6 @@ const handleStateChange = async (e) => {
   setCities(res.data);
 };
 
-
-
-  // setExistingImages(g.images || []);
 
 
 const handleImages = (e) => {
@@ -235,9 +270,9 @@ const handleSubmit = async (e) => {
     const formData = new FormData();
 
     // Basic fields
-    formData.append("name", form.groundName);
-    formData.append("contactNo", form.contact);
-    formData.append("pricePerSlot", form.pricePerHour);
+    formData.append("groundName", form.groundName);
+    formData.append("contact", form.contact);
+    formData.append("pricePerHour", form.pricePerHour);
     formData.append("game", form.game);
 
     // Address fields
@@ -272,17 +307,21 @@ const handleSubmit = async (e) => {
 
     // API call
     if (groundId) {
-      await updateGround(groundId, formData);
-      alert("Ground updated successfully");
-    } else {
-      await addGround(formData);
-      alert("Ground added successfully");
-    }
-    navigate("/admin/grounds");
-  } catch (err) {
-    console.error(err);
-    alert("Failed to add ground");
+    await updateGround(groundId, formData);
+    showToast("success", "Ground updated successfully");
+  } else {
+    await addGround(formData);
+    showToast("success", "Ground added successfully");
   }
+
+  setTimeout(() => {
+    navigate("/admin/grounds");
+  }, 1200);
+
+} catch (err) {
+  console.error(err);
+  showToast("error", "Failed to save ground");
+}
 };
 
 
@@ -505,28 +544,26 @@ const handleSubmit = async (e) => {
                   <p className="text-sm font-medium mb-2">Created Slots</p>
 
                   <div className="space-y-2">
-                    {slots.map((slots, index) => (
+                  
+                    {slots.map((slot,index) => (
                       <div
                         key={index}
                         className="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-lg"
                       >
                         <span className="text-sm">
-                          {slots.start} - {slots.end}
+                          {slot.start} - {slot.end}
                         </span>
 
                         <button
                           type="button"
-                          onClick={() =>{
-                            console.log("slot.................",slots)
-                            
-                            setSlots(slots.filter((_, i) => i !== index))}
-                          }
+                          onClick={() => removeSlot(index)}
                           className="text-red-500 text-xs"
                         >
                           Remove
                         </button>
                       </div>
                     ))}
+
                   </div>
                 </div>
               )}
@@ -545,28 +582,18 @@ const handleSubmit = async (e) => {
           {errors.images && (
             <p className="text-red-500 text-xs mt-1">{errors.images}</p>
           )}
+         
 
 
-          {/* {images.length > 0 && (
-            <div className="grid grid-cols-3 gap-3 mt-3">
-              {images.map((img, index) => (
-                <img
-                  key={index}
-                  src={URL.createObjectURL(img)}
-                  alt="preview"
-                  className="h-24 w-full object-cover rounded-lg border"
-                />
-              ))}
-            </div>
-          )} */}
 
-          {isEdit && images.length > 0 && (
+
+          {/* New Image Previews */}
+          {images.length > 0 && (
               <div className="grid grid-cols-3 gap-3 mt-3">
                 {images.map((img) => (
                   <img
                     key={img.id}
-                    
-                    src={`https://imgs.search.brave.com/jtENFihhAr-Ew6NvAfw7SmtHrVacGvyNgo280nYKv70/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJzLmNvbS9p/bWFnZXMvaGQvY2xv/dWR5LWJsdWUtcy0y/dnIxbTJrNTU0cGM0/ZWRoLmpwZw`}
+                    src={`${IMAGE_BASE}${img.imageUrl}`}
                     className="h-24 w-full object-cover rounded-lg border"
                     alt="preview"
                     />
@@ -574,19 +601,6 @@ const handleSubmit = async (e) => {
               </div>
             )}
             
-            {/* {images.length > 0 && (
-              <div className="grid grid-cols-3 gap-3 mt-3">
-                {images.map((img, index) => (
-                  <img
-                    key={index}
-                    src={`${process.env.REACT_APP_IMAGE_URL}${img.imageUrl}`}
-                    alt="preview"
-                    className="h-24 w-full object-cover rounded-lg border"
-                  />
-                ))}
-              </div>
-            )} */}
-
 
 
           {/* Submit */}
@@ -597,7 +611,16 @@ const handleSubmit = async (e) => {
              {groundId ? "Update Ground" : "Add Ground"}
           </button>
         </form>
+       
+        <Toast
+          show={toast.show}
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast({ ...toast, show: false })}
+        />
+
       </div>
     </div>
   );
 };
+//  console.log("slot.................",slots)

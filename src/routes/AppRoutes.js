@@ -44,6 +44,7 @@ export const AppRoutes = () => {
       <Route path="/user/UserRegister" element={<UserRegister />} />
 
       {/* User (WITH SIDEBAR) */}
+    
       <Route path="/user" element={<UserLayout />}>
         <Route path="home" element={<Home />} />
         <Route path="games" element={<Games />} />

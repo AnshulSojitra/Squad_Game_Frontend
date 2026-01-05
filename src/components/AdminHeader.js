@@ -6,7 +6,8 @@ export default function AdminHeader() {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  const adminName = "Admin User";
+  const admin = JSON.parse(localStorage.getItem("admin"));
+
   const profileImg =
     "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
@@ -30,7 +31,7 @@ export default function AdminHeader() {
       {/* Left */}
       <div className="flex items-center gap-4">
 
-        <h1 className="text-lg font-semibold">Squad Game Admin</h1>
+        <h1 className="text-lg font-semibold">BoxArena Admin</h1>
       </div>
 
       {/* Right */}
@@ -44,7 +45,8 @@ export default function AdminHeader() {
             alt="Admin"
             className="w-9 h-9 rounded-full border"
           />
-          <span className="hidden sm:block font-medium">{adminName}</span>
+         <span className="font-medium"> {admin?.name || "Admin"} </span>
+
         </button>
 
         {open && (

@@ -11,7 +11,7 @@ export default function Navbar() {
         to="/"
         className="text-2xl font-extrabold tracking-wide text-indigo-500 hover:text-indigo-400 transition"
       >
-        SquadGame
+      BoxArena
       </Link>
 
       {/* Links */}
