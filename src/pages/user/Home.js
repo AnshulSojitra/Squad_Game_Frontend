@@ -47,7 +47,7 @@ export default function Home() {
         <div
           onClick={() => {
             localStorage.removeItem("userToken");
-            navigate("/user/login");
+            navigate("/");
           }}
           className="bg-gray-800 p-6 rounded-xl cursor-pointer hover:bg-red-600 transition"
         >

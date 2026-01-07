@@ -50,11 +50,37 @@ export default function AddGround() {
   message: "",
 });
 
+  const [amenityInput, setAmenityInput] = useState("");
+  const [amenities, setAmenities] = useState([]);
+
 
 
 
 const showToast = (type, message) => {
   setToast({ show: true, type, message });
+};
+
+// for Amenities
+const handleAddAmenity = () => {
+  if (!amenityInput.trim()) return;
+
+  if (amenities.length >= 10) {
+    setErrors((prev) => ({
+      ...prev,
+      amenities: "Maximum 10 amenities allowed",
+    }));
+    return;
+  }
+
+  if (amenities.includes(amenityInput.trim())) return;
+
+  setAmenities([...amenities, amenityInput.trim()]);
+  setAmenityInput("");
+};
+
+// remove amenities
+const handleRemoveAmenity = (index) => {
+  setAmenities(amenities.filter((_, i) => i !== index));
 };
 
 
@@ -142,6 +168,13 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
       city: g.city,
     });
 
+    setAmenities(
+      g.amenities?.map(a =>
+        typeof a === "string" ? a : a.name
+      ) || []
+    );
+
+
     setOpeningTime(g.openingTime);
     setClosingTime(g.closingTime);
     setSlots(
@@ -153,6 +186,7 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
       
       setImages(g.images);
     setExistingImages(g.images || []);
+
   
 
 // Load states and cities based on existing data
@@ -252,7 +286,9 @@ const handleImages = (e) => {
         if (slots.length === 0) {
           newErrors.slots = "Please add at least one slot";
         }
-
+        if (amenities.length === 0) {
+          newErrors.amenities = "Please add at least one amenity";
+        }
 
         setErrors(newErrors);
 
@@ -281,6 +317,10 @@ const handleSubmit = async (e) => {
     formData.append("country", form.country);
     formData.append("state", form.state);
     formData.append("city", form.city);
+    
+    // Amenities
+    formData.append("amenities", JSON.stringify(amenities));
+
 
     // Time info
     formData.append("openingTime", openingTime);
@@ -465,6 +505,55 @@ const handleSubmit = async (e) => {
               </option>
             ))}
           </select>
+
+
+            {/* Amenities */}
+              <label className="block text-sm font-medium mb-1">
+                Amenities (Max 10)
+              </label>
+
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={amenityInput}
+                  onChange={(e) => setAmenityInput(e.target.value)}
+                  placeholder="e.g. Parking, Washroom"
+                  className="input-style flex-1"
+                />
+
+                <button
+                  type="button"
+                  onClick={handleAddAmenity}
+                  className="bg-indigo-600 text-white px-4 rounded-lg"
+                >
+                  Add
+                </button>
+              </div>
+
+              {errors.amenities && (
+                <p className="text-red-500 text-xs mt-1">{errors.amenities}</p>
+              )}
+
+              {/* Amenities List */}
+              {amenities.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {amenities.map((a, index) => (
+                    <span
+                      key={index}
+                      className="flex items-center gap-2 bg-gray-200 px-3 py-1 rounded-full text-sm"
+                    >
+                      {a}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAmenity(index)}
+                        className="text-red-500 text-xs"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
 
 
           {/* Time Slots */}

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 export default function AdminHeader() {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -23,7 +24,7 @@ export default function AdminHeader() {
 
   const handleLogout = () => {
      localStorage.removeItem("adminToken");
-    navigate("/login");
+    navigate("/");
   };
 
   return (

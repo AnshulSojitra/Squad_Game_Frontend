@@ -190,6 +190,22 @@ const paginatedGrounds = filteredGrounds.slice(
                 <p className="text-sm text-gray-600">
                   📞 {ground.contactNo}
                 </p>
+               {ground.amenities?.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-400 mb-1">Amenities</p>
+
+                    <div className="flex flex-wrap gap-2">
+                      {ground.amenities.slice(0, 4).map((amenity, index) => (
+                        <span
+                          key={amenity.id ?? index}
+                          className="text-xs bg-gray-700 text-gray-200 px-2 py-1 rounded-full"
+                        >
+                          {typeof amenity === "string" ? amenity : amenity.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Actions */}

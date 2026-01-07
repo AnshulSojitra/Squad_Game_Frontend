@@ -24,17 +24,17 @@ export default function Navbar() {
         </Link>
 
         <Link
-          to="/dashboard"
+          to="/user/bookingslot"
           className="text-gray-300 hover:text-white text-sm font-medium transition"
         >
-          Dashboard
+          Grounds
         </Link>
 
         <Link
-          to="/contact"
+          to="/user/Mybooking"
           className="text-gray-300 hover:text-white text-sm font-medium transition"
         >
-          Contact
+          Mybooking
         </Link>
 
         {/* CTA Button */}
@@ -43,6 +43,11 @@ export default function Navbar() {
           className="ml-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition"
         >
           Login
+        </Link>
+        <Link
+        to="/user/UserRegister"
+        className="ml-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+          Sign Up
         </Link>
       </div>
     </div>

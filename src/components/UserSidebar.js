@@ -43,7 +43,7 @@ export default function UserSidebar() {
           to="/user/bookingslot"
           className="flex items-center gap-3 hover:bg-gray-800 p-2 rounded"
         >
-          ⏱ {!collapsed && "Booking Slots"}
+          ⏱ {!collapsed && "Book slots"}
         </Link>
 
         <Link

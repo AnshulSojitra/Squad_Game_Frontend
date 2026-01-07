@@ -9,10 +9,6 @@ const api = axios.create({
   },
 });
 
-// CREATE - Register Admin
-// export const registerAdmin = (data) => {
-//   return api.post("/admin/register", data);
-// };
 
 // Attach token automatically
 api.interceptors.request.use((req) => {
@@ -129,6 +125,21 @@ export const getCitiesByState = (stateId) =>
 });
 
 /* -------- BOOKINGS -------- */
+
+// Get single ground for booking
+
+export const getPublicGround = () => {
+
+  return api.get("/grounds", {
+    headers: {
+      "ngrok-skip-browser-warning": "true"
+    },
+  });
+};
+
+export const getPublicGroundById = (id) =>
+  api.get(`/grounds/${id}`);
+
 
 // CREATE BOOKING
 export const createBooking = (data) => {
