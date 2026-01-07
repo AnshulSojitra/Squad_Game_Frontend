@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL, // your backend base URL
   // baseURL: "https://indissolubly-unadmonitory-pinkie.ngrok-free.dev/api",
@@ -10,14 +11,18 @@ const api = axios.create({
 });
 
 
+
+
 // Attach token automatically
-api.interceptors.request.use((req) => {
-  const token = localStorage.getItem("adminToken");
-  if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
-  return req;
-});
+// api.interceptors.request.use((req) => {
+//   const token = localStorage.getItem("adminToken");
+//   if (token) {
+//     req.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return req;
+// });
+
+// <============================ ADMIN ================================>
 
 // READ - Login Admin
 export const loginAdmin = (data) => {
@@ -32,25 +37,6 @@ export const updateAdmin = (id, data) => {
 // DELETE - Delete Admin
 export const deleteAdmin = (id) => {
   return api.delete(`/admin/${id}`);
-};
-
-/* ================= USER APIs ================= */
-
-// CREATE - User Registration
-export const userRegister = (data) => {
-  return api.post("/user/register", data);
-};
-
-// READ - User Login
-export const userLogin = (data) => {
-  return api.post("/user/login", data);
-};
-
-// READ - Get user bookings
-export const getMyBookings = (token) => {
-  return api.get("/user/bookings", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
 };
 
 /* -------- GROUNDS -------- */
@@ -124,6 +110,41 @@ export const getCitiesByState = (stateId) =>
   headers:{"ngrok-skip-browser-warning": "true",}
 });
 
+
+// <===== ADMIN SHOWING USER GROUND BOOKING ========>
+// ================= ADMIN BOOKINGS =================
+export const getAdminBookings = () => {
+  return api.get("/admin/bookings", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
+  });
+};
+
+
+
+
+/* ================= USER APIs ================= */
+
+// CREATE - User Registration
+export const userRegister = (data) => {
+  return api.post("/user/register", data);
+};
+
+// READ - User Login
+export const userLogin = (data) => {
+  return api.post("/user/login", data);
+};
+
+// READ - Get user bookings
+export const getMyBookings = (token) => {
+  return api.get("/user/bookings", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+
+
 /* -------- BOOKINGS -------- */
 
 // Get single ground for booking
@@ -137,26 +158,52 @@ export const getPublicGround = () => {
   });
 };
 
+// confirm booking
+export const confirmBooking = (payload) => {
+  console.log(localStorage.getItem("userToken"));
+  
+  return api.post("/bookings", payload, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+    },
+  });
+};
+
 export const getPublicGroundById = (id) =>
   api.get(`/grounds/${id}`);
 
 
-// CREATE BOOKING
-export const createBooking = (data) => {
-  return api.post("/user/bookings", data, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-    },
-  });
-};
+// // CREATE BOOKING
+// export const createBooking = (data) => {
+//   return api.post("/bookings", data, {
+//     headers: {
+//       Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+//     },
+//   });
+// };
 
 // GET BOOKINGS (My Bookings)
 export const getUserBookings = () => {
-  return api.get("/user/bookings", {
+  return api.get("/bookings/my", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("userToken")}`,
     },
   });
 };
 
+// Cancel booking (user)
+export const cancelUserBooking = (bookingId) => {
+  return api.put(
+    `/bookings/${bookingId}/cancel`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+      },
+    }
+  );
+};
+
+
 export default api;
+

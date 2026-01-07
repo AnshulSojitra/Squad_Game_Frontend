@@ -3,7 +3,7 @@ import AdminLogin from "../pages/AdminLogin";
 import Dashboard from "../pages/admin/Dashboard";
 import { Games } from "../pages/admin/Games";
 import Grounds from "../pages/admin/Grounds";
-import { Bookings } from "../pages/admin/Bookings";
+import Bookings from "../pages/admin/Bookings";
 import AdminLayout from "../components/AdminLayout";
 import LandingPage from "../pages/Landingpage";
 import UserLogin from "../pages/user/UserLogin";

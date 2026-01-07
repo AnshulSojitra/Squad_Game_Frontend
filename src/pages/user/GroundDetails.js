@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getPublicGroundById } from "../../services/api";
+import { getPublicGroundById , confirmBooking } from "../../services/api";
 
 const IMAGE_BASE = process.env.REACT_APP_IMAGE_URL;
 
@@ -9,7 +9,9 @@ export default function GroundDetails({ groundId, onBack }) {
   const selectedDate = searchParams.get("date");
 
   const [ground, setGround] = useState(null);
-  const [selectedSlot, setSelectedSlot] = useState(null);
+//   const [selectedSlot, setSelectedSlot] = useState([]);
+const [selectedSlots, setSelectedSlots] = useState([]);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,6 +28,48 @@ export default function GroundDetails({ groundId, onBack }) {
 
     fetchGround();
   }, [groundId]);
+
+  const formatTime12 = (time) => {
+  if (!time) return "";
+
+  const [hours, minutes] = time.split(":");
+  const h = parseInt(hours, 10);
+
+  const period = h >= 12 ? "PM" : "AM";
+  const hour12 = h % 12 || 12;
+
+  return `${hour12.toString().padStart(2, "0")}:${minutes} ${period}`;
+};
+
+
+  const toggleSlot = (slot) => {
+  setSelectedSlots((prev) => {
+    const exists = prev.find(
+      (s) => s.startTime === slot.startTime && s.endTime === slot.endTime
+    );
+
+    if (exists) {
+      // remove slot
+      return prev.filter(
+        (s) =>
+          !(s.startTime === slot.startTime && s.endTime === slot.endTime)
+      );
+    } else {
+      // add slot
+      return [...prev, slot];
+    }
+  });
+};
+
+    const isSlotSelected = (slot) =>
+    selectedSlots.some(
+        (s) => s.startTime === slot.startTime && s.endTime === slot.endTime
+    );
+
+    const totalPrice =
+  selectedSlots.length * Number(ground?.pricePerSlot || 0);
+
+
 
   if (loading || !ground) {
     return <p className="text-center mt-10">Loading ground...</p>;
@@ -48,6 +92,31 @@ export default function GroundDetails({ groundId, onBack }) {
         return true;
       })
     : [];
+
+    const handleConfirmBooking = async () => {
+    if (!selectedDate) {
+        alert("Please select a date");
+        return;
+    }
+
+    if (selectedSlots.length === 0) {
+        alert("Please select at least one slot");
+        return;
+    }
+
+    try {
+        await confirmBooking({
+        slotIds: selectedSlots.map(slot => slot.id),
+        date: selectedDate,
+        });
+
+        alert("Booking confirmed 🎉");
+        setSelectedSlots([]);
+    } catch (err) {
+        alert(err.response?.data?.message || "Booking failed");
+    }
+    };
+
 
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-10">
@@ -120,47 +189,86 @@ export default function GroundDetails({ groundId, onBack }) {
           />
         </div>
 
-        {/* SLOTS */}
+        {/* AVAILABLE SLOTS */}
         <div className="p-6 border-t">
-          <h2 className="text-xl font-semibold mb-4">Available Slots</h2>
+        <h2 className="text-xl font-semibold mb-4">Available Slots</h2>
 
-          {validSlots.length === 0 ? (
+        {validSlots.length === 0 ? (
             <p className="text-gray-500">No slots available</p>
-          ) : (
+        ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {validSlots.map((slot, i) => (
+            {validSlots.map((slot, i) => {
+                const selected = isSlotSelected(slot);
+
+                return (
                 <button
-                  key={i}
-                  onClick={() => setSelectedSlot(slot)}
-                  className={`px-4 py-3 rounded-lg border ${
-                    selectedSlot === slot
-                      ? "bg-indigo-600 text-white"
-                      : "bg-white hover:bg-indigo-100"
-                  }`}
+                    key={i}
+                    onClick={() => toggleSlot(slot)}
+                    className={`px-4 py-3 rounded-lg border text-sm font-medium transition
+                    ${
+                        selected
+                        ? "bg-indigo-600 text-white"
+                        : "bg-white hover:bg-indigo-100"
+                    }`}
                 >
-                  {slot.startTime} – {slot.endTime}
+                    {formatTime12(slot.startTime)} – {formatTime12(slot.endTime)}
                 </button>
-              ))}
+                );
+            })}
             </div>
-          )}
+        )}
         </div>
 
+        {/* BOOKING SUMMARY */}
+        {selectedSlots.length > 0 && (
+        <div className="p-6 border-t bg-gray-50">
+            <h3 className="font-semibold mb-2">Selected Slots</h3>
+
+            <ul className="text-sm text-gray-700 mb-3">
+            {selectedSlots.map((slot, i) => (
+                <li key={i}>
+                ⏱ {formatTime12(slot.startTime)} – {formatTime12(slot.endTime)}
+
+                </li>
+            ))}
+            </ul>
+
+            <p className="font-semibold text-lg">
+            Total Price:{" "}
+            <span className="text-green-600">₹{totalPrice}</span>
+            </p>
+        </div>
+        )}
+
+
         {/* CONFIRM */}
-        {selectedSlot && (
-          <div className="p-6 border-t flex justify-end">
-            <button
-              onClick={() =>
-                console.log("BOOK SLOT", {
-                  groundId: ground.id,
-                  date: selectedDate,
-                  slot: selectedSlot,
-                })
-              }
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg"
+        {selectedSlots.length > 0 && (
+        <div className="p-6 border-t flex justify-end">
+            {/* <button
+            onClick={() => {
+                const payload = {
+                groundId: ground.id,
+                date: selectedDate,
+                slots: selectedSlots,
+                totalAmount: totalPrice,
+                };
+
+                console.log("BOOKING PAYLOAD 👉", payload);
+                alert("Booking payload ready (API pending)");
+            }}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold"
             >
-              Confirm Booking
+            Confirm Booking ({selectedSlots.length} slots)
+            </button> */}
+            <button
+                onClick={handleConfirmBooking}
+                disabled={selectedSlots.length === 0}
+                className="bg-indigo-600 text-white px-6 py-3 rounded-lg"
+                >
+                Confirm Booking ({selectedSlots.length})
             </button>
-          </div>
+
+        </div>
         )}
       </div>
     </div>

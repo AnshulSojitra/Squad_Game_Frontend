@@ -1,41 +1,146 @@
 import { useEffect, useState } from "react";
-import { getUserBookings } from "../../services/api";
+import { getUserBookings, cancelUserBooking } from "../../services/api";
 
-export default function Mybooking() {
+export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [cancelLoading, setCancelLoading] = useState(null);
 
   useEffect(() => {
-    const fetchBookings = async () => {
-      const res = await getUserBookings();
-      setBookings(res.data);
-    };
-
     fetchBookings();
   }, []);
 
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">My Bookings</h2>
+  const fetchBookings = async () => {
+    try {
+      const res = await getUserBookings();
+      setBookings(res.data.data); // backend response structure
+    } catch (err) {
+      console.error("Failed to fetch bookings", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      {bookings.length === 0 ? (
-        <p>No bookings found</p>
-      ) : (
-        <div className="space-y-4">
-          {bookings.map((b) => (
-            <div
-              key={b._id}
-              className="bg-white p-4 rounded shadow"
-            >
-              <p className="font-semibold">{b.ground.name}</p>
-              <p>Date: {b.date}</p>
-              <p>
-                Time: {b.startTime} ({b.hours} hrs)
-              </p>
-              <p>Total: ₹{b.totalPrice}</p>
-            </div>
-          ))}
-        </div>
-      )}
+  const formatTime = (time) => {
+  const [hour, minute] = time.split(":");
+  const h = Number(hour);
+  const suffix = h >= 12 ? "PM" : "AM";
+  const formattedHour = h % 12 || 12;
+  return `${formattedHour}:${minute} ${suffix}`;
+  };
+
+
+  const handleCancel = async (bookingId) => {
+    if (!window.confirm("Are you sure you want to cancel this booking?")) return;
+
+    try {
+      setCancelLoading(bookingId);
+      await cancelUserBooking(bookingId);
+
+      // Update UI instantly
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.bookingId === bookingId
+            ? { ...b, status: "cancelled" }
+            : b
+        )
+      );
+    } catch (err) {
+      alert("Failed to cancel booking");
+    } finally {
+      setCancelLoading(null);
+    }
+  };
+
+  if (loading) {
+    return <p className="text-center mt-10">Loading bookings...</p>;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 px-6 py-10">
+      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
+        <h1 className="text-2xl font-bold mb-6">My Bookings</h1>
+
+        {bookings.length === 0 ? (
+          <p className="text-gray-500 text-center">
+            You have no bookings yet
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-100 text-left text-sm">
+                  <th className="p-3">Ground</th>
+                  <th className="p-3">Date</th>
+                  <th className="p-3">Slot</th>
+                  <th className="p-3">Price</th>
+                  <th className="p-3">Status</th>
+                  <th className="p-3">Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {bookings.map((booking) => (
+                  <tr
+                    key={booking.bookingId}
+                    className="border-b text-sm"
+                  >
+                    <td className="p-3">
+                      <p className="font-medium">
+                        {booking.ground.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {booking.ground.area} ,  
+                        {booking.ground.state} ,  
+                        {booking.ground.country}
+                      </p>
+                    </td>
+
+                    <td className="p-3">{booking.date}</td>
+
+                    <td className="p-3">
+                      {formatTime(booking.startTime)} –{" "}
+                      {formatTime(booking.endTime)}
+                    </td>
+
+                    <td className="p-3 font-semibold text-green-600">
+                      ₹{booking.totalPrice}
+                    </td>
+
+                    <td className="p-3">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          booking.status === "confirmed"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {booking.status}
+                      </span>
+                    </td>
+
+                    <td className="p-3">
+                      {booking.status === "confirmed" && (
+                        <button
+                          onClick={() =>
+                            handleCancel(booking.bookingId)
+                          }
+                          disabled={cancelLoading === booking.bookingId}
+                          className="text-red-600 hover:underline text-sm"
+                        >
+                          {cancelLoading === booking.bookingId
+                            ? "Cancelling..."
+                            : "Cancel"}
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
