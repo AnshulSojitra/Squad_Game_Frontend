@@ -13,13 +13,13 @@ import Mybooking from "../pages/user/Mybooking";
 import Bookingslot from "../pages/user/Bookingslot";
 import UserLayout from "../components/UserLayout";
 import AdminProtectedRoute from "./AdminProtectedRoute";
-import Profile from "../pages/admin/Profile";
 import ChangePassword from "../pages/admin/ChangePassword";
 import AddGround from "../pages/admin/AddGround";
 import { Navigate } from "react-router-dom";
-
-
-
+import UserProtectedRoute from "./UserProtectedRoute";
+import GroundDetails from "../pages/user/GroundDetails";
+import PublicLayout from "../components/PublicLayout";
+import AdminProfile from "../pages/admin/AdminProfile";
 
 
 
@@ -27,31 +27,55 @@ import { Navigate } from "react-router-dom";
 
 export const AppRoutes = () => {
   return (
-    // <Routes>
-    //   <Route path="/" element={<LandingPage />} />
-    //   <Route path="/admin/login" element={<AdminLayout />}>
-    //     <Route path="/admin/dashboard" element={<Dashboard />} />
-    //     <Route path="/admin/games" element={<Games />} />
-    //     <Route path="/admin/grounds" element={<Grounds />} />
-    //     <Route path="/admin/bookings" element={<Bookings />} />
-    //   </Route>
-    // </Routes>
 
     <Routes>
       {/* Public */}
-      <Route path="/" element={<LandingPage />} />
+      {/* <Route path="/" element={<LandingPage />} />
       <Route path="/user/login" element={<UserLogin />} />
-      <Route path="/user/UserRegister" element={<UserRegister />} />
+      <Route path="/user/UserRegister" element={<UserRegister />} /> */}
 
       {/* User (WITH SIDEBAR) */}
     
-      <Route path="/user" element={<UserLayout />}>
+      {/* <Route path="/user" element={<UserLayout />}>
         <Route path="home" element={<Home />} />
         <Route path="games" element={<Games />} />
         <Route path="mybooking" element={<Mybooking />} />
         <Route path="bookingslot" element={<Bookingslot />} />
         <Route path="/user/book/:groundId" element={<Bookingslot />} />
-      </Route>
+      </Route> */}
+
+      <Route element={<PublicLayout />}>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/Grounds" element={<Bookingslot />} />
+      <Route path="/user/login" element={<UserLogin />} />
+      <Route path="/user/UserRegister" element={<UserRegister />} />
+    </Route>
+
+
+        {/* Public */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/user/login" element={<UserLogin />} />
+        <Route path="/user/UserRegister" element={<UserRegister />} />
+
+        {/* Public Booking View */}
+       
+        {/* <Route path="/user/book/:groundId" element={<Bookingslot />} />  */}
+
+        {/* Protected User Area */}
+        <Route element={<UserProtectedRoute />}>
+          <Route path="/user" element={<UserLayout />}>
+            <Route path="home" element={<Home />} />
+            <Route path="games" element={<Games />} />
+            <Route path="bookingslot" element={<Bookingslot />} />
+            <Route path="mybooking" element={<Mybooking />} />
+          </Route>
+        </Route>
+        
+        <Route path="/Grounds" element={<Bookingslot />} />
+        
+        <Route path="/user/grounds/:groundId" element={<GroundDetails />} />
+        
+      
       // Admin Login without sidebar
        <Route path="/login" element={<AdminLogin />} />
        
@@ -73,9 +97,9 @@ export const AppRoutes = () => {
           <Route path="bookings" element={<Bookings />} />
           <Route path="games" element={<Games />} />
           <Route path="grounds" element={<Grounds />} />
-          <Route path="profile" element={<Profile />} />
           <Route path="change-password" element={<ChangePassword />} />
           <Route path="addground" element={<AddGround />} />
+          <Route path="profile" element={<AdminProfile />} />
         </Route>
       </Route>
     </Routes>

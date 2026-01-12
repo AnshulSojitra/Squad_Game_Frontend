@@ -39,6 +39,16 @@ export const deleteAdmin = (id) => {
   return api.delete(`/admin/${id}`);
 };
 
+// Admin Profile
+export const getAdminProfile = () => {
+  return api.get("/admin/me", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
+  });
+};
+
+
 /* -------- GROUNDS -------- */
 
 // Add ground
@@ -169,9 +179,9 @@ export const confirmBooking = (payload) => {
   });
 };
 
-export const getPublicGroundById = (id) =>
-  api.get(`/grounds/${id}`);
-
+export const getPublicGroundById = (id) =>{
+ return api.get(`/grounds/${id}`);
+}
 
 // // CREATE BOOKING
 // export const createBooking = (data) => {
@@ -203,6 +213,7 @@ export const cancelUserBooking = (bookingId) => {
     }
   );
 };
+
 
 
 export default api;

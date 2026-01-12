@@ -1,18 +1,29 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams , useNavigate , useLocation , useParams } from "react-router-dom";
 import { getPublicGroundById , confirmBooking } from "../../services/api";
 
 const IMAGE_BASE = process.env.REACT_APP_IMAGE_URL;
 
-export default function GroundDetails({ groundId, onBack }) {
+export default function GroundDetails({ groundId: propGroundId }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedDate = searchParams.get("date");
+  const { groundId: paramGroundId } = useParams();
+
+   // 🔑 Decide source of truth
+  const groundId = propGroundId || paramGroundId;
+
 
   const [ground, setGround] = useState(null);
 //   const [selectedSlot, setSelectedSlot] = useState([]);
-const [selectedSlots, setSelectedSlots] = useState([]);
+  const [selectedSlots, setSelectedSlots] = useState([]);
 
   const [loading, setLoading] = useState(true);
+
+  const token = localStorage.getItem("userToken");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const userToken = localStorage.getItem("userToken");
+
 
   useEffect(() => {
     const fetchGround = async () => {
@@ -42,24 +53,24 @@ const [selectedSlots, setSelectedSlots] = useState([]);
 };
 
 
-  const toggleSlot = (slot) => {
-  setSelectedSlots((prev) => {
-    const exists = prev.find(
-      (s) => s.startTime === slot.startTime && s.endTime === slot.endTime
-    );
+//   const toggleSlot = (slot) => {
+//   setSelectedSlots((prev) => {
+//     const exists = prev.find(
+//       (s) => s.startTime === slot.startTime && s.endTime === slot.endTime
+//     );
 
-    if (exists) {
-      // remove slot
-      return prev.filter(
-        (s) =>
-          !(s.startTime === slot.startTime && s.endTime === slot.endTime)
-      );
-    } else {
-      // add slot
-      return [...prev, slot];
-    }
-  });
-};
+//     if (exists) {
+//       // remove slot
+//       return prev.filter(
+//         (s) =>
+//           !(s.startTime === slot.startTime && s.endTime === slot.endTime)
+//       );
+//     } else {
+//       // add slot
+//       return [...prev, slot];
+//     }
+//   });
+// };
 
     const isSlotSelected = (slot) =>
     selectedSlots.some(
@@ -94,14 +105,16 @@ const [selectedSlots, setSelectedSlots] = useState([]);
     : [];
 
     const handleConfirmBooking = async () => {
-    if (!selectedDate) {
-        alert("Please select a date");
-        return;
+      if (!token) {
+      navigate("/user/login", {
+        state: { from: location.pathname + location.search },
+      });
+      return;
     }
 
-    if (selectedSlots.length === 0) {
-        alert("Please select at least one slot");
-        return;
+    if (!selectedDate || selectedSlots.length === 0) {
+      alert("Select date and slots");
+      return;
     }
 
     try {
@@ -118,13 +131,32 @@ const [selectedSlots, setSelectedSlots] = useState([]);
     };
 
 
+    const handleSlotSelect = (slot) => {
+  if (!token) {
+    navigate("/user/login", {
+      state: { from: location.pathname + location.search }
+    });
+    return;
+  }
+
+  setSelectedSlots(prev =>
+    prev.some(s => s.id === slot.id)
+      ? prev.filter(s => s.id !== slot.id)
+      : [...prev, slot]
+  );
+};
+
+
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-10">
       <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
 
         {/* BACK */}
         <div className="p-4 border-b">
-          <button onClick={onBack} className="text-indigo-600 font-medium">
+          <button
+            onClick={() => navigate("/user/bookingslot")}
+            className="text-indigo-600 font-medium"
+          >
             ← Back to Grounds
           </button>
         </div>
@@ -203,7 +235,10 @@ const [selectedSlots, setSelectedSlots] = useState([]);
                 return (
                 <button
                     key={i}
-                    onClick={() => toggleSlot(slot)}
+                    onClick={() => {
+                      // toggleSlot(slot);
+                      handleSlotSelect(slot);
+                    }}
                     className={`px-4 py-3 rounded-lg border text-sm font-medium transition
                     ${
                         selected
@@ -261,11 +296,27 @@ const [selectedSlots, setSelectedSlots] = useState([]);
             Confirm Booking ({selectedSlots.length} slots)
             </button> */}
             <button
-                onClick={handleConfirmBooking}
-                disabled={selectedSlots.length === 0}
-                className="bg-indigo-600 text-white px-6 py-3 rounded-lg"
+                //onClick={handleConfirmBooking}
+                onClick={() => {
+                  if (!userToken) {
+                    navigate("/user/login", {
+                      state: { from: location.pathname },
+                    });
+                  } else {
+                    handleConfirmBooking();
+                  }
+
+                }}
+                disabled={!token || selectedSlots.length === 0}
+                className={`px-6 py-3 rounded-lg font-semibold
+                  ${token
+                    ? "bg-indigo-600 hover:bg-indigo-700 text-white"
+                    : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  }
+                `}
                 >
-                Confirm Booking ({selectedSlots.length})
+                {/* Confirm Booking ({selectedSlots.length}) */}
+                {token ? "Confirm Booking" : "Login to Book"}
             </button>
 
         </div>

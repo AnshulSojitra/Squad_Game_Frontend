@@ -52,6 +52,7 @@ export default function AddGround() {
 
   const [amenityInput, setAmenityInput] = useState("");
   const [amenities, setAmenities] = useState([]);
+  const [loading, setLoading] = useState(false);
 
 
 
@@ -85,44 +86,41 @@ const handleRemoveAmenity = (index) => {
 
 
 const handleAddSlot = () => {
-  if (!slotStart || !slotEnd) {
+  // Determine start time
+  const startTime =
+    slots.length === 0
+      ? slotStart
+      : slots[slots.length - 1].end;
+
+  if (!startTime || !slotEnd) {
     alert("Select start and end time");
     return;
   }
 
   // Opening / closing validation
-  if (slotStart < openingTime || slotEnd > closingTime) {
+  if (startTime < openingTime || slotEnd > closingTime) {
     alert("Slot must be within opening and closing time");
     return;
   }
 
-  // Sequential validation
-  if (slots.length > 0) {
-    const lastSlot = slots[slots.length - 1];
-    if (slotStart !== lastSlot.end) {
-      alert("Slot must start from previous slot's end time");
-      return;
-    }
-  }
-
-  if (slotStart >= slotEnd) {
+  if (startTime >= slotEnd) {
     alert("End time must be after start time");
     return;
   }
 
-  // setSlots([...slots, { start: slotStart, end: slotEnd }]);
-   setSlots((prev) => [
+  setSlots((prev) => [
     ...prev,
     {
-      id: Date.now(), // ✅ temp unique id
-      start: slotStart,
+      id: Date.now(),
+      start: startTime,
       end: slotEnd,
     },
   ]);
 
-  setSlotStart("");
+  // IMPORTANT: reset ONLY end time
   setSlotEnd("");
 };
+
 
 const removeSlot = (indexToRemove) => {
   setSlots(prevSlots =>
@@ -145,15 +143,17 @@ useEffect(() => {
   const fetchGroundForEdit = async () => {
     const res = await getGroundById(groundId);
     const g = res.data;
-    const normalizedSlots = Array.isArray(g.slots)
-      ? g.slots.map((s) => ({
-      id: s.id,               // backend id
+    const normalizedSlots = Array.isArray(g.Slots)
+  ? g.Slots.map((s) => ({
+      id: s.id,
       start: s.startTime,
       end: s.endTime,
     }))
   : [];
 
+
 setSlots(normalizedSlots);
+
 
     console.log("EDIT DATA", res.data);
 console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
@@ -177,13 +177,14 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
 
     setOpeningTime(g.openingTime);
     setClosingTime(g.closingTime);
-    setSlots(
-        (g.Slots || []).map(slot => ({
-          start: slot.startTime,
-          end: slot.endTime,
-        }))
-      );
       
+      setSlots(
+        (g.Slots || []).map(slot => ({
+           start: slot.startTime,
+           end: slot.endTime,
+         }))
+      );
+
       setImages(g.images);
     setExistingImages(g.images || []);
 
@@ -258,8 +259,8 @@ const handleImages = (e) => {
           newErrors.pricePerHour = "Price must be greater than 0";
         }
 
-        if (!form.game) {
-          newErrors.game = "Please select a game type";
+        if (!form.game || form.game.trim().length < 3) {
+          newErrors.game = "game name must be atleast of 3 letters";
         }
 
        
@@ -302,7 +303,14 @@ const handleSubmit = async (e) => {
 
   if (!validateForm()) return;
 
+   // ⛔ Prevent multiple submissions
+  if (loading) return;
+
+
   try {
+
+    setLoading(true); // LOCK BUTTON
+
     const formData = new FormData();
 
     // Basic fields
@@ -329,10 +337,6 @@ const handleSubmit = async (e) => {
     // Slots (IMPORTANT → stringify)
     formData.append("slots", JSON.stringify(slots));
 
-    // Images (multiple)
-    // images.forEach((img) => {
-    //   formData.append("images", img);
-    // });
     if (images.length > 0) {
       images.forEach(img => {
     formData.append("images", img);
@@ -361,6 +365,7 @@ const handleSubmit = async (e) => {
 } catch (err) {
   console.error(err);
   showToast("error", "Failed to save ground");
+  setLoading(false); // UNLOCK BUTTON
 }
 };
 
@@ -424,25 +429,29 @@ const handleSubmit = async (e) => {
             <p className="text-red-500 text-xs mt-1">{errors.pricePerHour}</p>
           )}
 
-          {/* Game Type */}
-          <label className="block text-sm font-medium mb-1">Game Type</label>
-          <select
+          <label className="block text-sm font-medium mb-1">
+            Game Type
+          </label>
+
+          <input
+            type="text"
             name="game"
+            placeholder="e.g. Cricket, Pickleball, Tennis"
             className="input-style"
+            value={form.game}
             onChange={(e) =>
               setForm({ ...form, game: e.target.value })
             }
-            value={form.game}
-          >
-            <option value="">Select Game</option>
-            <option value="Cricket">Cricket</option>
-            <option value="Badminton">Badminton</option>
-            <option value="Football">Football</option>
-            <option value="Basketball">Basketball</option>
-          </select>
+          />
+
           {errors.game && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.game}
+            </p>
+          )}
+          {/* {errors.game && (
               <p className="text-red-500 text-xs mt-1">{errors.game}</p>
-            )}
+            )} */}
 
           {/* Address */}
           <label className="block text-sm font-medium mb-1">Address</label>
@@ -592,15 +601,23 @@ const handleSubmit = async (e) => {
                 <p className="text-sm font-medium mb-2">Add Time Slot</p>
 
                 <div className="grid grid-cols-3 gap-3 items-end">
+
                   <div>
                     <label className="text-xs">Start Time</label>
                     <input
-                      type="time"
-                      value={slotStart}
-                      onChange={(e) => setSlotStart(e.target.value)}
-                      className="input-style"
-                    />
-                    
+                        type="time"
+                        value={
+                          slots.length === 0
+                            ? slotStart
+                            : slots[slots.length - 1].end
+                        }
+                        disabled={slots.length > 0}
+                        onChange={(e) => setSlotStart(e.target.value)}
+                        className={`input-style ${
+                          slots.length > 0 ? "bg-gray-100 cursor-not-allowed" : ""
+                        }`}
+                      />
+
                   </div>
 
                   <div>
@@ -612,6 +629,7 @@ const handleSubmit = async (e) => {
                       className="input-style"
                     />
                   </div>
+
 
                   <button
                     type="button"
@@ -691,14 +709,25 @@ const handleSubmit = async (e) => {
             )}
             
 
+            {loading && (
+                <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm">
+                  <span className="animate-spin">⏳</span>
+                  Please wait, adding ground...
+                </div>
+             )}
 
-          {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg font-semibold transition
+              ${loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700 text-white"}
+            `}
           >
-             {groundId ? "Update Ground" : "Add Ground"}
+            {loading ? "Saving Ground..." : groundId ? "Update Ground" : "Add Ground"}
           </button>
+
         </form>
        
         <Toast
@@ -712,4 +741,3 @@ const handleSubmit = async (e) => {
     </div>
   );
 };
-//  console.log("slot.................",slots)

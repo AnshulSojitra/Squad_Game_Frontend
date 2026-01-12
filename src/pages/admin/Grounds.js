@@ -157,7 +157,7 @@ const paginatedGrounds = filteredGrounds.slice(
               </div>
 
               {/* Content */}
-              <div className="p-4 space-y-2">
+              <div className="p-4 space-y-2 mb-2">
                 <h3 className="text-lg font-semibold text-gray-800">
                   {ground.name}
                 </h3>
@@ -191,7 +191,7 @@ const paginatedGrounds = filteredGrounds.slice(
                   📞 {ground.contactNo}
                 </p>
                {ground.amenities?.length > 0 && (
-                  <div className="mt-2">
+                  <div className="mt-2 mb-2">
                     <p className="text-xs text-gray-400 mb-1">Amenities</p>
 
                     <div className="flex flex-wrap gap-2">

@@ -24,18 +24,18 @@ export default function Navbar() {
         </Link>
 
         <Link
-          to="/user/bookingslot"
+          to="/Grounds"
           className="text-gray-300 hover:text-white text-sm font-medium transition"
         >
           Grounds
         </Link>
 
-        <Link
+        {/* <Link
           to="/user/Mybooking"
           className="text-gray-300 hover:text-white text-sm font-medium transition"
         >
           Mybooking
-        </Link>
+        </Link> */}
 
         {/* CTA Button */}
         <Link

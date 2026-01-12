@@ -11,36 +11,75 @@ export default function AdminLogin() {
     password: "",
   });
 
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [generalError, setGeneralError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
+  // ================= HANDLE CHANGE =================
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
+    setGeneralError("");
   };
 
+  // ================= VALIDATION =================
+  const validate = () => {
+    const newErrors = {};
+
+    // Email validation
+    if (!form.email) {
+      newErrors.email = "Email is required";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.email)) {
+        newErrors.email = "Enter a valid email address";
+      } else {
+        const domainName = form.email.split("@")[1]?.split(".")[0];
+        if (!domainName || domainName.length < 4) {
+          newErrors.email =
+            "Email domain must be at least 4 characters";
+        }
+      }
+    }
+
+    // Password validation
+    if (!form.password) {
+      newErrors.password = "Password is required";
+    } else if (form.password.length < 6) {
+      newErrors.password =
+        "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // ================= HANDLE LOGIN =================
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (!validate()) return;
+
     setLoading(true);
-    setError("");
+    setGeneralError("");
 
     try {
       const res = await loginAdmin(form);
 
-      console.log("Login Success:", res.data);
-
-      // save token
       localStorage.setItem("adminToken", res.data.token);
-
       navigate("/admin/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setGeneralError(
+        err.response?.data?.message || "Invalid email or password"
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-      <div className="min-h-screen bg-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gray-900 flex flex-col">
 
       {/* ================= HEADER ================= */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
@@ -61,42 +100,92 @@ export default function AdminLogin() {
 
       {/* ================= LOGIN FORM ================= */}
       <main className="flex flex-1 items-center justify-center px-4">
-        <div className="bg-white p-8 rounded-xl w-full max-w-md shadow-lg">
-          <h2 className="text-2xl font-bold text-center mb-6">
+        <div className="bg-white p-8 rounded-xl w-full max-w-md shadow-2xl">
+          <h2 className="text-2xl font-bold text-center mb-1">
             Admin Login
           </h2>
 
-          {/* Error Message */}
-          {error && (
+          <p className="text-xs text-gray-500 text-center mb-6">
+            Enter admin credentials to continue
+          </p>
+
+          {/* General Error */}
+          {generalError && (
             <p className="text-red-600 text-sm text-center mb-4">
-              {error}
+              {generalError}
             </p>
           )}
 
-
           <form onSubmit={handleLogin} className="space-y-4">
+
+            {/* EMAIL */}
             <Input
               label="Email"
               type="email"
               name="email"
               value={form.email}
               onChange={handleChange}
+              error={errors.email}
+              placeholder="admin@example.com"
             />
 
-            <Input
-              label="Password"
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-            />
+            {/* PASSWORD WITH TOGGLE */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Password
+              </label>
 
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  className={`input-style pr-12 ${
+                    errors.password
+                      ? "border-red-500 focus:ring-red-500"
+                      : ""
+                  }`}
+                />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPassword(!showPassword)
+                  }
+                  className="absolute right-3 top-1/2 -translate-y-1/2
+                             text-gray-500 hover:text-indigo-600"
+                  aria-label={
+                    showPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.password}
+                </p>
+              )}
+            </div>
+
+            {/* SUBMIT BUTTON */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
+              className={`w-full py-3 rounded-lg font-semibold transition
+                ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                }
+              `}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Signing in..." : "Login"}
             </button>
           </form>
         </div>

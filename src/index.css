@@ -49,3 +49,8 @@ code {
 .animate-slide-in {
   animation: slideIn 0.35s ease-out;
 }
+
+.filter-select {
+  @apply h-12 px-4 rounded-xl bg-gray-900/70 text-white
+         border border-gray-700 text-sm
+}
