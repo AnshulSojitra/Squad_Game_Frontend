@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getPublicGround } from "../../services/api";
 import GroundDetails from "./GroundDetails";
 
@@ -14,6 +15,7 @@ export default function Bookingslot() {
   const [state, setState] = useState("");
   const [country, setCountry] = useState("");
   const [game, setGame] = useState("");
+  const navigate = useNavigate("");
 
 
   // for filter
@@ -130,7 +132,8 @@ export default function Bookingslot() {
         {filteredGrounds.map((ground) => (
           <div
             key={ground.id}
-            onClick={() => setSelectedGroundId(ground.id)}
+            // onClick={() => setSelectedGroundId(ground.id)}
+            onClick={() => navigate(`/user/grounds/${ground.id}`)}
             className="bg-white rounded-xl shadow-md hover:shadow-lg cursor-pointer overflow-hidden"
           >
             {/* IMAGE */}

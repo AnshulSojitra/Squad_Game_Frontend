@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import AdminSidebar from "../components/AdminSidebar";
-import AdminHeader from "../components/AdminHeader";
+import AdminSidebar from "../sidebar/AdminSidebar";
+import AdminHeader from "../headers/AdminHeader";
 
 export default function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);

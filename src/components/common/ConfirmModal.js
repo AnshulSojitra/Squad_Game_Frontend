@@ -18,14 +18,14 @@ export default function ConfirmModal({
             onClick={onCancel}
             className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100"
           >
-            Cancel
+            No
           </button>
 
           <button
             onClick={onConfirm}
             className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700"
           >
-            Delete
+            Yes
           </button>
         </div>
       </div>

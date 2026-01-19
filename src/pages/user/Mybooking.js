@@ -57,7 +57,7 @@ export default function MyBookings() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 px-6 py-10">
+    <div className="min-h-screen bg-gray-900 px-6 py-10">
       <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
         <h1 className="text-2xl font-bold mb-6">My Bookings</h1>
 

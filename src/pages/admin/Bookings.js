@@ -33,7 +33,7 @@ export default function AdminBookings() {
         <table className="min-w-full text-sm">
           <thead className="bg-gray-100 text-gray-700">
             <tr>
-              <th className="px-4 py-3 text-left">Booking ID</th>
+              <th className="px-4 py-3 text-left">No</th>
               <th className="px-4 py-3 text-left">User</th>
               <th className="px-4 py-3 text-left">Email</th>
               <th className="px-4 py-3 text-left">Ground</th>
@@ -52,12 +52,12 @@ export default function AdminBookings() {
                 </td>
               </tr>
             ) : (
-              bookings.map((booking) => (
+              bookings.map((booking, index) => (
                 <tr
                   key={booking.bookingId}
                   className="border-t hover:bg-gray-50 text-black"
                 >
-                  <td className="px-4 py-3">{booking.bookingId}</td>
+                  <td className="px-4 py-3">{index + 1}</td>
 
                   <td className="px-4 py-3">
                     {booking.user?.name}
