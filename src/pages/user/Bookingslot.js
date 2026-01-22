@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getPublicGround } from "../../services/api";
 import GroundDetails from "./GroundDetails";
+import Pagination from "../../components/common/Pagination";
 
 const IMAGE_BASE = process.env.REACT_APP_IMAGE_URL;
 
@@ -16,6 +17,11 @@ export default function Bookingslot() {
   const [country, setCountry] = useState("");
   const [game, setGame] = useState("");
   const navigate = useNavigate("");
+
+
+  const ITEMS_PER_PAGE = 15;
+  const [page, setPage] = useState(1);
+
 
 
   // for filter
@@ -40,7 +46,7 @@ export default function Bookingslot() {
     fetchGrounds();
   }, []);
 
-
+// filtered grounds
     const filteredGrounds = grounds.filter((g) => {
       const text = `${g.name} ${g.city} ${g.state} ${g.country}`.toLowerCase();
 
@@ -52,6 +58,14 @@ export default function Bookingslot() {
       (!game || g.game === game)
      );
    });
+
+// paginated grounds 
+const totalPages = Math.ceil(filteredGrounds.length / ITEMS_PER_PAGE);
+
+const paginatedGrounds = filteredGrounds.slice(
+  (page - 1) * ITEMS_PER_PAGE,
+  page * ITEMS_PER_PAGE
+);
 
 
 
@@ -129,7 +143,7 @@ export default function Bookingslot() {
         </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredGrounds.map((ground) => (
+        {paginatedGrounds.map((ground) => (
           <div
             key={ground.id}
             // onClick={() => setSelectedGroundId(ground.id)}
@@ -192,9 +206,15 @@ export default function Bookingslot() {
                 ₹{ground.pricePerSlot} / slot
               </p> */}
             </div>
-          </div>
+          </div>  
         ))}
       </div>
+                  <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
+
     </div>
   );
 }

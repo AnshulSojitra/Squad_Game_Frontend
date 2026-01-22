@@ -1,13 +1,36 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getUserProfile } from "../../services/api";
+import BackButton from "../common/BackButton";
 
 export default function UserHeader({ collapsed, setCollapsed }) {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("userToken");
 
+  /* ================= FETCH USER ================= */
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchUser = async () => {
+      try {
+        const res = await getUserProfile();
+        setUser(res.data);
+
+        // optional but recommended
+        localStorage.setItem("user", JSON.stringify(res.data));
+      } catch (error) {
+        console.error("Failed to fetch user profile");
+      }
+    };
+
+    fetchUser();
+  }, [token]);
+
+  /* ================= CLOSE DROPDOWN ================= */
   useEffect(() => {
     const close = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -18,6 +41,7 @@ export default function UserHeader({ collapsed, setCollapsed }) {
     return () => document.removeEventListener("mousedown", close);
   }, []);
 
+  /* ================= LOGOUT ================= */
   const logout = () => {
     localStorage.removeItem("userToken");
     localStorage.removeItem("user");
@@ -25,21 +49,15 @@ export default function UserHeader({ collapsed, setCollapsed }) {
   };
 
   return (
-    <header className="h-16 bg-white border-b shadow-sm flex items-center justify-between px-6">
+    <header className="h-16 bg-[#0b1220] border-b shadow-sm flex items-center justify-between px-6 text-white">
+      <BackButton/>
       
-      {/* Left */}
+      {/* LEFT */}
       <div className="flex items-center gap-4">
-        {/* <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-xl"
-        >
-          ☰
-        </button> */}
-
         <h1 className="text-lg font-semibold">BoxArena User</h1>
       </div>
 
-      {/* Right */}
+      {/* RIGHT */}
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setOpen(!open)}
@@ -50,13 +68,14 @@ export default function UserHeader({ collapsed, setCollapsed }) {
             className="w-9 h-9 rounded-full border"
             alt="user"
           />
+
           <span className="font-medium">
             {user?.name || "User"}
           </span>
         </button>
 
         {open && (
-          <div className="absolute right-0 mt-3 w-48 bg-white rounded-md shadow-lg z-50">
+          <div className="absolute right-0 mt-3 w-48 bg-white rounded-md shadow-lg z-50 text-black">
             <button
               onClick={() => navigate("/user/profile")}
               className="block w-full text-left px-4 py-2 hover:bg-gray-100"
@@ -69,6 +88,13 @@ export default function UserHeader({ collapsed, setCollapsed }) {
               className="block w-full text-left px-4 py-2 hover:bg-gray-100"
             >
               📅 My Bookings
+            </button>
+
+          <button
+              onClick={() => navigate("/user/change-password")}
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+            >
+              🔒 Change Password
             </button>
 
             <hr />

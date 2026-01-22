@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import BackButton from "../common/BackButton";
 
 export default function SuperAdminHeader() {
   const [open, setOpen] = useState(false);
@@ -22,7 +23,9 @@ export default function SuperAdminHeader() {
   };
 
   return (
-    <header className="h-16 bg-white flex items-center justify-between px-6 shadow">
+    <header className="h-16 bg-[#0b1220] border-b shadow-sm flex items-center justify-between px-6 shadow text-white">
+      <BackButton />
+      {/* left */}
       <h1 className="text-lg font-semibold">BoxArena Super Admin</h1>
 
       <div className="relative" ref={ref}>
@@ -39,7 +42,7 @@ export default function SuperAdminHeader() {
         </button>
 
         {open && (
-          <div className="absolute right-0 mt-3 w-48 bg-white rounded-md shadow-lg z-50">
+          <div className="absolute right-0 mt-3 w-48 bg-white rounded-md shadow-lg z-50 text-black">
             <button
               onClick={() => navigate("/super-admin/profile")}
               className="block w-full px-4 py-2 text-left hover:bg-gray-100"

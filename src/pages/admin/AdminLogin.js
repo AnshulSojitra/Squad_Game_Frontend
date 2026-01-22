@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Input from "../components/common/Input";
-import { loginAdmin } from "../services/api";
+import Input from "../../components/common/Input";
+import { loginAdmin } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminLogin() {
@@ -99,8 +99,11 @@ export default function AdminLogin() {
       </header>
 
       {/* ================= LOGIN FORM ================= */}
-      <main className="flex flex-1 items-center justify-center px-4">
-        <div className="bg-white p-8 rounded-xl w-full max-w-md shadow-2xl">
+      <main className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4">
+        {/* className="flex flex-1 items-center justify-center px-4" */}
+        {/* <div className="bg-white p-8 rounded-xl w-full max-w-md shadow-2xl"> */}
+        <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-xl p-8 text-white">
+           {/* Header */}
           <h2 className="text-2xl font-bold text-center mb-1">
             Admin Login
           </h2>
@@ -118,7 +121,7 @@ export default function AdminLogin() {
 
           <form onSubmit={handleLogin} className="space-y-4">
 
-            {/* EMAIL */}
+            {/* EMAIL
             <Input
               label="Email"
               type="email"
@@ -127,7 +130,23 @@ export default function AdminLogin() {
               onChange={handleChange}
               error={errors.email}
               placeholder="admin@example.com"
-            />
+            /> */}
+            <div className="mb-4">
+            <label className="block text-sm font-medium">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="admin@gmail.com"
+                className={`w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none text-black
+                  ${errors.email ? "border-red-500" : "border-gray-300"}
+                `}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              )}
+            </div>
 
             {/* PASSWORD WITH TOGGLE */}
             <div>
@@ -142,7 +161,7 @@ export default function AdminLogin() {
                   value={form.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className={`input-style pr-12 ${
+                  className={`input-style pr-12 text-black ${
                     errors.password
                       ? "border-red-500 focus:ring-red-500"
                       : ""
@@ -151,10 +170,19 @@ export default function AdminLogin() {
 
                 <button
                   type="button"
+                  onClick={() => navigate("/admin/forgot-password")}
+                  className="text-sm text-indigo-600 hover:underline mt-3"
+                >
+                  Forgot Password?
+                </button>
+
+
+                <button
+                  type="button"
                   onClick={() =>
                     setShowPassword(!showPassword)
                   }
-                  className="absolute right-3 top-1/2 -translate-y-1/2
+                  className="absolute right-3 top-1/3 -translate-y-1/2
                              text-gray-500 hover:text-indigo-600"
                   aria-label={
                     showPassword

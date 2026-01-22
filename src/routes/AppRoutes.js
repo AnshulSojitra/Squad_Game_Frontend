@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import AdminLogin from "../pages/AdminLogin";
+import AdminLogin from "../pages/admin/AdminLogin";
 import Dashboard from "../pages/admin/Dashboard";
 import { Games } from "../pages/admin/Games";
 import Grounds from "../pages/admin/Grounds";
@@ -19,8 +19,13 @@ import { Navigate } from "react-router-dom";
 import UserProtectedRoute from "./UserProtectedRoute";
 import GroundDetails from "../pages/user/GroundDetails";
 import PublicLayout from "../components/layouts/PublicLayout";
-import AdminProfile from "../pages/admin/AdminProfile";
+import Profile from "../pages/admin/Profile";
 import UserProfile from "../pages/user/UserProfile";
+import UserChangePassword from "../pages/user/UserChangePassword";
+import UserForgotPassword from "../pages/user/UserForgotPassword";
+import UserResetPassword from "../pages/user/UserResetPassword";
+import AdminForgotPassword from "../pages/admin/AdminForgotPassword";
+import AdminResetPassword from "../pages/admin/AdminResetPassword";
 
 
 /* Super Admin */
@@ -35,6 +40,8 @@ import SuperAdminProtectedRoute from "./SuperAdminProtectedRoutes";
 import SuperAdminUserBook from "../pages/super-admin/SuperAdminUserBook";
 import SuperAdminAdminDetails from "../pages/super-admin/SuperAdminAdminDetails";
 import SuperAdminGroundsBooking from "../pages/super-admin/SuperAdminGroundBooking";
+import SuperAdminCreateAdmin from "../pages/super-admin/SuperAdminCreateAdmin";
+import SuperAdminProfile from "../pages/super-admin/SuperAdminProfile";
 export const AppRoutes = () => {
   return (
 
@@ -52,6 +59,8 @@ export const AppRoutes = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/user/login" element={<UserLogin />} />
         <Route path="/user/UserRegister" element={<UserRegister />} />
+        <Route path="user/forgot-password" element={<UserForgotPassword/>}/>
+        <Route path="/user/reset-password/:token" element={<UserResetPassword/>}/>
 
         {/* Public Booking View */}
        
@@ -64,27 +73,21 @@ export const AppRoutes = () => {
             <Route path="games" element={<Games />} />
             <Route path="bookingslot" element={<Bookingslot />} />
             <Route path="mybooking" element={<Mybooking />} />
-            <Route path="profile" element={<UserProfile/>}/>
+            
           </Route>
+          <Route path="/user/profile" element={<UserProfile/>}/>
+          <Route path="/user/change-password" element={<UserChangePassword/>}/>
         </Route>
         
         <Route path="/Grounds" element={<Bookingslot />} />
-        
         <Route path="/user/grounds/:groundId" element={<GroundDetails />} />
         
       
        {/* Admin Login without sidebar */}
        <Route path="/login" element={<AdminLogin />} />
-       
+       <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
+       <Route path="/admin/reset-password" element={<AdminResetPassword />} />
 
-      {/* Admin
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="games" element={<Games />} />
-        <Route path="grounds" element={<Grounds />} />
-        <Route path="bookings" element={<Bookings />} />
-        <Route path="addground" element={<AddGround />} />
-      </Route> */}
 
       {/* Admin Protected */}
       <Route element={<AdminProtectedRoute />}>
@@ -96,8 +99,9 @@ export const AppRoutes = () => {
           <Route path="grounds" element={<Grounds />} />
           <Route path="change-password" element={<ChangePassword />} />
           <Route path="addground" element={<AddGround />} />
-          <Route path="profile" element={<AdminProfile />} />
+          
         </Route>
+        <Route path="/admin/profile" element={<Profile />} />
       </Route>
 
 
@@ -116,12 +120,13 @@ export const AppRoutes = () => {
         <Route path="dashboard" element={<SuperAdminDashboard />} />
         <Route path="users" element={<SuperAdminUsers />} />
         <Route path="admins" element={<SuperAdminAdmins />} />
+        <Route path="/super-admin/admins/create" element={<SuperAdminCreateAdmin />} />
         <Route path="grounds" element={<SuperAdminGrounds />} />
         <Route path="bookings" element={<SuperAdminBookings />} />
         <Route path="users/:userId/bookings" element={<SuperAdminUserBook/>}/>
         <Route path="admins/:adminId" element={<SuperAdminAdminDetails />}/>
-        <Route path="/super-admin/grounds/:groundId/bookings" element={<SuperAdminGroundsBooking />} />
-
+        <Route path="grounds/:groundId/bookings" element={<SuperAdminGroundsBooking />} />
+        <Route path="/super-admin/profile" element={<SuperAdminProfile />} />
       </Route>
 
     </Routes>

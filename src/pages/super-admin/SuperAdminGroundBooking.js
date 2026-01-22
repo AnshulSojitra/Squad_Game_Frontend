@@ -1,14 +1,43 @@
 import { useEffect, useState } from "react";
 import { useParams , useNavigate } from "react-router-dom";
-import { getGroundBookings } from "../../services/api";
+import { getGroundBookings , cancelBookingBySuperAdmin } from "../../services/api";
+import ConfirmModal from "../../components/common/ConfirmModal";
 
 export default function SuperAdminGroundsBooking() {
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
   const { groundId } = useParams();
   const [bookings, setBookings] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
     fetchBookings();
   }, []);
+
+  const handleOpenCancelModal = (booking) => {
+  setSelectedBooking(booking);
+  setIsConfirmOpen(true);
+};
+  const handleConfirmCancel = async () => {
+  try {
+    cancelBookingBySuperAdmin(selectedBooking.id);
+
+    // Update UI
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.id === selectedBooking.id
+          ? { ...b, status: "cancelled" }
+          : b
+      )
+    );
+
+    setIsConfirmOpen(false);
+    setSelectedBooking(null);
+  } catch (error) {
+    console.error(error);
+    alert("Failed to cancel booking");
+  }
+};
+
 
   const fetchBookings = async () => {
     const res = await getGroundBookings(groundId);
@@ -17,12 +46,6 @@ export default function SuperAdminGroundsBooking() {
 
   return (
     <div className="min-h-screen bg-gray-850 p-6">
-        <button
-        onClick={() => navigate("/super-admin/admins")}
-        className="mb-4 flex items-center gap-2 text-sm font-medium text-white hover:text-gray-400"
-      >
-        ← Back to admin 
-      </button>
       <h2 className="text-2xl font-semibold text-white mb-6">
         Ground Bookings
       </h2>
@@ -69,7 +92,7 @@ export default function SuperAdminGroundsBooking() {
                     ₹{booking.totalPrice}
                   </td>
 
-                  <td className="px-6 py-4">
+                  {/* <td className="px-6 py-4">
                     <span
                       className={`px-3 py-1 text-xs font-semibold rounded-full ${
                         booking.status === "confirmed"
@@ -79,7 +102,23 @@ export default function SuperAdminGroundsBooking() {
                     >
                       {booking.status}
                     </span>
-                  </td>
+                  </td> */}
+                  <td className="px-6 py-4">
+                  {booking.status !== "cancelled" ? (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // prevent row click
+                        handleOpenCancelModal(booking);
+                      }}
+                      className="px-4 py-1.5 text-sm font-medium text-red-700 bg-red-100 rounded-lg hover:bg-red-200"
+                    >
+                      Cancel
+                    </button>
+                  ) : (
+                    <span className="text-sm text-gray-400">Cancelled</span>
+                  )}
+                </td>
+
                 </tr>
               ))}
 
@@ -94,7 +133,17 @@ export default function SuperAdminGroundsBooking() {
           </table>
         </div>
       </div>
-
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        title="Cancel Booking"
+        message="Are you sure you want to cancel this booking? This action cannot be undone."
+        onCancel={() => {
+          setIsConfirmOpen(false);
+          setSelectedBooking(null);
+        }}
+        onConfirm={handleConfirmCancel}
+      />
     </div>
+    
   );
 }

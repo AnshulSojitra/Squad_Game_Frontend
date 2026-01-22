@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAdminProfile } from "../../services/api";
+import BackButton from "../common/BackButton";
 
 export default function AdminHeader() {
   const [open, setOpen] = useState(false);
@@ -47,7 +48,8 @@ export default function AdminHeader() {
   };
 
   return (
-    <header className="h-16 bg-white border-b shadow-sm flex items-center justify-between px-6">
+    <header className="h-16 bg-[#0b1220] border-b shadow-sm flex items-center justify-between px-6 text-white">
+      <BackButton />
       {/* Left */}
       <div className="flex items-center gap-4">
         <h1 className="text-lg font-semibold">BoxArena Admin</h1>
@@ -67,14 +69,14 @@ export default function AdminHeader() {
           />
 
           {/* Admin Name */}
-          <span className="font-medium text-gray-800">
+          <span className="font-medium text-white">
             {admin ? admin.name : "Admin"}
           </span>
         </button>
 
         {/* Dropdown */}
         {open && (
-          <div className="absolute right-0 mt-3 w-48 bg-white rounded-md shadow-lg z-50">
+          <div className="absolute right-0 mt-3 w-48 bg-white rounded-md shadow-lg z-50 text-black">
             <button
               onClick={() => navigate("/admin/profile")}
               className="block w-full text-left px-4 py-2 hover:bg-gray-100"

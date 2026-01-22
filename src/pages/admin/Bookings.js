@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import { getAdminBookings } from "../../services/api";
+import Pagination from "../../components/common/Pagination";
 
 export default function AdminBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+
+
+  const ITEMS_PER_PAGE = 1;
+  const [page, setPage] = useState(1);
+
 
   useEffect(() => {
     fetchBookings();
@@ -21,12 +27,20 @@ export default function AdminBookings() {
     }
   };
 
+  const totalPages = Math.ceil(bookings.length / ITEMS_PER_PAGE);
+
+const paginatedBookings = bookings.slice(
+  (page - 1) * ITEMS_PER_PAGE,
+  page * ITEMS_PER_PAGE
+);
+
+
   if (loading) {
     return <p className="p-6 text-gray-500">Loading bookings...</p>;
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 text-white">
       <h1 className="text-2xl font-bold mb-6">User Bookings</h1>
 
       <div className="overflow-x-auto bg-white rounded-xl shadow">
@@ -52,7 +66,7 @@ export default function AdminBookings() {
                 </td>
               </tr>
             ) : (
-              bookings.map((booking, index) => (
+              paginatedBookings.map((booking, index) => (
                 <tr
                   key={booking.bookingId}
                   className="border-t hover:bg-gray-50 text-black"
@@ -101,6 +115,12 @@ export default function AdminBookings() {
           </tbody>
         </table>
       </div>
+      <Pagination
+  currentPage={page}
+  totalPages={totalPages}
+  onPageChange={setPage}
+/>
+
     </div>
   );
 }

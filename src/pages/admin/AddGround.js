@@ -93,18 +93,21 @@ const handleAddSlot = () => {
       : slots[slots.length - 1].end;
 
   if (!startTime || !slotEnd) {
-    alert("Select start and end time");
+     showToast("error", "Select start and end time");
+    // alert("Select start and end time");
     return;
   }
 
   // Opening / closing validation
   if (startTime < openingTime || slotEnd > closingTime) {
-    alert("Slot must be within opening and closing time");
+    showToast("error", "Slot must be within opening and closing time");
+    //alert("Slot must be within opening and closing time");
     return;
   }
 
   if (startTime >= slotEnd) {
-    alert("End time must be after start time");
+    showToast("error", "End time must be after start time");
+    //alert("End time must be after start time");
     return;
   }
 

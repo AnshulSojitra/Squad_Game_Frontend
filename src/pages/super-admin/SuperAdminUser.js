@@ -4,6 +4,9 @@ import {
   getAllUsers,
   toggleUserBlock,
 } from "../../services/api";
+import Pagination from "../../components/common/Pagination";
+import ToggleSwitch from "../../components/common/ToggleSwitch";
+
 
 
 
@@ -11,7 +14,18 @@ export default function SuperAdminUsers() {
   const [users, setUsers] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
   const navigate = useNavigate();
+  const ITEMS_PER_PAGE = 6;
+  const [page, setPage] = useState(1);
 
+  const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE);
+
+  const paginatedUsers = users.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
+
+
+  /* ---------------- Fetch Users ---------------- */
   const fetchUsers = async () => {
     const res = await getAllUsers();
     setUsers(res.data.users);
@@ -54,7 +68,7 @@ const handleToggleBlock = async (user) => {
           </thead>
 
           <tbody>
-            {users.map((u) => (
+            {paginatedUsers.map((u) => (
               <tr
                 key={u.id}
                 className="border-b hover:bg-gray-50 cursor-pointer"
@@ -79,7 +93,7 @@ const handleToggleBlock = async (user) => {
                   )}
                 </td>
 
-                <td
+                {/* <td
                   className="p-3"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -99,12 +113,33 @@ const handleToggleBlock = async (user) => {
                       : "Block"}
                   </button>
 
+                </td> */}
+
+                <td
+                  className="p-3"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {loadingId === u.id ? (
+                    <span className="text-sm text-gray-500">Updating...</span>
+                  ) : (
+                    <ToggleSwitch
+                      enabled={u.isBlocked}
+                      onToggle={() => handleToggleBlock(u)}
+                    />
+                  )}
                 </td>
+
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
+
     </div>
   );
 }

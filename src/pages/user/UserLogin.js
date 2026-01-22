@@ -94,8 +94,11 @@ export default function UserLogin() {
       </header> */}
 
       {/* ================= LOGIN FORM ================= */}
-      <main className="flex flex-1 items-center justify-center px-4">
-        <div className="bg-white p-8 rounded-xl w-full max-w-md shadow-lg">
+      <main className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4">
+         {/* className="flex flex-1 items-center justify-center px-4" */}
+        {/* <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4"></div> */}
+        {/* <div className="bg-white p-8 rounded-xl w-full max-w-md shadow-lg"> */}
+           <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-xl p-8 text-white">
           <h2 className="text-2xl font-bold text-center mb-6">
             User Login
           </h2>
@@ -116,7 +119,8 @@ export default function UserLogin() {
                 name="email"
                 value={form.email}
                 onChange={handleChange}
-                className={`w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none
+                placeholder="player@gmail.com"
+                className={`w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none text-black
                   ${errors.email ? "border-red-500" : "border-gray-300"}
                 `}
               />
@@ -126,7 +130,7 @@ export default function UserLogin() {
             </div>
 
 
-            <div className="mb-4">
+            <div className="mb-4 text-white">
              <label className="block text-sm font-medium mb-1">
                 Password
               </label>
@@ -138,7 +142,7 @@ export default function UserLogin() {
                   value={form.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="input-style pr-16"
+                  className="input-style pr-16 text-black"
                 />
 
                 <button
@@ -157,7 +161,14 @@ export default function UserLogin() {
               )}
             </div>
 
-              
+              <button
+                type="button"
+                onClick={() => navigate("/user/forgot-password")}
+                className="text-sm text-indigo-600 hover:underline"
+              >
+                Forgot Password?
+              </button>
+
 
             <button
               type="submit"

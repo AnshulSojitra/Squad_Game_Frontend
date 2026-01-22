@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { changeAdminPassword } from "../../services/api";
+import { changeUserPassword } from "../../services/api";
 import Toast from "../../components/common/Toast";
+import BackButton from "../../components/common/BackButton";
 
-export default function AdminChangePassword() {
+export default function UserChangePassword() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -27,10 +28,12 @@ export default function AdminChangePassword() {
 });
 
 
+ /* ---------------- TOAST HANDLER ---------------- */
+const showToast = (type, message) => {
+  setToast({ show: true, type, message });
+};
 
-
-
- /* ---------------- VALIDATION ---------------- */
+  /* ---------------- VALIDATION ---------------- */
 
   const validate = () => {
     const e = {};
@@ -55,11 +58,6 @@ export default function AdminChangePassword() {
     return Object.keys(e).length === 0;
   };
 
-  /* ---------------- TOAST HANDLER ---------------- */
-  const showToast = (type, message) => {
-    setToast({ show: true, type, message });
-  };
-
   /* ---------------- HANDLERS ---------------- */
 
   const handleChange = (e) => {
@@ -75,14 +73,14 @@ export default function AdminChangePassword() {
 
     setLoading(true);
     try {
-      await changeAdminPassword({
+      await changeUserPassword({
         currentPassword: form.oldPassword,
         newPassword: form.newPassword,
       });
 
-    //   alert("Password updated successfully");
+      //alert("Password updated successfully");
         showToast("success","Password updated successfully");
-      navigate("/admin/profile");
+       navigate("/user/profile");
     } catch (err) {
       setServerError(
         err.response?.data?.message || "Failed to update password"
@@ -95,14 +93,18 @@ export default function AdminChangePassword() {
   /* ---------------- UI ---------------- */
 
   return (
-    <div className="min-h-screen overflow-hidden flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 px-4">
-      <div className="h-full overflow-y-auto w-full max-w-md bg-white rounded-2xl shadow-2xl text-gray-800">
+    <div className="min-h-screen overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-900 via-slate-900 to-gray-900 px-4">
+      {/* FLOATING BACK BUTTON */}
+      <div className="absolute top-6 left-6 z-50">
+        <BackButton />
+      </div>
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
 
         {/* HEADER */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-6 text-white text-center">
-          <h2 className="text-2xl font-bold">Admin Change Password</h2>
+        <div className="bg-gradient-to-r from-indigo-600 to-blue-600 px-8 py-6 text-white text-center">
+          <h2 className="text-2xl font-bold">Update Password</h2>
           <p className="text-sm opacity-90 mt-1">
-            Update your admin credentials securely
+            Keep your account secure
           </p>
         </div>
 
@@ -225,12 +227,12 @@ export default function AdminChangePassword() {
             </button>
           </form>
         </div>
-        <Toast
-          show={toast.show}
-          type={toast.type}
-          message={toast.message}
-          onClose={() => setToast({ ...toast, show: false })}
-        />
+         <Toast
+                  show={toast.show}
+                  type={toast.type}
+                  message={toast.message}
+                  onClose={() => setToast({ ...toast, show: false })}
+                />
       </div>
     </div>
   );

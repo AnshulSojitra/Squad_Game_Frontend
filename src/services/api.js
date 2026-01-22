@@ -19,7 +19,7 @@ const API = axios.create({
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("superAdminToken");
   req.headers["ngrok-skip-browser-warning"] = "true";
-  req.headers["Content-Type"] = "multipart/form-data";
+  req.headers["Content-Type"] = "application/json";
   if (token) {
     req.headers.Authorization = `Bearer ${token}`;
   }
@@ -28,20 +28,16 @@ API.interceptors.request.use((req) => {
 // <=============================================== SUPER ADMIN ================================================>
 
 /* ================= SUPER ADMIN LOGIN ================= */
-export const superAdminLogin = (data) => {
-  return api.post("/super-admin/login", data);
+export const superAdminLogin = (data) =>{ 
+  return api.post("/super-admin/login", data)
 };
+
 
 /* ================= USERS ================= */
 
 // get all users
 export const getAllUsers = () => API.get("/super-admin/users");
 
-// block / unblock user
-// export const toggleUserBlock = (userId) =>
-//   API.patch(`/super-admin/users/${userId}/toggle-block`);
-// export const blockUser = (userId) =>
-//   API.patch(`/super-admin/users/${userId}/block`);
 export const toggleUserBlock = (userId) =>
   API.patch(`/super-admin/user/block/${userId}`);
 
@@ -66,6 +62,11 @@ export const getAllBookingsBySuperAdmin = () => {
 };
 
 
+// Admin Registration
+export const createAdmin = (data) =>{
+ return API.post("/super-admin/admins", data);
+}
+
 // get all admins
 export const getAllAdmins = () =>
   API.get("/super-admin/admins");
@@ -74,12 +75,32 @@ export const getAllAdmins = () =>
 export const getAdminGrounds = (adminId) =>
   API.get(`/super-admin/admins/${adminId}/grounds`);
 
+// Get ground bookings by ground
 export const getGroundBookings = (groundId) =>
   API.get(`/super-admin/grounds/${groundId}/bookings`);
 
+// Block and Unblock 
 export const toggleAdminBlock = (adminId) =>
   API.patch(`/super-admin/admin/block/${adminId}`);
 
+export const toggleGroundBlock = (groundId) =>
+  API.patch(`/super-admin/ground/block/${groundId}`);
+
+// Get all grounds (Super Admin)
+export const getAllGroundsSupAdi = () => {
+  return API.get(`/super-admin/grounds`);
+};
+
+// all details of super admin
+export const getSuperAdminProfile = () => {
+  // const token = localStorage.getItem("superAdminToken");
+
+  return API.get("/super-admin/me", {
+    // headers: {
+    //   Authorization: `Bearer ${token}`,
+    // },
+  });
+};
 
 
 // <=============================================== ADMIN ================================================>
@@ -191,6 +212,32 @@ export const getAdminBookings = () => {
   });
 };
 
+// admin change passwoed 
+export const changeAdminPassword = (data) => {
+  const token = localStorage.getItem("adminToken");
+
+  return api.put("/admin/change-password", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+// ADMIN FORGOT PASSWORD
+export const adminForgotPassword = (email) => {
+  return api.post("/admin/forgot-password", { email });
+};
+
+// ADMIN RESET PASSWORD
+export const adminResetPassword = ({ email, otp, newPassword }) => {
+  return api.post("/admin/reset-password", {
+    email,
+    otp,
+    newPassword,
+  });
+};
+
+
 
 
 
@@ -272,6 +319,30 @@ export const cancelUserBooking = (bookingId) => {
       },
     }
   );
+};
+
+export const changeUserPassword = (data) => {
+  const token = localStorage.getItem("userToken");
+
+  return api.put("/user/change-password", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+// USER FORGOT PASSWORD
+export const userForgotPassword = (email) => {
+  return api.post("/user/forgot-password", { email });
+};
+
+// User reset password
+export const userResetPassword = ({ email, otp, newPassword }) => {
+  return api.post("/user/reset-password", {
+    email,
+    otp,
+    newPassword,
+  });
 };
 
 

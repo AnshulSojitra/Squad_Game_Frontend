@@ -1,10 +1,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllAdmins, toggleAdminBlock } from "../../services/api";
+import Pagination from "../../components/common/Pagination";
+
+
+
 
 export default function SuperAdminAdmins() {
   const [admins, setAdmins] = useState([]);
   const navigate = useNavigate();
+  const ITEMS_PER_PAGE = 10;
+  const [page, setPage] = useState(1);
+
+  const totalPages = Math.ceil(admins.length / ITEMS_PER_PAGE);
+
+const paginatedAdmins = admins.slice(
+  (page - 1) * ITEMS_PER_PAGE,
+  page * ITEMS_PER_PAGE
+);
+
 
   /* ---------------- Toggle Component ---------------- */
   function ToggleSwitch({ enabled, onToggle }) {
@@ -63,10 +77,31 @@ export default function SuperAdminAdmins() {
 
   /* ---------------- UI ---------------- */
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
-      <h2 className="text-2xl font-semibold text-white mb-6">
-        Admins
-      </h2>
+    <div className="min-h-screen bg-gray-850 p-6">
+     {/* Page Header */}
+<div className="flex items-center justify-between mb-6">
+  <h2 className="text-2xl font-semibold text-white">
+    Admins
+  </h2>
+
+  <button
+    onClick={() => navigate("/super-admin/admins/create")}
+    className="
+      inline-flex items-center gap-2
+      bg-gradient-to-r from-blue-600 to-indigo-600
+      hover:from-blue-700 hover:to-indigo-700
+      text-white px-5 py-2.5 rounded-lg
+      text-sm font-semibold
+      shadow-lg hover:shadow-xl
+      transition-all duration-200
+      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+    "
+  >
+    <span className="text-lg leading-none">+</span>
+    Add Admin
+  </button>
+</div>
+
 
       <div className="bg-white rounded-xl shadow-xl overflow-hidden">
         <div className="overflow-x-auto">
@@ -83,7 +118,7 @@ export default function SuperAdminAdmins() {
             </thead>
 
             <tbody className="divide-y divide-gray-200">
-              {admins.map((admin, index) => (
+              {paginatedAdmins.map((admin, index) => (
                 <tr
                   key={admin.id}
                   onClick={() =>
@@ -149,6 +184,11 @@ export default function SuperAdminAdmins() {
           </table>
         </div>
       </div>
+      <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
     </div>
   );
 }

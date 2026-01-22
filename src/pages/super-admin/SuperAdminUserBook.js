@@ -5,6 +5,7 @@ import {
   cancelBookingBySuperAdmin,
 } from "../../services/api";
 import ConfirmModal from "../../components/common/ConfirmModal";
+import Pagination from "../../components/common/Pagination";
 
 export default function SuperAdminUserBook() {
   const { userId } = useParams();
@@ -13,6 +14,25 @@ export default function SuperAdminUserBook() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
   const navigate = useNavigate();
+  const ITEMS_PER_PAGE = 2;
+  const [page, setPage] = useState(1);
+
+  let bookingList = data ? data.bookings : [];
+
+  const totalPages = Math.max(
+  1,
+  Math.ceil(bookingList.length / ITEMS_PER_PAGE)
+);
+
+  const paginatedBookings = bookingList.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
+
+  
+
+
+  /* ---------------- FETCH BOOKINGS ---------------- */
   const fetchBookings = async () => {
     const res = await SupAdigetUserBookings(userId);
     setData(res.data);
@@ -22,9 +42,19 @@ export default function SuperAdminUserBook() {
     fetchBookings();
   }, [userId]);
 
+ useEffect(() => {
+    setPage(1);
+  }, [data]);
+
+
   const openCancelConfirm = (bookingId) => {
     setSelectedBookingId(bookingId);
     setConfirmOpen(true);
+  };
+  
+  const handlePageChange = (newPage) => {
+    // if (newPage < 1 || newPage > totalPages) return null;
+    setPage(newPage);
   };
 
   const handleConfirmCancel = async () => {
@@ -32,7 +62,7 @@ export default function SuperAdminUserBook() {
 
     setLoadingId(selectedBookingId);
     try {
-      cancelBookingBySuperAdmin(selectedBookingId);
+      await cancelBookingBySuperAdmin(selectedBookingId);
       await fetchBookings();
     } catch (err) {
       alert("Failed to cancel booking");
@@ -65,7 +95,7 @@ export default function SuperAdminUserBook() {
       <p className="text-gray-100 mb-6">{data.user.email}</p>
 
       <div className="space-y-4">
-        {data.bookings.map((b) => (
+        {paginatedBookings.map((b) => (
           <div
             key={b.id}
             className="bg-white rounded-lg shadow p-4 flex justify-between items-center"
@@ -109,6 +139,21 @@ export default function SuperAdminUserBook() {
           </div>
         ))}
       </div>
+      {/* <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      /> */}
+
+      <div className="mt-8 flex justify-center">
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
+
+
 
       {/* CONFIRM MODAL */}
       <ConfirmModal
@@ -118,6 +163,7 @@ export default function SuperAdminUserBook() {
         onConfirm={handleConfirmCancel}
         onCancel={handleCancelModal}
       />
+      
     </div>
   );
 }

@@ -1,52 +1,43 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { getUserProfile } from "../../services/api";
-import BackButton from "../../components/common/BackButton";
+import { getSuperAdminProfile } from "../../services/api";
 
-export default function UserProfile() {
-  const [user, setUser] = useState(null);
+export default function SuperAdminProfile() {
+  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const token = localStorage.getItem("userToken");
-
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchProfile = async () => {
       try {
-        const res = await getUserProfile();
-        setUser(res.data);
-      } catch (error) {
-        console.error("Error fetching user profile", error);
+        const res = await getSuperAdminProfile();
+        setProfile(res.data);
+      } catch (err) {
+        console.error("Failed to load profile", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUser();
-  }, [token]);
+    fetchProfile();
+  }, []);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full text-gray-400">
+      <p className="text-center mt-10 text-white">
         Loading profile...
-      </div>
+      </p>
     );
   }
 
-  if (!user) {
+  if (!profile) {
     return (
-      <div className="text-center text-red-500 mt-10">
+      <p className="text-center mt-10 text-red-500">
         Failed to load profile
-      </div>
+      </p>
     );
   }
 
   return (
-<>
-     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-6 py-10">
-      {/* FLOATING BACK BUTTON */}
-      <div className="absolute top-6 left-6 z-50">
-        <BackButton />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-6 py-10">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
 
         {/* HEADER */}
@@ -59,9 +50,9 @@ export default function UserProfile() {
             />
             <div>
               <h1 className="text-2xl font-bold">
-                {user.name}
+                {profile.name}
               </h1>
-              <p className="opacity-90">Player</p>
+              <p className="opacity-90">Super Administrator</p>
             </div>
           </div>
         </div>
@@ -74,36 +65,29 @@ export default function UserProfile() {
             <div>
               <label className="text-sm text-gray-500">Name</label>
               <p className="text-lg font-semibold text-gray-900">
-                {user.name}
+                {profile.name}
               </p>
             </div>
 
             <div>
               <label className="text-sm text-gray-500">Email</label>
               <p className="text-lg font-semibold text-gray-900">
-                {user.email}
+                {profile.email}
               </p>
             </div>
 
-            {/* <div>
-              <label className="text-sm text-gray-500">Phone Number : </label>
+            <div>
+              <label className="text-sm text-gray-500">Role</label>
               <p className="inline-block px-4 py-1 mt-1 rounded-full
                              bg-indigo-100 text-indigo-700 font-semibold text-sm">
-               9988223311
-              </p>
-            </div> */}
-
-              <div>
-              <label className="text-sm text-gray-500">Phone Number</label>
-              <p className="text-lg font-semibold text-gray-900">
-                {user.phoneNumber}
+                Super Admin
               </p>
             </div>
 
             <div>
               <label className="text-sm text-gray-500">User ID</label>
               <p className="text-lg font-semibold text-gray-900">
-                #{user.id}
+                #{profile.id}
               </p>
             </div>
 
@@ -112,6 +96,5 @@ export default function UserProfile() {
         </div>
       </div>
     </div>
-</>
   );
 }

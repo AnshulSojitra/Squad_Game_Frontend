@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import { getUserBookings, cancelUserBooking } from "../../services/api";
+import Pagination from "../../components/common/Pagination";
 
 export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancelLoading, setCancelLoading] = useState(null);
+  const ITEMS_PER_PAGE = 10;
+  const [page, setPage] = useState(1);
+
+
 
   useEffect(() => {
     fetchBookings();
@@ -52,6 +57,15 @@ export default function MyBookings() {
     }
   };
 
+  // paginated grounds 
+  const totalPages = Math.ceil(bookings.length / ITEMS_PER_PAGE);
+
+const paginatedBookings = bookings.slice(
+  (page - 1) * ITEMS_PER_PAGE,
+  page * ITEMS_PER_PAGE
+);
+
+
   if (loading) {
     return <p className="text-center mt-10">Loading bookings...</p>;
   }
@@ -80,7 +94,7 @@ export default function MyBookings() {
               </thead>
 
               <tbody>
-                {bookings.map((booking) => (
+                {paginatedBookings.map((booking) => (
                   <tr
                     key={booking.bookingId}
                     className="border-b text-sm"
@@ -141,6 +155,12 @@ export default function MyBookings() {
           </div>
         )}
       </div>
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
+
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getAdminGrounds } from "../../services/api";
+import { getAdminGrounds , toggleGroundBlock } from "../../services/api";
+import ToggleSwitch from "../../components/common/ToggleSwitch";
+import Pagination from "../../components/common/Pagination";
 
 export default function SuperAdminAdminDetails() {
   const { adminId } = useParams();
@@ -9,6 +11,19 @@ export default function SuperAdminAdminDetails() {
   const [admin, setAdmin] = useState(null);
   const [grounds, setGrounds] = useState([]);
 
+
+  const ITEMS_PER_PAGE = 10;
+  const [page, setPage] = useState(1);
+
+  const totalPages = Math.ceil(grounds.length / ITEMS_PER_PAGE);
+
+  const paginatedGrounds = grounds.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
+
+
+  /* ---------------- FETCH ADMIN GROUNDS ---------------- */
   useEffect(() => {
     fetchAdminGrounds();
   }, []);
@@ -19,14 +34,27 @@ export default function SuperAdminAdminDetails() {
     setGrounds(res.data.grounds);
   };
 
+  const handleToggleGroundBlock = async (ground) => {
+  try {
+    await toggleGroundBlock(ground.id);
+
+    // Optimistic UI update
+    setGrounds((prev) =>
+      prev.map((g) =>
+        g.id === ground.id
+          ? { ...g, isBlocked: !g.isBlocked }
+          : g
+      )
+    );
+  } catch (error) {
+    console.error(error);
+    alert("Failed to update ground status");
+  }
+};
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
-      <button
-        onClick={() => navigate("/super-admin/admins")}
-        className="mb-4 flex items-center gap-2 text-sm font-medium text-white hover:text-gray-400"
-      >
-        ← Back to admin
-      </button>
       {/* Page Title */}
       <h2 className="text-2xl font-semibold text-white mb-6">
         Admin Details
@@ -39,6 +67,7 @@ export default function SuperAdminAdminDetails() {
             {admin.name}
           </h3>
           <p className="text-gray-600">{admin.email}</p>
+          <p className="text-gray-600">{admin.phoneNumber}</p>
         </div>
       )}
 
@@ -65,7 +94,7 @@ export default function SuperAdminAdminDetails() {
             </thead>
 
             <tbody className="divide-y">
-              {grounds.map((ground, index) => (
+              {paginatedGrounds.map((ground, index) => (
                 <tr
                   key={ground.id}
                   onClick={() =>
@@ -97,7 +126,7 @@ export default function SuperAdminAdminDetails() {
                     ₹{ground.pricePerSlot}
                   </td>
 
-                  <td className="px-6 py-4">
+                  {/* <td className="px-6 py-4">
                     {ground.isActive ? (
                       <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700">
                         Yes
@@ -107,6 +136,24 @@ export default function SuperAdminAdminDetails() {
                         No
                       </span>
                     )}
+                  </td> */}
+
+                  {/* Active / Blocked */}
+                  <td className="px-6 py-4 flex items-center gap-3">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold
+                        ${ground.isBlocked
+                          ? "bg-red-100 text-red-700"
+                          : "bg-green-100 text-green-700"}
+                      `}
+                    >
+                      {ground.isBlocked ? "Blocked" : "Active"}
+                    </span>
+
+                    <ToggleSwitch
+                      enabled={ground.isBlocked}
+                      onToggle={() => handleToggleGroundBlock(ground)}
+                    />
                   </td>
                 </tr>
               ))}
@@ -122,6 +169,11 @@ export default function SuperAdminAdminDetails() {
           </table>
         </div>
       </div>
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
 
     </div>
   );
