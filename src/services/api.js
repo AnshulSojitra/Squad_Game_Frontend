@@ -175,7 +175,7 @@ export const addGround = (formData) => {
     headers: {
       Authorization: `Bearer ${token}`,
       "ngrok-skip-browser-warning": "true",
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };

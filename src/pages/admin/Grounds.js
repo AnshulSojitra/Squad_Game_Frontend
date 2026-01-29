@@ -173,6 +173,7 @@ const paginatedGrounds = filteredGrounds.slice(
                 // console.log("GROUND OBJECT 👉", ground);
                 <div
                   key={ground.id}
+                   onClick={() => navigate(`/admin/grounds/${ground.id}`)}
                   className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden"
                 >
                   
@@ -240,12 +241,14 @@ const paginatedGrounds = filteredGrounds.slice(
               {/* Actions */}
               <div className="flex justify-between items-center border-t px-4 py-3">
                 <button 
-                  onClick={() => {
+                  onClick={(e) => {
                     if (!ground.id) {
                       console.error("Ground ID missing", ground);
                       return;
                     }
+                    e.stopPropagation();
                     navigate(`/admin/addground?id=${ground.id}`);
+                    
                   }}
                   className="text-blue-600 hover:underline text-sm"
                 >
@@ -254,7 +257,10 @@ const paginatedGrounds = filteredGrounds.slice(
 
 
                 <button
-                  onClick={() => openDeleteModal(ground.id)}
+                   onClick={(e) => {
+                  e.stopPropagation();
+                  openDeleteModal(ground.id);
+                }}
                   className="text-red-600 hover:underline text-sm"
                 >
                   Delete
@@ -330,11 +336,7 @@ const paginatedGrounds = filteredGrounds.slice(
         </div>
 
       </div>
-      {/* Reviews */}
-           <div className="max-w-4xl mx-auto p-4">
-                   <h1 className="text-xl font-bold mb-4 text-white">Ground Reviews</h1>
-                   <ReviewList groundId={groundId} />
-                 </div>
+  
       <ConfirmModal
         isOpen={showConfirm}
         title="Delete Ground?"

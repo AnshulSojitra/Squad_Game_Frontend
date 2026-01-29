@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { getAdminBookings } from "../../services/api";
 import Pagination from "../../components/common/Pagination";
+import SearchInput from "../../components/common/SearchInput";
+
 
 export default function AdminBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
 
-  const ITEMS_PER_PAGE = 10;
+  const ITEMS_PER_PAGE = 7;
   const [page, setPage] = useState(1);
+
+  const [search, setSearch] = useState("");
 
 
   useEffect(() => {
@@ -27,12 +31,33 @@ export default function AdminBookings() {
     }
   };
 
-  const totalPages = Math.ceil(bookings.length / ITEMS_PER_PAGE);
+  const filteredBookings = bookings.filter((booking) => {
+  const searchText = search.toLowerCase();
 
-const paginatedBookings = bookings.slice(
-  (page - 1) * ITEMS_PER_PAGE,
-  page * ITEMS_PER_PAGE
-);
+  return (
+    booking.user?.name?.toLowerCase().includes(searchText) ||
+    booking.user?.email?.toLowerCase().includes(searchText) ||
+    booking.ground?.name?.toLowerCase().includes(searchText) ||
+    booking.status?.toLowerCase().includes(searchText)
+  );
+});
+
+useEffect(() => {
+  setPage(1);
+}, [search]);
+
+useEffect(() => {
+  const maxPage = Math.ceil(filteredBookings.length / ITEMS_PER_PAGE) || 1;
+  if (page > maxPage) setPage(maxPage);
+}, [filteredBookings.length, page]);
+
+
+  const totalPages = Math.ceil(filteredBookings.length / ITEMS_PER_PAGE);
+
+    const paginatedBookings = filteredBookings.slice(
+      (page - 1) * ITEMS_PER_PAGE,
+      page * ITEMS_PER_PAGE
+    );
 
 
   if (loading) {
@@ -42,6 +67,25 @@ const paginatedBookings = bookings.slice(
   return (
     <div className="p-6 text-white">
       <h1 className="text-2xl font-bold mb-6">User Bookings</h1>
+      
+      {/* <div className="mb-4">
+      <SearchInput
+        value={search}
+        placeholder="Search by user, email, ground, status..."
+        onChange={(value) => {
+          setSearch(value);
+          setPage(1); // reset page on search
+        }}
+      />
+      </div> */}
+
+      <div className="mb-4">
+        <SearchInput
+          value={search}
+          placeholder="Search by user, email, ground, status..."
+          onChange={setSearch}
+        />
+      </div>
 
       <div className="overflow-x-auto bg-white rounded-xl shadow">
         <table className="min-w-full text-sm">
@@ -59,7 +103,7 @@ const paginatedBookings = bookings.slice(
           </thead>
 
           <tbody>
-            {bookings.length === 0 ? (
+            {filteredBookings.length === 0 ? (
               <tr>
                 <td colSpan="8" className="text-center py-6 text-gray-500">
                   No bookings found
@@ -118,7 +162,8 @@ const paginatedBookings = bookings.slice(
       <Pagination
   currentPage={page}
   totalPages={totalPages}
-  onPageChange={setPage}
+  // onPageChange={setPage}
+    onPageChange={setPage}
 />
 
     </div>

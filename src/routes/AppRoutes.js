@@ -42,6 +42,10 @@ import SuperAdminAdminDetails from "../pages/super-admin/SuperAdminAdminDetails"
 import SuperAdminGroundsBooking from "../pages/super-admin/SuperAdminGroundBooking";
 import SuperAdminCreateAdmin from "../pages/super-admin/SuperAdminCreateAdmin";
 import SuperAdminProfile from "../pages/super-admin/SuperAdminProfile";
+import GroundDetailsAdmin from "../pages/admin/GroundDetailsAdmin";
+
+
+
 export const AppRoutes = () => {
   return (
 
@@ -97,6 +101,7 @@ export const AppRoutes = () => {
           <Route path="bookings" element={<Bookings />} />
           <Route path="games" element={<Games />} />
           <Route path="grounds" element={<Grounds />} />
+          <Route path="/admin/grounds/:id" element={<GroundDetailsAdmin />} />
           <Route path="change-password" element={<ChangePassword />} />
           <Route path="addground" element={<AddGround />} />
           

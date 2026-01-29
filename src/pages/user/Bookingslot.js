@@ -204,9 +204,6 @@ const paginatedGrounds = filteredGrounds.slice(
                   )}
                 </div>
               )}
-              {/* <p className="text-green-600 font-semibold">
-                ₹{ground.pricePerSlot} / slot
-              </p> */}
             </div>
           </div>  
         ))}
