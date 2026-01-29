@@ -100,12 +100,12 @@ export default function UserProfile() {
               </p>
             </div>
 
-            <div>
+            {/* <div>
               <label className="text-sm text-gray-500">User ID</label>
               <p className="text-lg font-semibold text-gray-900">
                 #{user.id}
               </p>
-            </div>
+            </div> */}
 
           </div>
 

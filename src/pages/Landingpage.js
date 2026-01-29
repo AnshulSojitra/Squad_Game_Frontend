@@ -100,7 +100,9 @@ export default function LandingPage() {
 
       {/* ---------------- HERO SECTION ---------------- */}
 
-      <section className="py-16 px-6 bg-gradient-to-b from-[#0f172a] to-[#020617]">
+      <section 
+      id="available-grounds"
+      className="py-16 px-6 bg-gradient-to-b from-[#0f172a] to-[#020617]">
       <h2 className="text-3xl font-bold text-center text-white mb-10">
           Available Grounds
       </h2>

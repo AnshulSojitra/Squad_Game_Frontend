@@ -71,6 +71,13 @@ export const createAdmin = (data) =>{
 export const getAllAdmins = () =>
   API.get("/super-admin/admins");
 
+// delete admin
+export const deleteAdminBySuperAdmin = (adminId) => {
+    return API.delete(`/super-admin/admin/${adminId}`
+  );
+};
+
+
 // get grounds by admin
 export const getAdminGrounds = (adminId) =>
   API.get(`/super-admin/admins/${adminId}/grounds`);
@@ -103,6 +110,15 @@ export const getSuperAdminProfile = () => {
 };
 
 
+// SUPER ADMIN – DELETE GROUND
+export const deleteGroundBySuperAdmin = (groundId) => {
+  return API.delete(`/super-admin/ground/${groundId}`);
+};
+
+
+
+
+
 // <=============================================== ADMIN ================================================>
 
 // READ - Login Admin
@@ -129,6 +145,25 @@ export const getAdminProfile = () => {
   });
 };
 
+//  TOGGLE BLOCK ADMIN
+// export const toggleGroundBlockApi = (Id) => {
+
+//   return api.patch("/admin/grounds/block/${Id}", {}, {
+//       headers: {
+//         Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+//       },
+//     });
+// };
+
+export const toggleGroundBlockApi = (groundId) => {
+  return api.patch(`/admin/grounds/block/${groundId}`, {}, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+    },
+  });
+};
+
+
 
 /* -------- GROUNDS -------- */
 
@@ -140,7 +175,7 @@ export const addGround = (formData) => {
     headers: {
       Authorization: `Bearer ${token}`,
       "ngrok-skip-browser-warning": "true",
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "application/json",
     },
   });
 };
@@ -331,6 +366,25 @@ export const changeUserPassword = (data) => {
   });
 };
 
+// GET ground reviews (public)
+export const getGroundReviews = (groundId) => {
+  return api.get(`/grounds/${groundId}/reviews`);
+  }
+
+
+// SUBMIT GROUND REVIEWS
+export const submitGroundReview = (groundId, data) => {
+  const token = localStorage.getItem("userToken");
+  
+  return api.post(`/grounds/${groundId}/reviews`, data , {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  });
+};
+
+
+
 // USER FORGOT PASSWORD
 export const userForgotPassword = (email) => {
   return api.post("/user/forgot-password", { email });
@@ -342,6 +396,28 @@ export const userResetPassword = ({ email, otp, newPassword }) => {
     email,
     otp,
     newPassword,
+  });
+};
+
+// send OTP in Email
+export const sendOtp = (login) => {
+  return api.post("/user/send-otp", { login }  );
+};
+
+// Verify OTP in Email
+export const verifyOtp = (payload) => {
+  return api.post("/user/verify-otp", payload);
+};
+
+
+/* ================= COMPLETE PROFILE ================= */
+export const completeProfile = (data) => {
+   const token = localStorage.getItem("userToken");
+  // data = { name, email OR phoneNumber }
+  return api.put("/user/complete-profile", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
   });
 };
 

@@ -90,12 +90,12 @@ export default function UserHeader({ collapsed, setCollapsed }) {
               📅 My Bookings
             </button>
 
-          <button
+          {/* <button
               onClick={() => navigate("/user/change-password")}
               className="block w-full text-left px-4 py-2 hover:bg-gray-100"
             >
               🔒 Change Password
-            </button>
+            </button> */}
 
             <hr />
 

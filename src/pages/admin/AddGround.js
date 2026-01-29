@@ -4,6 +4,7 @@ import { addGround , updateGround , getGroundById } from "../../services/api"; /
 import { getCountries, getStatesByCountry, getCitiesByState } from "../../services/api";
 import { useSearchParams } from "react-router-dom";
 import Toast from "../../components/common/Toast";
+import LocationPicker from "../../components/common/LocationPicker";
 
 
 
@@ -17,6 +18,7 @@ export default function AddGround() {
     country: "",
     state: "",
     city: "",
+    locationUrl: "",
     slots: [],
   });
 
@@ -34,6 +36,7 @@ export default function AddGround() {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
+  
 
 
   const [searchParams] = useSearchParams();
@@ -53,6 +56,12 @@ export default function AddGround() {
   const [amenityInput, setAmenityInput] = useState("");
   const [amenities, setAmenities] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [location, setLocation] = useState(null);
+
+  const [advanceBookingDays, setAdvanceBookingDays] = useState("");
+
+
 
 
 
@@ -154,6 +163,7 @@ useEffect(() => {
     }))
   : [];
 
+  
 
 setSlots(normalizedSlots);
 
@@ -169,6 +179,9 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
       country: g.country,
       state: g.state,
       city: g.city,
+      // locationUrl: g.locationUrl || "",
+      latitude: g.lat,
+      longitude: g.lng,
     });
 
     setAmenities(
@@ -191,6 +204,12 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
       setImages(g.images);
     setExistingImages(g.images || []);
 
+
+    setLocation({
+      lat: Number(g.latitude),
+      lng: Number(g.longitude),
+    });
+
   
 
 // Load states and cities based on existing data
@@ -199,6 +218,9 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
 
     const citiesRes = await getCitiesByState(g.state);
     setCities(citiesRes.data);
+
+    setAdvanceBookingDays(g.advanceBookingDays ?? 0);
+
 
     
   };
@@ -278,6 +300,13 @@ const handleImages = (e) => {
         if (!form.city) {
           newErrors.city = "City is required";
         }
+        // if (
+        //   !form.locationUrl ||
+        //   (!form.locationUrl.includes("google.com/maps") &&
+        //   !form.locationUrl.includes("maps.app.goo.gl"))
+        // ) {
+        //   newErrors.locationUrl = "Please enter a valid Google Maps link";
+        // }
 
         if (!openingTime) {
           newErrors.openingTime = "Opening time is required";
@@ -328,6 +357,10 @@ const handleSubmit = async (e) => {
     formData.append("country", form.country);
     formData.append("state", form.state);
     formData.append("city", form.city);
+    // formData.append("locationUrl", form.locationUrl); // ✅ REQUIRED
+    formData.append("latitude", location.lat);
+    formData.append("longitude", location.lng);
+
     
     // Amenities
     formData.append("amenities", JSON.stringify(amenities));
@@ -339,6 +372,9 @@ const handleSubmit = async (e) => {
 
     // Slots (IMPORTANT → stringify)
     formData.append("slots", JSON.stringify(slots));
+
+    formData.append("advanceBookingDays", advanceBookingDays);
+
 
     if (images.length > 0) {
       images.forEach(img => {
@@ -416,21 +452,7 @@ const handleSubmit = async (e) => {
             <p className="text-red-500 text-xs mt-1">{errors.contact}</p>
           )}
 
-          {/* Price */}
-          <label className="block text-sm font-medium mb-1">Price per Slot (₹)</label>
-          <input
-            type="number"
-            name="pricePerHour"
-            placeholder="Price per slot (₹)"
-            className="input-style"
-            value={form.pricePerHour}
-            onChange={(e) =>
-              setForm({ ...form, pricePerHour: e.target.value })
-            }
-          />
-          {errors.pricePerHour && (
-            <p className="text-red-500 text-xs mt-1">{errors.pricePerHour}</p>
-          )}
+          
 
           <label className="block text-sm font-medium mb-1">
             Game Type
@@ -517,6 +539,37 @@ const handleSubmit = async (e) => {
               </option>
             ))}
           </select>
+
+
+          {/* <label className="block text-sm font-medium mb-1">
+            Google Maps Location Link
+          </label>
+
+          <input
+            type="url"
+            name="locationUrl"
+            placeholder="https://maps.google.com/?q=..."
+            className="input-style"
+            value={form.locationUrl}
+            onChange={(e) =>
+              setForm({ ...form, locationUrl: e.target.value })
+            }
+          /> */}
+
+          <label className="block text-sm font-medium mb-2">
+            Select Ground Location
+          </label>
+
+          <LocationPicker
+            value={location}
+            onChange={(coords) => setLocation(coords)}
+          />
+
+
+          {errors.locationUrl && (
+            <p className="text-red-500 text-xs mt-1">{errors.locationUrl}</p>
+          )}
+
 
 
             {/* Amenities */}
@@ -677,6 +730,41 @@ const handleSubmit = async (e) => {
                   </div>
                 </div>
               )}
+
+              <label className="block text-sm font-medium mb-1">
+                Advance Booking Allowed (Days)
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                placeholder="e.g. 7"
+                value={advanceBookingDays}
+                onChange={(e) => setAdvanceBookingDays(e.target.value)}
+                className="input-style"
+              />
+
+              <p className="text-xs text-gray-500">
+                player can book up to {advanceBookingDays || 0} days in advance
+              </p>
+
+
+
+              {/* Price */}
+          <label className="block text-sm font-medium mb-1 my-6">Price per Slot (₹)</label>
+          <input
+            type="number"
+            name="pricePerHour"
+            placeholder="Price per slot (₹)"
+            className="input-style"
+            value={form.pricePerHour}
+            onChange={(e) =>
+              setForm({ ...form, pricePerHour: e.target.value })
+            }
+          />
+          {errors.pricePerHour && (
+            <p className="text-red-500 text-xs mt-1">{errors.pricePerHour}</p>
+          )}
 
 
           </div>

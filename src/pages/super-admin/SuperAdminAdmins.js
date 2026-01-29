@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllAdmins, toggleAdminBlock } from "../../services/api";
+import { getAllAdmins, toggleAdminBlock , deleteAdminBySuperAdmin} from "../../services/api";
 import Pagination from "../../components/common/Pagination";
+import ConfirmModal from "../../components/common/ConfirmModal";
 
 
 
@@ -11,6 +12,10 @@ export default function SuperAdminAdmins() {
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 10;
   const [page, setPage] = useState(1);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedAdminId, setSelectedAdminId] = useState(null);
+  const [loadingId, setLoadingId] = useState(null);
+
 
   const totalPages = Math.ceil(admins.length / ITEMS_PER_PAGE);
 
@@ -75,6 +80,36 @@ const paginatedAdmins = admins.slice(
     }
   };
 
+ /* ---------------- Delete admin  ---------------- */
+
+    const openDeleteConfirm = (e, adminId) => {
+      e.stopPropagation(); // 🚫 prevent card navigation
+      setSelectedAdminId(adminId);
+      setConfirmOpen(true);
+    };
+    
+    const handleConfirmDelete = async () => {
+      if (!selectedAdminId) return;
+
+      try {
+        setLoadingId(selectedAdminId);
+        await deleteAdminBySuperAdmin(selectedAdminId);
+        await fetchAdmins(); // refresh list
+      } catch (err) {
+        alert(err.response?.data?.message || "Failed to delete admin");
+      } finally {
+        setLoadingId(null);
+        setConfirmOpen(false);
+        setSelectedAdminId(null);
+      }
+    };
+    
+    const handleCancelDelete = () => {
+      setConfirmOpen(false);
+      setSelectedAdminId(null);
+    };
+
+
   /* ---------------- UI ---------------- */
   return (
     <div className="min-h-screen bg-gray-850 p-6">
@@ -108,12 +143,12 @@ const paginatedAdmins = admins.slice(
           <table className="w-full border-collapse">
             <thead className="bg-gray-100">
               <tr className="text-left text-sm font-semibold text-gray-700">
-                <th className="px-6 py-4">#</th>
+                <th className="px-6 py-4">No</th>
                 <th className="px-6 py-4">Name</th>
                 <th className="px-6 py-4">Email</th>
                 <th className="px-6 py-4">Role</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Created At</th>
+                <th className="px-6 py-4">Action</th>
               </tr>
             </thead>
 
@@ -164,8 +199,21 @@ const paginatedAdmins = admins.slice(
                     />
                   </td>
 
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {new Date(admin.createdAt).toLocaleDateString()}
+                  {/* Delete Button */}
+                  <td className="px-6 py-4">
+                    <button
+                    onClick={(e) => openDeleteConfirm(e, admin.id)}
+                    disabled={loadingId === admin.id}
+                    className={`px-4 py-2 text-sm rounded-lg text-white
+                      ${
+                        loadingId === admin.id
+                          ? "bg-red-400 cursor-not-allowed"
+                          : "bg-red-600 hover:bg-red-700"
+                      }
+                    `}
+                  >
+                    {loadingId === admin.id ? "Deleting..." : "Delete"}
+                  </button>
                   </td>
                 </tr>
               ))}
@@ -184,11 +232,19 @@ const paginatedAdmins = admins.slice(
           </table>
         </div>
       </div>
-      <Pagination
+            <Pagination
               currentPage={page}
               totalPages={totalPages}
               onPageChange={setPage}
             />
+            <ConfirmModal
+            isOpen={confirmOpen}
+            title="Delete Admin"
+            message="Are you sure you want to delete this admin? All associated data will be permanently removed."
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+          />
+
     </div>
   );
 }

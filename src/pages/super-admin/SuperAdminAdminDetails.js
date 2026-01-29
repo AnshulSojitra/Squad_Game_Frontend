@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getAdminGrounds , toggleGroundBlock } from "../../services/api";
+import { getAdminGrounds , toggleGroundBlock , deleteGroundBySuperAdmin} from "../../services/api";
 import ToggleSwitch from "../../components/common/ToggleSwitch";
 import Pagination from "../../components/common/Pagination";
+import ConfirmModal from "../../components/common/ConfirmModal";
 
 export default function SuperAdminAdminDetails() {
   const { adminId } = useParams();
@@ -11,6 +12,8 @@ export default function SuperAdminAdminDetails() {
   const [admin, setAdmin] = useState(null);
   const [grounds, setGrounds] = useState([]);
 
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedGroundId, setSelectedGroundId] = useState(null);
 
   const ITEMS_PER_PAGE = 10;
   const [page, setPage] = useState(1);
@@ -34,6 +37,8 @@ export default function SuperAdminAdminDetails() {
     setGrounds(res.data.grounds);
   };
 
+
+  //================= TOGGLE BLOCK GROUNDS ================= //
   const handleToggleGroundBlock = async (ground) => {
   try {
     await toggleGroundBlock(ground.id);
@@ -50,6 +55,33 @@ export default function SuperAdminAdminDetails() {
     console.error(error);
     alert("Failed to update ground status");
   }
+};
+
+//================= DELETE GROUNDS ================== //
+const openDeleteConfirm = (groundId) => {
+  setSelectedGroundId(groundId);
+  setConfirmOpen(true);
+};
+
+const handleConfirmDelete = async () => {
+  if (!selectedGroundId) return;
+
+  try {
+    await deleteGroundBySuperAdmin(selectedGroundId);
+    await setGrounds();
+  } catch (error) {
+    alert(
+      error.response?.data?.message || "Failed to delete ground"
+    );
+  } finally {
+    setConfirmOpen(false);
+    setSelectedGroundId(null);
+  }
+};
+
+const handleCancelDelete = () => {
+  setConfirmOpen(false);
+  setSelectedGroundId(null);
 };
 
 
@@ -89,7 +121,8 @@ export default function SuperAdminAdminDetails() {
                 <th className="px-6 py-4">Game</th>
                 <th className="px-6 py-4">City</th>
                 <th className="px-6 py-4">Price / Slot</th>
-                <th className="px-6 py-4">Active</th>
+                <th className="px-6 py-4">Stauts</th>
+                <th className="px-6 py-4">Action</th>
               </tr>
             </thead>
 
@@ -155,6 +188,20 @@ export default function SuperAdminAdminDetails() {
                       onToggle={() => handleToggleGroundBlock(ground)}
                     />
                   </td>
+
+                  {/* DELETE BUTTON */}
+                  <td className="p-3">
+                    <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // 🔥 THIS LINE FIXES EVERYTHING
+                      openDeleteConfirm(ground.id);
+                    }}
+                    className="px-4 py-2 text-sm font-medium text-white
+                              bg-red-600 hover:bg-red-700 rounded-lg"
+                  >
+                    Delete
+                  </button>
+                  </td>
                 </tr>
               ))}
 
@@ -174,6 +221,13 @@ export default function SuperAdminAdminDetails() {
                 totalPages={totalPages}
                 onPageChange={setPage}
               />
+              <ConfirmModal
+                      isOpen={confirmOpen}
+                      title="Delete Ground"
+                      message="Are you sure you want to delete this ground? This action cannot be undone."
+                      onConfirm={handleConfirmDelete}
+                      onCancel={handleCancelDelete}
+                    />
 
     </div>
   );

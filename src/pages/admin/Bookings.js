@@ -7,7 +7,7 @@ export default function AdminBookings() {
   const [loading, setLoading] = useState(true);
 
 
-  const ITEMS_PER_PAGE = 1;
+  const ITEMS_PER_PAGE = 10;
   const [page, setPage] = useState(1);
 
 

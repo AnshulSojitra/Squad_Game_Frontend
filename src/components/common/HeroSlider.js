@@ -79,7 +79,7 @@ export default function HeroSlider() {
           {slides[index].subtitle}
         </p>
 
-        <div className="mt-8 flex gap-4">
+        {/* <div className="mt-8 flex gap-4">
           <button
             onClick={() => navigate("/user/login")}
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition"
@@ -93,7 +93,7 @@ export default function HeroSlider() {
           >
             Login as Admin
           </button>
-        </div>
+        </div> */}
 
         {/* STATS */}
         <div className="mt-14 grid grid-cols-3 gap-12 text-white">

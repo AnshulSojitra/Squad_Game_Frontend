@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getPublicGround } from "../../services/api";
 import GroundDetails from "./GroundDetails";
 import Pagination from "../../components/common/Pagination";
+import Footer from "../../components/common/Footer";
 
 const IMAGE_BASE = process.env.REACT_APP_IMAGE_URL;
 
@@ -177,13 +178,14 @@ const paginatedGrounds = filteredGrounds.slice(
                 ⏰ {ground.openingTime} – {ground.closingTime}
               </p>
               <div className="flex gap-2 text-sm mb-2">
-                <span className="px-2 py-1 bg-blue-200 font-medium">
+                <span className="px-2 py-1 bg-blue-200 font-small rounded-2xl">
                   {ground.game}
                 </span>
-                <span className="px-2 py-1 bg-green-200 font-medium">
+                <span className="px-2 py-1 bg-green-200 font-small rounded-2xl">
                   ₹{ground.pricePerSlot}/Slot
                 </span>
               </div>
+              <p className="text-md font-semibold"> Amenities</p>
               {ground.amenities?.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
                   {ground.amenities.slice(0, 5).map((amenity, index) => (
@@ -214,7 +216,8 @@ const paginatedGrounds = filteredGrounds.slice(
               totalPages={totalPages}
               onPageChange={setPage}
             />
-
+            <hr className="my-10 border-t border-gray-700" />
+      <Footer/>
     </div>
   );
 }

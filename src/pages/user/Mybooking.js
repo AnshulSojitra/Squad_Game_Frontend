@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getUserBookings, cancelUserBooking } from "../../services/api";
 import Pagination from "../../components/common/Pagination";
+import Toast from "../../components/common/Toast";
 
 export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
@@ -8,9 +9,18 @@ export default function MyBookings() {
   const [cancelLoading, setCancelLoading] = useState(null);
   const ITEMS_PER_PAGE = 10;
   const [page, setPage] = useState(1);
+  const [toast, setToast] = useState({
+  show: false,
+  type: "success",
+  message: "",
+  });
 
+// <---------showing toast----------> 
+const showToast = (type, message) => {
+  setToast({ show: true, type, message });
+};
 
-
+// <------------fetching Bookings----------------->
   useEffect(() => {
     fetchBookings();
   }, []);
@@ -51,7 +61,7 @@ export default function MyBookings() {
         )
       );
     } catch (err) {
-      alert("Failed to cancel booking");
+      showToast("error","Failed to cancel booking");
     } finally {
       setCancelLoading(null);
     }
@@ -140,7 +150,14 @@ const paginatedBookings = bookings.slice(
                             handleCancel(booking.bookingId)
                           }
                           disabled={cancelLoading === booking.bookingId}
-                          className="text-red-600 hover:underline text-sm"
+                          // className="text-red-600 hover:underline text-sm"
+                          className={`px-4 py-2 text-sm rounded-lg text-white
+                      ${
+                        cancelLoading === booking.bookingId
+                          ? "bg-red-400 cursor-not-allowed"
+                          : "bg-red-600 hover:bg-red-700"
+                      }
+                    `}
                         >
                           {cancelLoading === booking.bookingId
                             ? "Cancelling..."
@@ -160,6 +177,12 @@ const paginatedBookings = bookings.slice(
         totalPages={totalPages}
         onPageChange={setPage}
       />
+      <Toast
+                show={toast.show}
+                type={toast.type}
+                message={toast.message}
+                onClose={() => setToast({ ...toast, show: false })}
+              />
 
     </div>
   );

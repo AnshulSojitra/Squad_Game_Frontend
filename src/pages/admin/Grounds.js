@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { getGrounds, deleteGround } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
-import { getGroundById ,updateGround } from "../../services/api";
+import { getGroundById ,updateGround , toggleGroundBlockApi} from "../../services/api";
 import ConfirmModal from "../../components/common/ConfirmModal";
+import ToggleSwitch from "../../components/common/ToggleSwitch";
+import ReviewList from "../../components/common/ReviewList";
 
 const IMAGE_BASE=process.env.REACT_APP_IMAGE_URL
 
@@ -21,6 +23,7 @@ export default function Grounds() {
   const [selectedGroundId, setSelectedGroundId] = useState(null);
   const PAGE_SIZE = 6; // show 6 grounds per page
   const [currentPage, setCurrentPage] = useState(1);
+  const [isBlocked, setIsBlocked] = useState(grounds.isBlocked);
  
 // Filtering and Pagination
 const filteredGrounds = grounds
@@ -86,24 +89,50 @@ const paginatedGrounds = filteredGrounds.slice(
     setSelectedGroundId(null);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this ground?")) return;
 
-    try {
-      await deleteGround(id);
-
-      // remove from UI
-      setGrounds((prev) => prev.filter((g) => g.id !== id));
-    } catch (err) {
-      alert("Failed to delete ground");
-    }
-  };
 
   if (loading) {
     return <p className="text-gray-600">Loading grounds...</p>;
   }
   
-    
+   
+  // block ground togglr button 
+  //   const handleToggle = async () => {
+  //   if (loading) return;
+
+  //   try {
+  //     setLoading(true);
+
+  //     const res = await toggleGroundBlockApi(grounds.id);
+
+  //     // backend is source of truth
+  //     setIsBlocked(res.data.isBlocked);
+  //   } catch (error) {
+  //     console.error("Toggle failed", error);
+  //     alert("Failed to update ground status");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleToggle = async (groundId) => {
+  try {
+    const res = await toggleGroundBlockApi(groundId);
+
+    // update only that ground
+    setGrounds((prev) =>
+      prev.map((g) =>
+        g.id === groundId
+          ? { ...g, isBlocked: res.data.isBlocked }
+          : g
+      )
+    );
+  } catch (error) {
+    console.error("Toggle failed", error);
+    alert("Failed to update ground status");
+  }
+};
+
 
   return (
     <div>
@@ -112,7 +141,7 @@ const paginatedGrounds = filteredGrounds.slice(
       {/* HEADER ROW */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold"> Grounds </h1>
-      <div className="mb-6 flex justify-between items-center">
+       <div className="mb-6 flex justify-between items-center">
           <input
             type="text"
             placeholder="Search ground by name..."
@@ -131,9 +160,9 @@ const paginatedGrounds = filteredGrounds.slice(
         >
           ➕ Add Ground
         </button>
-      </div>
+       </div>
 
-            <div className="overflow-x-auto bg-gray shadow rounded-xl">
+       <div className="overflow-x-auto bg-gray shadow rounded-xl">
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredGrounds.length === 0 ? (
                 <p className="col-span-full text-center text-gray-400">
@@ -230,12 +259,42 @@ const paginatedGrounds = filteredGrounds.slice(
                 >
                   Delete
                 </button>
+                
+                 {/* <div>
+                    <p
+                      className={`text-sm ${
+                        isBlocked ? "text-red-600" : "text-green-600"
+                      }`}
+                    >
+                      {isBlocked ? "Blocked" : "Active"}
+                    </p>
+                  </div> */}
+
+                  {/* <ToggleSwitch
+                    enabled={isBlocked}
+                    onToggle={handleToggle}
+                  /> */}
+
+                  <p
+                    className={`text-sm ${
+                      ground.isBlocked ? "text-red-600" : "text-green-600"
+                    }`}
+                  >
+                    {ground.isBlocked ? "Blocked" : "Active"}
+                  </p>
+
+                  <ToggleSwitch
+                    enabled={ground.isBlocked}
+                    onToggle={() => handleToggle(ground.id)}
+                  />
+
               </div>
+              
             </div>
             
           ))
         )}
-      </div>
+       </div>
 
         {/* Pagination Controls */}
         <div className="flex justify-center items-center gap-3 mt-6">
@@ -271,6 +330,11 @@ const paginatedGrounds = filteredGrounds.slice(
         </div>
 
       </div>
+      {/* Reviews */}
+           <div className="max-w-4xl mx-auto p-4">
+                   <h1 className="text-xl font-bold mb-4 text-white">Ground Reviews</h1>
+                   <ReviewList groundId={groundId} />
+                 </div>
       <ConfirmModal
         isOpen={showConfirm}
         title="Delete Ground?"

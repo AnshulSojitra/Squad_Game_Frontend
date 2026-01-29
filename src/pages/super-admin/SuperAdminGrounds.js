@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { getAllGroundsSupAdi , toggleGroundBlock } from "../../services/api";
 import Pagination from "../../components/common/Pagination";
 import ToggleSwitch from "../../components/common/ToggleSwitch";
+import { deleteGroundBySuperAdmin } from "../../services/api";
+import ConfirmModal from "../../components/common/ConfirmModal";
+
+
 
 
 
@@ -15,6 +19,9 @@ export default function SuperAdminGrounds() {
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 8;
   const [page, setPage] = useState(1);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedGroundId, setSelectedGroundId] = useState(null);
+
   
   const totalPages = Math.ceil(grounds.length / ITEMS_PER_PAGE);
 
@@ -66,6 +73,34 @@ export default function SuperAdminGrounds() {
       alert("Failed to update ground status");
     }
   };
+//================= DELETE GROUNDS ================== //
+const openDeleteConfirm = (groundId) => {
+  setSelectedGroundId(groundId);
+  setConfirmOpen(true);
+};
+
+const handleConfirmDelete = async () => {
+  if (!selectedGroundId) return;
+
+  try {
+    await deleteGroundBySuperAdmin(selectedGroundId);
+    await setGrounds();
+  } catch (error) {
+    alert(
+      error.response?.data?.message || "Failed to delete ground"
+    );
+  } finally {
+    setConfirmOpen(false);
+    setSelectedGroundId(null);
+  }
+};
+
+const handleCancelDelete = () => {
+  setConfirmOpen(false);
+  setSelectedGroundId(null);
+};
+
+
 
   if (loading) {
     return (
@@ -161,7 +196,7 @@ export default function SuperAdminGrounds() {
                     )}
                   </div>
                 )}
-
+               
                 {/* FOOTER */}
                 <div className="pt-4 flex items-center justify-between">
                   <span
@@ -175,12 +210,16 @@ export default function SuperAdminGrounds() {
                   >
                     {ground.isBlocked ? "Blocked" : "Active"}
                   </span>
+                  <ToggleSwitch
+                        enabled={ground.isBlocked}
+                        onToggle={() => handleToggleGroundBlock(ground)}
+                      />
 
                   <span className="text-sm font-medium text-indigo-600">
                     View bookings →
                   </span>
                 </div>
-                <div className="pt-4 flex items-center justify-between">
+                {/* <div className="pt-4 flex items-center justify-between"> */}
                   {/* <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold
                           ${ground.isBlocked
@@ -191,21 +230,44 @@ export default function SuperAdminGrounds() {
                         {ground.isBlocked ? "Blocked" : "Active"}
                       </span> */}
 
-                      <ToggleSwitch
+                      {/* <ToggleSwitch
                         enabled={ground.isBlocked}
                         onToggle={() => handleToggleGroundBlock(ground)}
-                      />
-                </div>    
+                      /> */}
+                {/* </div>     */}
+                
+                 {/* DELETE BUTTON */}
+                 <div className="pt-4 flex items-center justify-between">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // 🔥 THIS LINE FIXES EVERYTHING
+                      openDeleteConfirm(ground.id);
+                    }}
+                    className="px-4 py-2 text-sm font-medium text-white
+                              bg-red-600 hover:bg-red-700 rounded-lg"
+                  >
+                    Delete
+                  </button>
+                 </div>   
+
               </div>
             </div>
+            
           ))}
-        </div>
+        </div> 
       )}
       <Pagination
       currentPage={page}
       totalPages={totalPages}
       onPageChange={setPage}
     />
+      <ConfirmModal
+        isOpen={confirmOpen}
+        title="Delete Ground"
+        message="Are you sure you want to delete this ground? This action cannot be undone."
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
 
     </div>
   );

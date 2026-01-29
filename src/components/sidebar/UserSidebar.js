@@ -18,9 +18,15 @@ export default function UserSidebar({ collapsed, setCollapsed }) {
       {/* TOP: Logo + Toggle */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-gray-800">
         {!collapsed && (
-          <span className="text-xl font-bold text-indigo-500">
+          // <span className="text-xl font-bold text-indigo-500" to="/">
+          //   BoxArena
+          // </span>
+          <Link
+            to="/"
+            className="text-2xl font-extrabold tracking-wide text-indigo-500 hover:text-indigo-400 transition"
+          >
             BoxArena
-          </span>
+          </Link>
         )}
 
         <button

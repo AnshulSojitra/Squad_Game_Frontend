@@ -1,201 +1,221 @@
 import { useState } from "react";
-import Input from "../../components/common/Input";
-import { userLogin } from "../../services/api";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { sendOtp, verifyOtp, completeProfile } from "../../services/api";
 
-export default function UserLogin() {
+export default function UserLogin({ onClose }) {
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from || "/user/home";
-  const [showPassword, setShowPassword] = useState(false);
 
+  // LOGIN → OTP → PROFILE
+  const [step, setStep] = useState("LOGIN");
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  const [login, setLogin] = useState("");
+  const [otp, setOtp] = useState("");
 
-  const [loading, setLoading] = useState(false);
-  // const [error, setError] = useState("");
-  const [errors, setErrors] = useState({
-  email: "",
-  password: "",
-  general: "",
-});
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-     setErrors({ ...errors, [e.target.name]: "", general: "" });
-  };
+  const [isNewUser, setIsNewUser] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrors("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
-    if(!validate()) return;
+  const isEmailLogin = login.includes("@");
+
+  /* ---------------- SEND OTP ---------------- */
+  const handleSendOtp = async () => {
+    if (!login) return alert("Enter email or mobile");
 
     try {
-      const res = await userLogin(form);
-
-      // Save user token
-      localStorage.setItem("userToken", res.data.token);
-
-     navigate(from, { replace: true });
+      const res = await sendOtp(login);
+      setIsNewUser(!!res.data.isNewUser);
+      setStep("OTP");
     } catch (err) {
-      // setErrors(err.response?.data?.message || "Invalid credentials");
-       setErrors((prev) => ({
-      ...prev,
-      general: err.response?.data?.message || "Login failed",
-    }));
-    
-    } finally {
-      setLoading(false);
+      alert(err.response?.data?.message || "Failed to send OTP");
     }
   };
 
-  const validate = () => {
-  let newErrors = {};
+  /* ---------------- VERIFY OTP ---------------- */
+  // const handleVerifyOtp = async () => {
+  //   if (!otp) return alert("Enter OTP");
 
-  if (!form.email.trim()) {
-    newErrors.email = "Email is required";
-  } else if (!/\S+@\S+\.\S+/.test(form.email)) {
-    newErrors.email = "Enter a valid email";
+  //   try {
+  //     const res = await verifyOtp({
+  //       login,
+  //       otp,
+  //     });
+
+  //     // EXISTING USER → LOGIN
+  //     if (!res.data.isNewUser) {
+  //       localStorage.setItem("userToken", res.data.token);
+  //       localStorage.setItem("user", JSON.stringify(res.data.user));
+  //       onClose?.();
+  //       navigate("/");
+  //       return;
+  //     }
+
+  //     // NEW USER → COMPLETE PROFILE
+  //     setIsNewUser(true);
+  //     setStep("PROFILE");
+  //   } catch (err) {
+  //     alert(err.response?.data?.message || "OTP verification failed");
+  //   }
+  // };
+
+  const handleVerifyOtp = async () => {
+  if (!otp) return alert("Enter OTP");
+
+  try {
+    const res = await verifyOtp({
+      login,
+      otp,
+    });
+
+    // ✅ ALWAYS STORE TOKEN & USER
+    localStorage.setItem("userToken", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+
+    // EXISTING USER → LOGIN COMPLETE
+    if (!res.data.isNewUser) {
+      onClose?.();
+      navigate("/");
+      return;
+    }
+
+    // NEW USER → COMPLETE PROFILE
+    setIsNewUser(true);
+    setStep("PROFILE");
+  } catch (err) {
+    alert(err.response?.data?.message || "OTP verification failed");
   }
-
-  if (!form.password.trim()) {
-    newErrors.password = "Password is required";
-  } else if (form.password.length < 6) {
-    newErrors.password = "Password must be at least 6 characters";
-  }
-
-  setErrors((prev) => ({ ...prev, ...newErrors }));
-  return Object.keys(newErrors).length === 0;
 };
 
 
+const handleCompleteProfile = async () => {
+  if (!firstName || !lastName) {
+    return alert("Enter first and last name");
+  }
+
+  const payload = {
+    name: `${firstName} ${lastName}`,
+  };
+
+  if (isEmailLogin) {
+    payload.phoneNumber = phone;
+  } else {
+    payload.email = email;
+  }
+
+  try {
+    const res = await completeProfile(payload);
+
+    // ✅ UPDATE USER ONLY (token already exists)
+    const existingUser = JSON.parse(localStorage.getItem("user")) || {};
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ ...existingUser, ...res.data.user })
+    );
+
+    onClose?.();
+    navigate("/");
+  } catch (err) {
+    alert(err.response?.data?.message || "Profile update failed");
+  }
+};
+
   return (
-        <div className="min-h-screen bg-gray-900 flex flex-col">
-
-      {/* ================= HEADER =================
-      <header className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
-        <h1
-          className="text-xl font-bold text-indigo-500 cursor-pointer"
-          onClick={() => navigate("/")}
-        >
-          BoxArena
-        </h1>
-
+    <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
+      <div className="bg-white w-[420px] rounded-2xl p-6 relative shadow-xl">
         <button
-          onClick={() => navigate("/")}
-          className="text-sm text-gray-400 hover:text-white transition"
+          onClick={onClose}
+          className="absolute right-4 top-4 text-gray-400 text-xl"
         >
-          ← Back to Home
+          ✕
         </button>
-      </header> */}
 
-      {/* ================= LOGIN FORM ================= */}
-      <main className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4">
-         {/* className="flex flex-1 items-center justify-center px-4" */}
-        {/* <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4"></div> */}
-        {/* <div className="bg-white p-8 rounded-xl w-full max-w-md shadow-lg"> */}
-           <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-xl p-8 text-white">
-          <h2 className="text-2xl font-bold text-center mb-6">
-            User Login
-          </h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Login / Sign Up
+        </h2>
 
-          {/* Error Message */}
-          {errors.general && (
-                <p className="text-red-600 text-sm mb-4 text-center">
-                  {errors.general}
-                </p>
-              )}
+        {step === "LOGIN" && (
+          <>
+            <input
+              type="text"
+              placeholder="Enter email or mobile number"
+              value={login}
+              onChange={(e) => setLogin(e.target.value)}
+              className="w-full border rounded-lg p-3 mb-4"
+            />
+            <button
+              onClick={handleSendOtp}
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold"
+            >
+              Send OTP
+            </button>
+          </>
+        )}
 
+        {step === "OTP" && (
+          <>
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              className="w-full border rounded-lg p-3 mb-4"
+            />
+            <button
+              onClick={handleVerifyOtp}
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold"
+            >
+              Verify & Continue
+            </button>
+          </>
+        )}
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="mb-4">
-              <label className="block text-sm font-medium">Email</label>
+        {step === "PROFILE" && (
+          <>
+            <input
+              type="text"
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="w-full border rounded-lg p-3 mb-3"
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full border rounded-lg p-3 mb-3"
+            />
+
+            {isEmailLogin ? (
+              <input
+                type="text"
+                placeholder="Mobile Number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full border rounded-lg p-3 mb-3"
+              />
+            ) : (
               <input
                 type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="player@gmail.com"
-                className={`w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none text-black
-                  ${errors.email ? "border-red-500" : "border-gray-300"}
-                `}
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full border rounded-lg p-3 mb-3"
               />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-              )}
-            </div>
-
-
-            <div className="mb-4 text-white">
-             <label className="block text-sm font-medium mb-1">
-                Password
-              </label>
-
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className="input-style pr-16 text-black"
-                />
-
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2
-                            text-xs font-medium text-gray-500
-                            hover:text-indigo-600 transition"
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
-              </div>
-
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-              )}
-            </div>
-
-              <button
-                type="button"
-                onClick={() => navigate("/user/forgot-password")}
-                className="text-sm text-indigo-600 hover:underline"
-              >
-                Forgot Password?
-              </button>
-
+            )}
 
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
+              onClick={handleCompleteProfile}
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold"
             >
-              {loading ? "Logging in..." : "Login"}
+              Complete Registration
             </button>
-
-            <div className="text-sm text-center mt-4">
-              Don’t have an account?{" "}
-              <button
-                type="button"
-                onClick={() => navigate("/user/UserRegister")}
-                className="text-indigo-600 hover:underline"
-              >
-                Register here
-              </button>
-            </div>
-          </form>
-        </div>
-      </main>
-
-      {/* ================= FOOTER ================= */}
-      <footer className="text-center text-xs text-gray-500 py-4 border-t border-gray-800">
-        © {new Date().getFullYear()} BoxArena. All rights reserved.
-      </footer>
+          </>
+        )}
+      </div>
     </div>
   );
 }
+
