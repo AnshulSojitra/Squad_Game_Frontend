@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getAllAdmins, toggleAdminBlock , deleteAdminBySuperAdmin} from "../../services/api";
 import Pagination from "../../components/common/Pagination";
 import ConfirmModal from "../../components/common/ConfirmModal";
+import { ShieldCheck, Activity, Search } from "lucide-react";
 
 
 
@@ -15,11 +16,18 @@ export default function SuperAdminAdmins() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedAdminId, setSelectedAdminId] = useState(null);
   const [loadingId, setLoadingId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
 
-  const totalPages = Math.ceil(admins.length / ITEMS_PER_PAGE);
+  // Filter admins based on search query
+  const filteredAdmins = admins.filter(admin =>
+    admin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    admin.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-const paginatedAdmins = admins.slice(
+  const totalPages = Math.ceil(filteredAdmins.length / ITEMS_PER_PAGE);
+
+const paginatedAdmins = filteredAdmins.slice(
   (page - 1) * ITEMS_PER_PAGE,
   page * ITEMS_PER_PAGE
 );
@@ -112,139 +120,238 @@ const paginatedAdmins = admins.slice(
 
   /* ---------------- UI ---------------- */
   return (
-    <div className="min-h-screen bg-gray-850 p-6">
-     {/* Page Header */}
-<div className="flex items-center justify-between mb-6">
-  <h2 className="text-2xl font-semibold text-white">
-    Admins
-  </h2>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Admin Management</h1>
+          <p className="text-gray-400">Manage and monitor all admin accounts</p>
+        </div>
 
-  <button
-    onClick={() => navigate("/super-admin/admins/create")}
-    className="
-      inline-flex items-center gap-2
-      bg-gradient-to-r from-blue-600 to-indigo-600
-      hover:from-blue-700 hover:to-indigo-700
-      text-white px-5 py-2.5 rounded-lg
-      text-sm font-semibold
-      shadow-lg hover:shadow-xl
-      transition-all duration-200
-      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-    "
-  >
-    <span className="text-lg leading-none">+</span>
-    Add Admin
-  </button>
-</div>
+        <button
+          onClick={() => navigate("/super-admin/admins/create")}
+          className="
+            inline-flex items-center gap-2
+            bg-gradient-to-r from-blue-600 to-indigo-600
+            hover:from-blue-700 hover:to-indigo-700
+            text-white px-6 py-3 rounded-xl
+            text-sm font-semibold
+            shadow-lg hover:shadow-xl
+            transition-all duration-200
+            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+            transform hover:scale-105
+          "
+        >
+          <span className="text-lg leading-none">+</span>
+          Add New Admin
+        </button>
+      </div>
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-blue-500/20 rounded-lg">
+              <ShieldCheck className="w-6 h-6 text-blue-400" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">Total Admins</p>
+              <p className="text-2xl font-bold text-white">{filteredAdmins.length}</p>
+            </div>
+          </div>
+        </div>
 
-      <div className="bg-white rounded-xl shadow-xl overflow-hidden">
+        <div className="bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20 rounded-xl p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-green-500/20 rounded-lg">
+              <Activity className="w-6 h-6 text-green-400" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">Active Admins</p>
+              <p className="text-2xl font-bold text-white">
+                {filteredAdmins.filter(admin => !admin.isBlocked).length}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-red-500/10 to-red-600/10 border border-red-500/20 rounded-xl p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-red-500/20 rounded-lg">
+              <ShieldCheck className="w-6 h-6 text-red-400" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">Blocked Admins</p>
+              <p className="text-2xl font-bold text-white">
+                {filteredAdmins.filter(admin => admin.isBlocked).length}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Search Bar */}
+      <div className="bg-slate-800/50 rounded-xl border border-slate-700 p-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            type="text"
+            placeholder="Search admins by name or email..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1); // Reset to first page when searching
+            }}
+            className="w-full pl-10 pr-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+      </div>
+
+      {/* Admins Table */}
+      <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-700">
+          <h2 className="text-lg font-semibold text-white">All Admins</h2>
+        </div>
+
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead className="bg-gray-100">
-              <tr className="text-left text-sm font-semibold text-gray-700">
-                <th className="px-6 py-4">No</th>
-                <th className="px-6 py-4">Name</th>
-                <th className="px-6 py-4">Email</th>
-                <th className="px-6 py-4">Role</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Action</th>
+          <table className="w-full">
+            <thead className="bg-slate-700/50">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                  #
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                  Admin Details
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                  Role
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-slate-700">
               {paginatedAdmins.map((admin, index) => (
                 <tr
                   key={admin.id}
-                  onClick={() =>
-                    navigate(`/super-admin/admins/${admin.id}`)
-                  }
-                  className="hover:bg-gray-50 transition cursor-pointer"
+                  onClick={() => navigate(`/super-admin/admins/${admin.id}`)}
+                  className="hover:bg-slate-700/30 transition-colors cursor-pointer group"
                 >
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {index + 1}
-                  </td>
-
-                  <td className="px-6 py-4 font-medium text-gray-900">
-                    {admin.name}
-                  </td>
-
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {admin.email}
+                  <td className="px-6 py-4 text-sm text-gray-400 font-medium">
+                    {(page - 1) * ITEMS_PER_PAGE + index + 1}
                   </td>
 
                   <td className="px-6 py-4">
-                    <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(admin.name)}&background=random`}
+                        alt={admin.name}
+                        className="w-10 h-10 rounded-full border-2 border-slate-600"
+                      />
+                      <div>
+                        <p className="font-semibold text-white group-hover:text-blue-400 transition-colors">
+                          {admin.name}
+                        </p>
+                        <p className="text-sm text-gray-400">{admin.email}</p>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td className="px-6 py-4">
+                    <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
                       {admin.role}
                     </span>
                   </td>
 
-                  {/* Status + Toggle */}
-                  <td className="px-6 py-4 flex items-center gap-3">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold
-                        ${
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
                           admin.isBlocked
-                            ? "bg-red-100 text-red-700"
-                            : "bg-green-100 text-green-700"
-                        }
-                      `}
-                    >
-                      {admin.isBlocked ? "Blocked" : "Active"}
-                    </span>
+                            ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                            : "bg-green-500/20 text-green-300 border border-green-500/30"
+                        }`}
+                      >
+                        {admin.isBlocked ? "Blocked" : "Active"}
+                      </span>
 
-                    <ToggleSwitch
-                      enabled={admin.isBlocked}
-                      onToggle={() => handleToggleBlock(admin)}
-                    />
+                      <ToggleSwitch
+                        enabled={admin.isBlocked}
+                        onToggle={() => handleToggleBlock(admin)}
+                      />
+                    </div>
                   </td>
 
-                  {/* Delete Button */}
                   <td className="px-6 py-4">
-                    <button
-                    onClick={(e) => openDeleteConfirm(e, admin.id)}
-                    disabled={loadingId === admin.id}
-                    className={`px-4 py-2 text-sm rounded-lg text-white
-                      ${
-                        loadingId === admin.id
-                          ? "bg-red-400 cursor-not-allowed"
-                          : "bg-red-600 hover:bg-red-700"
-                      }
-                    `}
-                  >
-                    {loadingId === admin.id ? "Deleting..." : "Delete"}
-                  </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/super-admin/admins/${admin.id}`);
+                        }}
+                        className="px-3 py-1.5 text-xs font-medium text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-lg hover:bg-blue-500/20 transition-colors"
+                      >
+                        View
+                      </button>
+
+                      <button
+                        onClick={(e) => openDeleteConfirm(e, admin.id)}
+                        disabled={loadingId === admin.id}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                          loadingId === admin.id
+                            ? "bg-red-500/50 text-red-300 cursor-not-allowed"
+                            : "bg-red-500/10 text-red-300 border border-red-500/20 hover:bg-red-500/20"
+                        }`}
+                      >
+                        {loadingId === admin.id ? "Deleting..." : "Delete"}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
 
-              {admins.length === 0 && (
+              {filteredAdmins.length === 0 && (
                 <tr>
-                  <td
-                    colSpan="6"
-                    className="px-6 py-10 text-center text-gray-500"
-                  >
-                    No admins found
+                  <td colSpan="5" className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <ShieldCheck className="w-12 h-12 text-gray-500" />
+                      <p className="text-gray-400">
+                        {searchQuery ? "No admins found matching your search" : "No admins found"}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {searchQuery ? "Try adjusting your search terms" : "Get started by adding your first admin"}
+                      </p>
+                    </div>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-      </div>
+
+        {filteredAdmins.length > 0 && (
+          <div className="px-6 py-4 border-t border-slate-700 bg-slate-800/30">
             <Pagination
               currentPage={page}
               totalPages={totalPages}
               onPageChange={setPage}
             />
-            <ConfirmModal
-            isOpen={confirmOpen}
-            title="Delete Admin"
-            message="Are you sure you want to delete this admin? All associated data will be permanently removed."
-            onConfirm={handleConfirmDelete}
-            onCancel={handleCancelDelete}
-          />
+          </div>
+        )}
+      </div>
 
+      <ConfirmModal
+        isOpen={confirmOpen}
+        title="Delete Admin"
+        message="Are you sure you want to delete this admin? All associated data will be permanently removed."
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </div>
   );
 }

@@ -179,7 +179,7 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
       country: g.country,
       state: g.state,
       city: g.city,
-      // locationUrl: g.locationUrl || "",
+      locationUrl: g.locationUrl || "",
       latitude: g.lat,
       longitude: g.lng,
     });
@@ -205,10 +205,10 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
     setExistingImages(g.images || []);
 
 
-    setLocation({
-      lat: Number(g.latitude),
-      lng: Number(g.longitude),
-    });
+    // setLocation({
+    //   lat: Number(g.latitude),
+    //   lng: Number(g.longitude),
+    // });
 
   
 
@@ -300,13 +300,13 @@ const handleImages = (e) => {
         if (!form.city) {
           newErrors.city = "City is required";
         }
-        // if (
-        //   !form.locationUrl ||
-        //   (!form.locationUrl.includes("google.com/maps") &&
-        //   !form.locationUrl.includes("maps.app.goo.gl"))
-        // ) {
-        //   newErrors.locationUrl = "Please enter a valid Google Maps link";
-        // }
+        if (
+          !form.locationUrl ||
+          (!form.locationUrl.includes("google.com/maps") &&
+          !form.locationUrl.includes("maps.app.goo.gl"))
+        ) {
+          newErrors.locationUrl = "Please enter a valid Google Maps link";
+        }
 
         if (!openingTime) {
           newErrors.openingTime = "Opening time is required";
@@ -357,9 +357,9 @@ const handleSubmit = async (e) => {
     formData.append("country", form.country);
     formData.append("state", form.state);
     formData.append("city", form.city);
-    // formData.append("locationUrl", form.locationUrl); // ✅ REQUIRED
-    formData.append("latitude", location.lat);
-    formData.append("longitude", location.lng);
+    formData.append("locationUrl", form.locationUrl); // ✅ REQUIRED
+    // formData.append("latitude", location.lat);
+    // formData.append("longitude", location.lng);
 
     
     // Amenities
@@ -410,31 +410,36 @@ const handleSubmit = async (e) => {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 px-4 text-black">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8">
-        <h2 className="text-2xl font-bold text-center mb-1">
-          Add Ground
-        </h2>
-        <p className="text-sm text-gray-500 text-center mb-6">
-          Enter ground details carefully
-        </p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 px-4 text-black animate-fade-in">
+      <div className="w-full max-w-2xl bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-white/20 transform transition-all duration-500 hover:shadow-3xl">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+            {groundId ? "Edit Ground" : "Add New Ground"}
+          </h2>
+          <p className="text-sm text-gray-600">
+            {groundId ? "Update ground details carefully" : "Enter ground details carefully"}
+          </p>
+        </div>
 
-        <label className="block text-sm font-medium mb-1">Ground Details</label>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <h5 className="block text-lg font-medium mb-4">Ground Details</h5>
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Ground Name */}
-          <input
-            type="text"
-            name="groundName"
-            placeholder="Ground Name"
-            className="input-style"
-            value={form.groundName}
-             onChange={(e) =>
-              setForm({ ...form, groundName: e.target.value })
-            }
-          />
-          {errors.groundName && (
-            <p className="text-red-500 text-xs mt-1">{errors.groundName}</p>
-          )}
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-gray-700">Ground Name</label>
+            <input
+              type="text"
+              name="groundName"
+              placeholder="Ground Name"
+              className="input-style transition-all duration-300 focus:scale-105"
+              value={form.groundName}
+               onChange={(e) =>
+                setForm({ ...form, groundName: e.target.value })
+              }
+            />
+            {errors.groundName && (
+              <p className="text-red-500 text-xs mt-1 animate-pulse">{errors.groundName}</p>
+            )}
+          </div>
 
           {/* Contact */}
           <label className="block text-sm font-medium mb-1">Contact Number</label>
@@ -541,7 +546,7 @@ const handleSubmit = async (e) => {
           </select>
 
 
-          {/* <label className="block text-sm font-medium mb-1">
+          <label className="block text-sm font-medium mb-1">
             Google Maps Location Link
           </label>
 
@@ -554,16 +559,16 @@ const handleSubmit = async (e) => {
             onChange={(e) =>
               setForm({ ...form, locationUrl: e.target.value })
             }
-          /> */}
+          />
 
-          <label className="block text-sm font-medium mb-2">
+          {/* <label className="block text-sm font-medium mb-2">
             Select Ground Location
           </label>
 
           <LocationPicker
             value={location}
             onChange={(coords) => setLocation(coords)}
-          />
+          /> */}
 
 
           {errors.locationUrl && (
@@ -810,13 +815,20 @@ const handleSubmit = async (e) => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg font-semibold transition
-              ${loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 text-white"}
-            `}
+            className={`w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed scale-95"
+                : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105"
+            }`}
           >
-            {loading ? "Saving Ground..." : groundId ? "Update Ground" : "Add Ground"}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="animate-spin">⏳</span>
+                Saving Ground...
+              </span>
+            ) : (
+              groundId ? "Update Ground" : "Add Ground"
+            )}
           </button>
 
         </form>

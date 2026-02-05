@@ -115,8 +115,20 @@ export const deleteGroundBySuperAdmin = (groundId) => {
   return API.delete(`/super-admin/ground/${groundId}`);
 };
 
+// SUPER ADMIN DASHBOARD
+export const getSuperAdminDashboard = () => {
+  return API.get("/super-admin/dashboard");
+};
 
 
+export const deleteUser = (userId) => {
+  const token = localStorage.getItem("superAdminToken");
+  API.delete(`/super-admin/user/${userId}`,{
+    headers: {
+     Authorization: `Bearer ${token}`,
+     },
+  });
+};
 
 
 // <=============================================== ADMIN ================================================>
@@ -146,15 +158,6 @@ export const getAdminProfile = () => {
 };
 
 //  TOGGLE BLOCK ADMIN
-// export const toggleGroundBlockApi = (Id) => {
-
-//   return api.patch("/admin/grounds/block/${Id}", {}, {
-//       headers: {
-//         Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-//       },
-//     });
-// };
-
 export const toggleGroundBlockApi = (groundId) => {
   return api.patch(`/admin/grounds/block/${groundId}`, {}, {
     headers: {
@@ -269,6 +272,110 @@ export const adminResetPassword = ({ email, otp, newPassword }) => {
     email,
     otp,
     newPassword,
+  });
+};
+
+/* -------- GAMES -------- */
+
+// Get all games
+export const getGames = () => {
+  const token = localStorage.getItem("adminToken");
+  return api.get("/admin/games", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "ngrok-skip-browser-warning": "true"
+    },
+  });
+};
+
+// Add game
+export const addGame = (data) => {
+  const token = localStorage.getItem("adminToken");
+  return api.post("/admin/games", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "ngrok-skip-browser-warning": "true"
+    },
+  });
+};
+
+// Delete game
+export const deleteGame = (id) => {
+  const token = localStorage.getItem("adminToken");
+  return api.delete(`/admin/games/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "ngrok-skip-browser-warning": "true"
+    },
+  });
+};
+
+// ADMIN DASHBOARD STATS
+export const getAdminDashboard = () => {
+  const token = localStorage.getItem("adminToken");
+
+  return api.get("/admin/dashboard", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+// ADMIN BOOKINGS CHART
+// export const getAdminBookingsChart = (fromDate) => {
+//   const token = localStorage.getItem("adminToken");
+
+//   return api.get("/admin/charts/bookings", {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//     params: {
+//       fromDate, // YYYY-MM-DD
+//     },
+//   });
+// };
+
+
+export const getAdminBookingsChart = (days) => {
+  const token = localStorage.getItem("adminToken");
+
+  return api.get("/admin/charts/bookings", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      days, // 👈 matches backend
+    },
+  });
+};
+
+
+// ADMIN REVENUE CHART
+export const getAdminRevenueChart = (days) => {
+  const token = localStorage.getItem("adminToken");
+
+  return api.get("/admin/charts/revenue", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      days,
+    },
+  });
+};
+
+
+// ADMIN GROUNDS CHART
+export const getAdminGroundsChart = (days) => {
+  const token = localStorage.getItem("adminToken");
+
+  return api.get("/admin/charts/grounds", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      days,
+    },
   });
 };
 
@@ -421,6 +528,20 @@ export const completeProfile = (data) => {
   });
 };
 
+// CHANGE USER NAME
+export const changeUserName = (name) => {
+  const token = localStorage.getItem("userToken");
+
+  return api.put(
+    "/user/change-name",
+    { name },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
 
 
 export default api;

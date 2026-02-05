@@ -107,18 +107,18 @@ export default function AdminChangePassword() {
         </div>
 
         {/* FORM */}
-        <div className="px-8 py-6">
+        <div className="space-y-6">
           {serverError && (
-            <div className="mb-4 text-sm text-red-700 bg-red-100 px-4 py-2 rounded-lg">
+            <div className="text-sm text-red-400 bg-red-500/20 border border-red-500/30 px-4 py-3 rounded-xl">
               {serverError}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
 
             {/* CURRENT PASSWORD */}
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block text-sm font-semibold text-gray-300 mb-2">
                 Current Password
               </label>
               <div className="relative">
@@ -127,20 +127,19 @@ export default function AdminChangePassword() {
                   name="oldPassword"
                   value={form.oldPassword}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 pr-12 border rounded-lg
-                             focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-4 py-3 pr-12 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                  placeholder="Enter current password"
                 />
                 <button
                   type="button"
                   onClick={() => setShow({ ...show, old: !show.old })}
-                  className="absolute right-3 top-1/2 -translate-y-1/2
-                             text-sm font-medium text-indigo-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-400 transition-colors duration-200"
                 >
                   {show.old ? "Hide" : "Show"}
                 </button>
               </div>
               {errors.oldPassword && (
-                <p className="text-xs text-red-600 mt-1">
+                <p className="text-xs text-red-400 mt-2 animate-pulse">
                   {errors.oldPassword}
                 </p>
               )}
@@ -212,16 +211,20 @@ export default function AdminChangePassword() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 rounded-xl font-semibold text-white
-                transition-all
-                ${
-                  loading
-                    ? "bg-indigo-400 cursor-not-allowed"
-                    : "bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg"
-                }
-              `}
+              className={`w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform ${
+                loading
+                  ? "bg-gray-600 cursor-not-allowed scale-95"
+                  : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105"
+              }`}
             >
-              {loading ? "Updating..." : "Update Password"}
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="animate-spin">⏳</span>
+                  Updating...
+                </span>
+              ) : (
+                "Update Password"
+              )}
             </button>
           </form>
         </div>

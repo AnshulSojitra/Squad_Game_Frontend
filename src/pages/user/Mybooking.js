@@ -8,11 +8,13 @@ export default function MyBookings() {
   const [loading, setLoading] = useState(true);
   const [cancelLoading, setCancelLoading] = useState(null);
   const ITEMS_PER_PAGE = 10;
-  const [page, setPage] = useState(1);
+  const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'cancelled'
+  const [activePage, setActivePage] = useState(1);
+  const [cancelledPage, setCancelledPage] = useState(1);
   const [toast, setToast] = useState({
-  show: false,
-  type: "success",
-  message: "",
+    show: false,
+    type: "success",
+    message: "",
   });
 
 // <---------showing toast----------> 
@@ -36,13 +38,13 @@ const showToast = (type, message) => {
     }
   };
 
-  const formatTime = (time) => {
-  const [hour, minute] = time.split(":");
-  const h = Number(hour);
-  const suffix = h >= 12 ? "PM" : "AM";
-  const formattedHour = h % 12 || 12;
-  return `${formattedHour}:${minute} ${suffix}`;
-  };
+  // const formatTime = (time) => {
+  //   const [hour, minute] = time.split(":");
+  //   const h = Number(hour);
+  //   const suffix = h >= 12 ? "PM" : "AM";
+  //   const formattedHour = h % 12 || 12;
+  //   return `${formattedHour}:${minute} ${suffix}`;
+  // };
 
 
   const handleCancel = async (bookingId) => {
@@ -67,123 +69,310 @@ const showToast = (type, message) => {
     }
   };
 
-  // paginated grounds 
-  const totalPages = Math.ceil(bookings.length / ITEMS_PER_PAGE);
+  // Filter bookings
+  const activeBookings = bookings.filter(b => b.status === "confirmed" || b.status === "completed");
+  const cancelledBookings = bookings.filter(b => b.status === "cancelled");
 
-const paginatedBookings = bookings.slice(
-  (page - 1) * ITEMS_PER_PAGE,
-  page * ITEMS_PER_PAGE
-);
+  // Pagination for active bookings
+  const totalActivePages = Math.ceil(activeBookings.length / ITEMS_PER_PAGE);
+  const paginatedActiveBookings = activeBookings.slice(
+    (activePage - 1) * ITEMS_PER_PAGE,
+    activePage * ITEMS_PER_PAGE
+  );
 
+  // Pagination for cancelled bookings
+  const totalCancelledPages = Math.ceil(cancelledBookings.length / ITEMS_PER_PAGE);
+  const paginatedCancelledBookings = cancelledBookings.slice(
+    (cancelledPage - 1) * ITEMS_PER_PAGE,
+    cancelledPage * ITEMS_PER_PAGE
+  );
+
+
+  const renderBookingTable = (bookings, showCancelButton = false, isCancelledSection = false) => (
+    <>
+      {/* MOBILE CARD VIEW */}
+      <div className="block md:hidden space-y-4">
+        {bookings.map((booking) => (
+          <div
+            key={booking.bookingId}
+            className={`rounded-xl p-4 border transition-all duration-200 ${
+              isCancelledSection
+                ? 'bg-red-900/20 border-red-700 hover:bg-red-800/30'
+                : 'bg-gray-800 border-gray-700 hover:bg-gray-750'
+            }`}
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1">
+                <h3 className="font-semibold text-white text-sm mb-1">
+                  {booking.ground.name}
+                </h3>
+                <p className="text-xs text-gray-400">
+                  {booking.ground.area}, {booking.ground.state}, {booking.ground.country}
+                </p>
+              </div>
+              <span
+                className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                  booking.status === "confirmed"
+                    ? "bg-green-900 text-green-300"
+                    : booking.status === "completed"
+                    ? "bg-blue-900 text-blue-300"
+                    : booking.status === "cancelled"
+                    ? "bg-red-900 text-red-300"
+                    : "bg-yellow-900 text-yellow-300"
+                }`}
+              >
+                {booking.status}
+              </span>
+            </div>
+
+            {/* Details Grid */}
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Date</p>
+                <p className="text-sm text-white font-medium">{booking.date}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Time</p>
+                <p className="text-sm text-white font-medium">
+                  {/* {formatTime(booking.startTime)} - {formatTime(booking.endTime)} */}
+                  {booking.startTime}-{booking.endTime}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Price</p>
+                <p className="text-sm font-semibold text-green-400">₹{booking.totalPrice}</p>
+              </div>
+              {showCancelButton && (
+                <div className="flex items-end">
+                  {booking.status === "confirmed" && (
+                    <button
+                      onClick={() => handleCancel(booking.bookingId)}
+                      disabled={cancelLoading === booking.bookingId}
+                      className={`w-full px-3 py-2 text-xs font-medium rounded-lg text-white transition-colors ${
+                        cancelLoading === booking.bookingId
+                          ? "bg-red-500 cursor-not-allowed"
+                          : "bg-red-600 hover:bg-red-700"
+                      }`}
+                    >
+                      {cancelLoading === booking.bookingId ? "Cancelling..." : "Cancel"}
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* DESKTOP TABLE VIEW */}
+      <div className={`hidden md:block overflow-x-auto rounded-lg shadow-lg border ${
+        isCancelledSection
+          ? 'bg-red-900/20 border-red-700'
+          : 'bg-gray-700 border-gray-600'
+      }`}>
+        <table className="w-full">
+          <thead className={isCancelledSection ? 'bg-red-800' : 'bg-gray-600'}>
+            <tr>
+              <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                Ground
+              </th>
+              <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                Date
+              </th>
+              <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                Slot
+              </th>
+              <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                Price
+              </th>
+              <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                Status
+              </th>
+              {showCancelButton && (
+                <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                  Action
+                </th>
+              )}
+            </tr>
+          </thead>
+
+          <tbody className={isCancelledSection ? 'divide-y divide-red-700' : 'divide-y divide-gray-600'}>
+            {bookings.map((booking) => (
+              <tr
+                key={booking.bookingId}
+                className={`transition-colors ${
+                  isCancelledSection
+                    ? 'hover:bg-red-800/30'
+                    : 'hover:bg-gray-600'
+                }`}
+              >
+                <td className="px-4 lg:px-6 py-4">
+                  <div>
+                    <p className="font-semibold text-white text-sm">
+                      {booking.ground.name}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {booking.ground.area}, {booking.ground.city}, {booking.ground.state}
+                    </p>
+                  </div>
+                </td>
+
+                <td className="px-4 lg:px-6 py-4 text-gray-300 text-sm">
+                  {booking.date}
+                </td>
+
+                <td className="px-4 lg:px-6 py-4 text-gray-300 text-sm">
+                  {/* {formatTime(booking.startTime)} – {formatTime(booking.endTime)} */}
+                    {booking.slot.startTime} - {booking.slot.endTime}
+                </td>
+
+                <td className="px-4 lg:px-6 py-4 font-semibold text-green-400 text-sm">
+                  ₹{booking.totalPrice}
+                </td>
+
+                <td className="px-4 lg:px-6 py-4">
+                  <span
+                    className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                      booking.status === "confirmed"
+                        ? "bg-green-900 text-green-300"
+                        : booking.status === "completed"
+                        ? "bg-blue-900 text-blue-300"
+                        : booking.status === "cancelled"
+                        ? "bg-red-900 text-red-300"
+                        : "bg-yellow-900 text-yellow-300"
+                    }`}
+                  >
+                    {booking.status}
+                  </span>
+                </td>
+
+                {showCancelButton && (
+                  <td className="px-4 lg:px-6 py-4">
+                    {booking.status === "confirmed" && (
+                      <button
+                        onClick={() => handleCancel(booking.bookingId)}
+                        disabled={cancelLoading === booking.bookingId}
+                        className={`px-3 py-2 text-xs font-medium rounded-lg text-white transition-colors ${
+                          cancelLoading === booking.bookingId
+                            ? "bg-red-500 cursor-not-allowed"
+                            : "bg-red-600 hover:bg-red-700"
+                        }`}
+                      >
+                        {cancelLoading === booking.bookingId ? "Cancelling..." : "Cancel"}
+                      </button>
+                    )}
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
 
   if (loading) {
-    return <p className="text-center mt-10">Loading bookings...</p>;
+    return (
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400"></div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 px-6 py-10">
-      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
-        <h1 className="text-2xl font-bold mb-6">My Bookings</h1>
+    <div className="min-h-screen bg-gray-900 px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">My Bookings</h1>
 
-        {bookings.length === 0 ? (
-          <p className="text-gray-500 text-center">
-            You have no bookings yet
-          </p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100 text-left text-sm">
-                  <th className="p-3">Ground</th>
-                  <th className="p-3">Date</th>
-                  <th className="p-3">Slot</th>
-                  <th className="p-3">Price</th>
-                  <th className="p-3">Status</th>
-                  <th className="p-3">Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {paginatedBookings.map((booking) => (
-                  <tr
-                    key={booking.bookingId}
-                    className="border-b text-sm"
-                  >
-                    <td className="p-3">
-                      <p className="font-medium">
-                        {booking.ground.name}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {booking.ground.area} ,  
-                        {booking.ground.state} ,  
-                        {booking.ground.country}
-                      </p>
-                    </td>
-
-                    <td className="p-3">{booking.date}</td>
-
-                    <td className="p-3">
-                      {formatTime(booking.startTime)} –{" "}
-                      {formatTime(booking.endTime)}
-                    </td>
-
-                    <td className="p-3 font-semibold text-green-600">
-                      ₹{booking.totalPrice}
-                    </td>
-
-                    <td className="p-3">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          booking.status === "confirmed"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
-                        }`}
-                      >
-                        {booking.status}
-                      </span>
-                    </td>
-
-                    <td className="p-3">
-                      {booking.status === "confirmed" && (
-                        <button
-                          onClick={() =>
-                            handleCancel(booking.bookingId)
-                          }
-                          disabled={cancelLoading === booking.bookingId}
-                          // className="text-red-600 hover:underline text-sm"
-                          className={`px-4 py-2 text-sm rounded-lg text-white
-                      ${
-                        cancelLoading === booking.bookingId
-                          ? "bg-red-400 cursor-not-allowed"
-                          : "bg-red-600 hover:bg-red-700"
-                      }
-                    `}
-                        >
-                          {cancelLoading === booking.bookingId
-                            ? "Cancelling..."
-                            : "Cancel"}
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {/* Tab Navigation */}
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-1 mb-6 sm:mb-8 bg-gray-800 p-1 rounded-lg w-full sm:w-fit">
+          <button
+            onClick={() => setActiveTab('bookings')}
+            className={`px-4 sm:px-6 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+              activeTab === 'bookings'
+                ? 'bg-green-600 text-white shadow-md'
+                : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+            }`}
+          >
+            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+            <span className="whitespace-nowrap">Bookings ({activeBookings.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('cancelled')}
+            className={`px-4 sm:px-6 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+              activeTab === 'cancelled'
+                ? 'bg-red-600 text-white shadow-md'
+                : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+            }`}
+          >
+            <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+            <span className="whitespace-nowrap">Cancelled ({cancelledBookings.length})</span>
+          </button>
+        </div>
+        {/* Tab Content */}
+        {activeTab === 'bookings' && (
+          <div>
+            {activeBookings.length === 0 ? (
+              <div className="text-center py-12 sm:py-16 bg-gray-700 rounded-lg border border-gray-600">
+                <div className="text-4xl sm:text-5xl mb-4">📅</div>
+                <p className="text-gray-400 text-lg sm:text-xl">
+                  No active bookings
+                </p>
+                <p className="text-gray-500 text-sm sm:text-base mt-2 px-4">
+                  Your confirmed and completed bookings will appear here
+                </p>
+              </div>
+            ) : (
+              <>
+                {renderBookingTable(paginatedActiveBookings, true, false)}
+                <div className="mt-6 sm:mt-8 flex justify-center">
+                  <Pagination
+                    currentPage={activePage}
+                    totalPages={totalActivePages}
+                    onPageChange={setActivePage}
+                  />
+                </div>
+              </>
+            )}
           </div>
         )}
-      </div>
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        onPageChange={setPage}
-      />
-      <Toast
-                show={toast.show}
-                type={toast.type}
-                message={toast.message}
-                onClose={() => setToast({ ...toast, show: false })}
-              />
 
+        {activeTab === 'cancelled' && (
+          <div>
+            {cancelledBookings.length === 0 ? (
+              <div className="text-center py-12 sm:py-16 bg-red-900/20 rounded-lg border border-red-700">
+                <div className="text-4xl sm:text-5xl mb-4">🚫</div>
+                <p className="text-gray-400 text-lg sm:text-xl">
+                  No cancelled bookings
+                </p>
+                <p className="text-gray-500 text-sm sm:text-base mt-2 px-4">
+                  Your cancelled bookings will appear here
+                </p>
+              </div>
+            ) : (
+              <>
+                {renderBookingTable(paginatedCancelledBookings, false, true)}
+                <div className="mt-6 sm:mt-8 flex justify-center">
+                  <Pagination
+                    currentPage={cancelledPage}
+                    totalPages={totalCancelledPages}
+                    onPageChange={setCancelledPage}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+      </div>
+
+      <Toast
+        show={toast.show}
+        type={toast.type}
+        message={toast.message}
+        onClose={() => setToast({ ...toast, show: false })}
+      />
     </div>
   );
 }

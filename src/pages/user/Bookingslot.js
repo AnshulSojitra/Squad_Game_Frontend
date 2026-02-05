@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { getPublicGround } from "../../services/api";
-import GroundDetails from "./GroundDetails";
 import Pagination from "../../components/common/Pagination";
 import Footer from "../../components/common/Footer";
-
-const IMAGE_BASE = process.env.REACT_APP_IMAGE_URL;
+import StickySearch from "../../components/common/StickySearch";
+import VenueCard from "../../components/common/VenueCard";
 
 export default function Bookingslot() {
   const [grounds, setGrounds] = useState([]);
-  const [selectedGroundId, setSelectedGroundId] = useState(null);
   const [loading, setLoading] = useState(true);
   
   const [search, setSearch] = useState("");
@@ -17,10 +14,16 @@ export default function Bookingslot() {
   const [state, setState] = useState("");
   const [country, setCountry] = useState("");
   const [game, setGame] = useState("");
-  const navigate = useNavigate("");
 
+  const clearFilters = () => {
+    setSearch("");
+    setCity("");
+    setState("");
+    setCountry("");
+    setGame("");
+  };
 
-  const ITEMS_PER_PAGE = 15;
+  const ITEMS_PER_PAGE = 12;
   const [page, setPage] = useState(1);
 
 
@@ -68,152 +71,131 @@ const paginatedGrounds = filteredGrounds.slice(
   page * ITEMS_PER_PAGE
 );
 
+// reset to page 1 when filters change
+useEffect(() => {
+  setPage(1);
+}, [search, city, state, country, game]);
 
-
-  if (loading) {
-    return <p className="text-center mt-10">Loading grounds...</p>;
+// keep current page within range when totalPages changes
+useEffect(() => {
+  if (totalPages > 0 && page > totalPages) {
+    setPage(totalPages);
   }
+}, [totalPages]);
 
-  /* ================= SHOW DETAILS ================= */
-  if (selectedGroundId) {
-    return (
-      <GroundDetails
-        groundId={selectedGroundId}
-      />
-    );
-  }
+
+
 
   /* ================= GROUNDS LIST ================= */
   return (
-    <div className="min-h-screen bg-gray-900 px-6 py-10">
-      <h1 className="text-2xl font-bold mb-6 text-center text-white">
-        Select a Ground
-      </h1>
+    <div className="min-h-screen bg-gray-900 px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 text-center text-white">
+          Select a Ground
+        </h1>
 
-      
-      {/* SEARCH & FILTER BAR */}
-        <div className="max-w-7xl mx-auto px-6 mt-10 mb-10">
-          <div
-            className="flex flex-col lg:flex-row gap-4 items-center
-                      bg-white/5 backdrop-blur-md border border-white/10
-                      rounded-2xl p-5 shadow-lg"
-          >
+        <p className="text-center text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base max-w-2xl mx-auto">
+          Find and book the perfect sports ground for your game. Choose from various locations and amenities.
+        </p>
 
-            {/* SEARCH */}
-            <div className="relative w-full lg:flex-1">
-              <input
-                type="text"
-                placeholder="Search ground, city, state or country"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full h-12 pl-12 pr-4 rounded-xl
-                          bg-gray-900/70 text-white placeholder-gray-400
-                          border border-gray-700
-                          focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                🔍
-              </span>
-            </div>
+        {/* SEARCH & FILTER BAR */}
+        <div className="mb-6 sm:mb-8">
+          <StickySearch
+            search={search}
+            setSearch={setSearch}
+            city={city}
+            setCity={setCity}
+            game={game}
+            setGame={setGame}
+            cities={cities}
+            games={games}
+            onClear={clearFilters}
+            overlay={false}
+          />
+        </div>
 
-            {/* FILTERS */}
-            <div className="flex flex-wrap gap-3 w-full lg:w-auto">
+        {/* RESULTS COUNT */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-2">
+          <div className="text-gray-400 text-sm">
+            {loading ? (
+              "Loading grounds..."
+            ) : (
+              <>
+                Showing {paginatedGrounds.length} of {filteredGrounds.length} ground{paginatedGrounds.length !== 1 ? 's' : ''}
+                {filteredGrounds.length > ITEMS_PER_PAGE && (
+                  <span className="text-gray-500 ml-1">
+                    (Page {page} of {totalPages})
+                  </span>
+                )}
+              </>
+            )}
+          </div>
 
-              <select value={city} onChange={(e) => setCity(e.target.value)} className="filter-select">
-                <option value="">City</option>
-                {cities.map(c => <option key={c}>{c}</option>)}
-              </select>
-
-              <select value={state} onChange={(e) => setState(e.target.value)} className="filter-select">
-                <option value="">State</option>
-                {states.map(s => <option key={s}>{s}</option>)}
-              </select>
-
-              <select value={country} onChange={(e) => setCountry(e.target.value)} className="filter-select">
-                <option value="">Country</option>
-                {countries.map(c => <option key={c}>{c}</option>)}
-              </select>
-
-              <select value={game} onChange={(e) => setGame(e.target.value)} className="filter-select">
-                <option value="">Game</option>
-                {games.map(g => <option key={g}>{g}</option>)}
-              </select>
-
-            </div>
+          {/* SORT/CLEAR BUTTONS - MOBILE FRIENDLY */}
+          <div className="flex gap-2">
+            {(search || city || game) && (
+              <button
+                onClick={clearFilters}
+                className="px-3 py-1.5 text-xs sm:text-sm bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white rounded-lg transition-colors duration-200 flex items-center gap-1"
+              >
+                <span>🗑️</span>
+                <span className="hidden sm:inline">Clear Filters</span>
+                <span className="sm:hidden">Clear</span>
+              </button>
+            )}
           </div>
         </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {paginatedGrounds.map((ground) => (
-          <div
-            key={ground.id}
-            // onClick={() => setSelectedGroundId(ground.id)}
-            onClick={() => navigate(`/user/grounds/${ground.id}`)}
-            className="bg-white rounded-xl shadow-md hover:shadow-lg cursor-pointer overflow-hidden"
-          >
-            {/* IMAGE */}
-            <div className="h-40 bg-gray-200">
-              <img
-                src={
-                  ground.images?.[0]
-                    ? `${IMAGE_BASE}${ground.images[0].imageUrl}`
-                    : "/placeholder.png"
-                }
-                alt={ground.name}
-                className="w-full h-full object-cover"
-              />
+        {/* GROUNDS GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
+          {loading ? (
+            Array.from({ length: ITEMS_PER_PAGE }).map((_, i) => (
+              <div key={i} className="h-64 sm:h-72 lg:h-80 rounded-xl sm:rounded-2xl bg-gray-800 animate-pulse" />
+            ))
+          ) : paginatedGrounds.length === 0 ? (
+            <div className="col-span-full text-center py-12 sm:py-16">
+              <div className="text-4xl sm:text-5xl mb-4">🏟️</div>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-300 mb-2">
+                No grounds found
+              </h3>
+              <p className="text-gray-400 text-sm sm:text-base mb-4 max-w-md mx-auto">
+                Try adjusting your search criteria or clearing the filters to see more results.
+              </p>
+              <button
+                onClick={clearFilters}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 px-6 py-2.5 rounded-lg text-white font-medium transition-all duration-300 hover:scale-105"
+              >
+                Clear All Filters
+              </button>
             </div>
-
-            {/* INFO */}
-            <div className="p-4 space-y-2">
-              <h3 className="text-lg font-semibold">{ground.name}</h3>
-
-              <p className="text-sm text-gray-500">
-                {[ground.area, ground.city, ground.state, ground.country]
-                  .filter(Boolean)
-                  .join(", ")}
-              </p>
-                
-              <p className="text-sm">
-                ⏰ {ground.openingTime} – {ground.closingTime}
-              </p>
-              <div className="flex gap-2 text-sm mb-2">
-                <span className="px-2 py-1 bg-blue-200 font-small rounded-2xl">
-                  {ground.game}
-                </span>
-                <span className="px-2 py-1 bg-green-200 font-small rounded-2xl">
-                  ₹{ground.pricePerSlot}/Slot
-                </span>
+          ) : (
+            paginatedGrounds.map((ground, index) => (
+              <div
+                key={ground.id}
+                className="animate-fade-in-up"
+                style={{animationDelay: `${index * 0.1}s`}}
+              >
+                <VenueCard ground={ground} />
               </div>
-              <p className="text-md font-semibold"> Amenities</p>
-              {ground.amenities?.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {ground.amenities.slice(0, 5).map((amenity, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-1 text-xs bg-gray-700 text-gray-200 rounded-full"
-                    >
-                      {typeof amenity === "string" ? amenity : amenity.name}
-                    </span>
-                  ))}
+            ))
+          )}
+        </div>
 
-                  {ground.amenities.length > 5 && (
-                    <span className="px-2 py-1 text-xs bg-gray-600 text-gray-300 rounded-full mb-2">
-                      +{ground.amenities.length - 5} more
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>  
-        ))}
-      </div>
-                  <Pagination
+        {/* PAGINATION */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mb-8">
+            <Pagination
               currentPage={page}
               totalPages={totalPages}
               onPageChange={setPage}
             />
-            <hr className="my-10 border-t border-gray-700" />
+          </div>
+        )}
+
+        {/* BOTTOM SPACING FOR FOOTER */}
+        <div className="h-8"></div>
+      </div>
+
       <Footer/>
     </div>
   );

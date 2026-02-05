@@ -99,18 +99,17 @@ export default function AdminLogin() {
       </header>
 
       {/* ================= LOGIN FORM ================= */}
-      <main className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4">
-        {/* className="flex flex-1 items-center justify-center px-4" */}
-        {/* <div className="bg-white p-8 rounded-xl w-full max-w-md shadow-2xl"> */}
-        <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-xl p-8 text-white">
+      <main className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4 animate-fade-in">
+        <div className="w-full max-w-md bg-gray-900/90 backdrop-blur-lg border border-gray-700 rounded-3xl shadow-2xl p-8 text-white transform transition-all duration-500 hover:shadow-3xl hover:scale-105">
            {/* Header */}
-          <h2 className="text-2xl font-bold text-center mb-1">
-            Admin Login
-          </h2>
-
-          <p className="text-xs text-gray-500 text-center mb-6">
-            Enter admin credentials to continue
-          </p>
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              Admin Login
+            </h2>
+            <p className="text-xs text-gray-400">
+              Enter admin credentials to continue
+            </p>
+          </div>
 
           {/* General Error */}
           {generalError && (
@@ -205,15 +204,20 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 rounded-lg font-semibold transition
-                ${
-                  loading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-indigo-600 hover:bg-indigo-700 text-white"
-                }
-              `}
+              className={`w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform ${
+                loading
+                  ? "bg-gray-600 cursor-not-allowed scale-95"
+                  : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105"
+              }`}
             >
-              {loading ? "Signing in..." : "Login"}
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="animate-spin">⏳</span>
+                  Signing in...
+                </span>
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
         </div>

@@ -1,38 +1,68 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate , Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import Lenis from "lenis";
 import Footer from "../components/common/Footer";
 import { getPublicGround } from "../services/api";
-import SportsSlider from "../components/common/SportsSlider";
 import LandingFeatures from "../components/common/LandingFeatures";
 import HeroSlider from "../components/common/HeroSlider";
 import ExplorebyCity from "../components/common/ExplorebyCities";
 import ScrollToTopButton from "../components/common/ScrollToTopButton";
-
-
-
-const IMAGE_BASE = process.env.REACT_APP_IMAGE_URL;
+import StickySearch from "../components/common/StickySearch";
+import VenueCardSlider from "../components/common/VenueCardSlider";
+import ScrollReveal from "../components/common/ScrollReveal";
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const lenisRef = useRef(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const [grounds, setGrounds] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState("");
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
   const [game, setGame] = useState("");
 
 
   // for filter
   const cities = [...new Set(grounds.map(g => g.city).filter(Boolean))];
-  const states = [...new Set(grounds.map(g => g.state).filter(Boolean))];
-  const countries = [...new Set(grounds.map(g => g.country).filter(Boolean))];
   const games = [...new Set(grounds.map(g => g.game).filter(Boolean))];
 
 
 
+
+  /* ---------------- LENIS ULTRA-SMOOTH SCROLL ---------------- */
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      touchMultiplier: 1.5,
+    });
+    lenisRef.current = lenis;
+
+    lenis.on("scroll", ({ scroll }) => {
+      setShowScrollTop(scroll > 300);
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+      lenisRef.current = null;
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: false });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   /* ---------------- FETCH GROUNDS ---------------- */
   useEffect(() => {
@@ -59,164 +89,184 @@ export default function LandingPage() {
   //   );
   // });
 
- 
-  const scrollRef = useRef(null);
-
-  const scrollLeft = () => {
-    scrollRef.current.scrollBy({
-      left: -350,
-      behavior: "smooth",
-    });
-  };
-
-  const scrollRight = () => {
-    scrollRef.current.scrollBy({
-      left: 350,
-      behavior: "smooth",
-    });
-  };
 
   const filteredGrounds = grounds.filter((g) => {
-  const text = `${g.name} ${g.city} ${g.state} ${g.country}`.toLowerCase();
+    const text = `${g.name} ${g.city} ${g.state} ${g.country}`.toLowerCase();
+
+    return (
+      text.includes(search.toLowerCase()) &&
+      (!city || g.city === city) &&
+      (!game || g.game === game)
+    );
+  });
+
+  const clearFilters = () => {
+    setSearch("");
+    setCity("");
+    setGame("");
+  };
 
   return (
-    text.includes(search.toLowerCase()) &&
-    (!city || g.city === city) &&
-    (!state || g.state === state) &&
-    (!country || g.country === country) &&
-    (!game || g.game === game)
-  );
-});
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white flex flex-col overflow-x-hidden">
+      {/* Animated gradient orbs - ambient background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-3xl" />
+      </div>
 
+      {/* Add padding for fixed navbar */}
+      <div className="pt-16"></div>
 
+      {/* HERO */}
+      <div className="relative">
+        <HeroSlider />
+      </div>
 
-  return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col">
-      {/* Banner */}
-     <HeroSlider/>
-      {/* <Banner/> */}
-
-      {/* <SportsSlider/> */}
-
-      {/* ---------------- HERO SECTION ---------------- */}
-
-      <section 
-      id="available-grounds"
-      className="py-16 px-6 bg-gradient-to-b from-[#0f172a] to-[#020617]">
-      <h2 className="text-3xl font-bold text-center text-white mb-10">
-          Available Grounds
-      </h2>
-      
-        
-        <div className="relative">
-        {/* arrows here */}
-
-
-      {/* SCROLL CONTAINER */}
-       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {grounds.slice(0,4).map((ground) => (
-          <div
-            key={ground.id}
-            onClick={() => navigate(`/user/grounds/${ground.id}`)}
-            className="min-w-[320px] max-w-[320px] bg-gray-800 rounded-xl 
-                       shadow-md hover:scale-[1.04] transition-transform duration-300 overflow-hidden"
-          >
-            {/* IMAGE */}
-            <div className="h-40 w-full bg-gray-700">
-              <img
-                src={
-                  ground.images?.[0]
-                    ? `${process.env.REACT_APP_IMAGE_URL}${ground.images[0].imageUrl}`
-                    : "/placeholder.png"
-                }
-                alt={ground.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* CONTENT */}
-            <div className="p-4 space-y-2 text-white">
-              <h3 className="text-lg font-semibold">{ground.name}</h3>
-
-              <p className="text-sm text-gray-400">
-                {[ground.area, ground.city, ground.state, ground.country]
-                  .filter(Boolean)
-                  .join(", ")}
-              </p>
-
-              <div className="flex gap-2 text-sm">
-                <span className="px-2 py-1 bg-indigo-600 rounded">
-                  {ground.game}
-                </span>
-                <span className="px-2 py-1 bg-green-600 rounded">
-                  ₹{ground.pricePerSlot}/Slot
-                </span>
+      <main className="flex-1">
+        {/* GROUNDS SECTION */}
+        <ScrollReveal animation="fade-up" delay={0}>
+          <section className="px-4 sm:px-6 lg:px-8 py-20 max-w-7xl mx-auto">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent mb-2">
+                  Find a Ground
+                </h2>
+                <p className="text-gray-400 text-lg">Quickly find grounds near you and book instantly.</p>
               </div>
 
-              <p className="text-sm text-gray-400">
-                ⏰ {ground.openingTime} – {ground.closingTime}
-              </p>
-            </div>
-            {/* AMENITIES */}
-              {ground.amenities?.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {ground.amenities.slice(0, 5).map((amenity, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-1 text-xs bg-gray-700 text-gray-200 rounded-full"
-                    >
-                      {typeof amenity === "string" ? amenity : amenity.name}
-                    </span>
-                  ))}
-
-                  {ground.amenities.length > 5 && (
-                    <span className="px-2 py-1 text-xs bg-gray-600 text-gray-300 rounded-full mb-2">
-                      +{ground.amenities.length - 5} more
-                    </span>
-                  )}
-                </div>
-              )}
+            {/* <div className="flex gap-3 items-center animate-slide-in-right">
+              <Link
+                to="/grounds"
+                className="text-gray-300 hover:text-white text-sm font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 group"
+              >
+                View all grounds
+                <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+              </Link>
+              <Link
+                to="/user/UserRegister"
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/25"
+              >
+                Get Started
+              </Link>
+            </div> */}
           </div>
-        ))}
-        </div>
-        <div className="text-center mt-10">
-          <Link
-            to="/grounds"
-            className="inline-block px-6 py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition"
-          >
-            View All Grounds →
-          </Link>
-        </div>
-      </div>
-    </section>
 
+          {/* Search sticker placed under the heading for clarity */}
+          <div className="mt-6 mb-8">
+            <StickySearch
+              search={search}
+              setSearch={setSearch}
+              city={city}
+              setCity={setCity}
+              game={game}
+              setGame={setGame}
+              cities={cities}
+              games={games}
+              onClear={clearFilters}
+              overlay={false}
+            />
+          </div>
 
-    {/* LandingFeatures */}
-    <LandingFeatures/>
+          {/* Category chips */}
+          <div className="flex gap-3 overflow-x-auto pb-3 hide-scrollbar mb-8">
+            <button
+              onClick={() => { setGame(""); }}
+              className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 whitespace-nowrap ${
+                game === "" ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" : "bg-white/10 text-gray-300 hover:bg-white/20"
+              }`}
+            >
+              All Games
+            </button>
+            {games.map((g, index) => (
+              <button
+                key={g}
+                onClick={() => setGame(g)}
+                className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 whitespace-nowrap ${
+                  game === g ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" : "bg-white/10 text-gray-300 hover:bg-white/20"
+                }`}
+              >
+                {g}
+              </button>
+            ))}
+          </div>
 
-    <ExplorebyCity/>
+          {/* Listings - Horizontal Slider */}
+          {filteredGrounds.length === 0 && !loading ? (
+            <div className="text-center text-gray-400 py-16 animate-fade-in">
+              <div className="text-6xl mb-4">🏟️</div>
+              <h3 className="text-xl font-semibold mb-2">No grounds found</h3>
+              <p className="mb-4">Try clearing your filters or search for something else.</p>
+              <button
+                onClick={clearFilters}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 px-6 py-2 rounded-lg text-white font-medium transition-all duration-300 hover:scale-105"
+              >
+                Clear Filters
+              </button>
+            </div>
+          ) : (
+            <VenueCardSlider
+              grounds={filteredGrounds}
+              loading={loading}
+            />
+          )}
 
-      {/* ---------------- CTA ---------------- */}
-      <section className="px-6 py-16 bg-indigo-600 text-center">
-        <h2 className="text-3xl font-bold mb-4">
-          Ready to Play?
-        </h2>
+          <div className="text-center mt-12">
+            <Link
+              to="/grounds"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold transition-all duration-500 ease-smooth transform hover:scale-105 hover:shadow-xl hover:shadow-indigo-500/30 group"
+            >
+              View More Grounds
+              <span className="group-hover:translate-x-2 transition-transform duration-300">→</span>
+            </Link>
+          </div>
+        </section>
+        </ScrollReveal>
 
-        <p className="mb-6">
-          Join Game Squad and make game booking effortless.
-        </p>
+        {/* FEATURES SECTION */}
+        <ScrollReveal animation="fade-up" delay={100}>
+          <LandingFeatures />
+        </ScrollReveal>
 
-        <button
-          onClick={() => navigate("/user/UserRegister")}
-          className="bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
-        >
-          Get Started
-        </button>
-      </section>
+        {/* EXPLORE BY CITY SECTION */}
+        <ScrollReveal animation="fade-up" delay={100}>
+          <ExplorebyCity />
+        </ScrollReveal>
 
-      {/* Footer */}
-      <Footer />
-      <ScrollToTopButton/>
+        {/* CTA SECTION */}
+        <section className="px-6 py-20 mx-6 mt-16">
+          <ScrollReveal animation="scale" delay={0}>
+          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-500 text-center rounded-3xl p-12 shadow-2xl relative overflow-hidden">
+            {/* Background decoration */}
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-blue-500/20 backdrop-blur-sm"></div>
+            <div className="absolute top-0 left-0 w-full h-full opacity-10">
+              <div className="w-full h-full bg-gradient-to-br from-white/5 to-transparent"></div>
+            </div>
+
+            <div className="relative z-10">
+              <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-white animate-float-slow">
+                Ready to Play?
+              </h2>
+              <p className="text-xl mb-8 text-indigo-100 max-w-2xl mx-auto">
+                Join Game Squad and make booking effortless. Discover amazing venues and connect with fellow players.
+              </p>
+              <button
+                onClick={() => navigate("/user/UserRegister")}
+                className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-500 ease-smooth transform hover:scale-105 hover:shadow-xl shadow-lg group animate-float"
+              >
+                Get Started Today
+                <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300 inline-block">🚀</span>
+              </button>
+            </div>
+          </div>
+          </ScrollReveal>
+        </section>
+      </main>
+
+      <ScrollReveal animation="fade-up" delay={0}>
+        <Footer />
+      </ScrollReveal>
+      <ScrollToTopButton onScrollToTop={scrollToTop} visible={showScrollTop} />
     </div>
   );
 }

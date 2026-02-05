@@ -43,6 +43,9 @@ import SuperAdminGroundsBooking from "../pages/super-admin/SuperAdminGroundBooki
 import SuperAdminCreateAdmin from "../pages/super-admin/SuperAdminCreateAdmin";
 import SuperAdminProfile from "../pages/super-admin/SuperAdminProfile";
 import GroundDetailsAdmin from "../pages/admin/GroundDetailsAdmin";
+import UserProfileLayout from "../components/layouts/UserProfileLayout";
+import EditProfile from "../pages/user/EditProfile";
+import Feedback from "../pages/user/Feedback";
 
 
 
@@ -54,9 +57,23 @@ export const AppRoutes = () => {
       <Route element={<PublicLayout />}>
       <Route path="/" element={<LandingPage />} />
       <Route path="/Grounds" element={<Bookingslot />} />
+      <Route path="/user/grounds/:groundId" element={<GroundDetails />} />
+      <Route path="/user/mybooking" element={<Mybooking />} />
       <Route path="/user/login" element={<UserLogin />} />
       <Route path="/user/UserRegister" element={<UserRegister />} />
-    </Route>
+      </Route>
+
+  
+
+<Route path="/profile" element={<UserProfileLayout />}>
+  <Route path="profile" element={<UserProfile />} />
+  <Route path="mybooking" element={<Mybooking />} />
+  <Route path="edit" element={<EditProfile />} />
+  <Route path="feedback" element={<Feedback />} />
+</Route>
+
+
+{/* =================================================================== USER PANEL ==================================================== */}
 
 
         {/* Public */}
@@ -86,7 +103,7 @@ export const AppRoutes = () => {
         <Route path="/Grounds" element={<Bookingslot />} />
         <Route path="/user/grounds/:groundId" element={<GroundDetails />} />
         
-      
+{/* =================================================================== ADMIN PANEL ==================================================== */}      
        {/* Admin Login without sidebar */}
        <Route path="/login" element={<AdminLogin />} />
        <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
@@ -110,10 +127,10 @@ export const AppRoutes = () => {
       </Route>
 
 
-        {/* ================= SUPER ADMIN LOGIN ================= */}
+{/* =================================================================== SUPER ADMIN LOGIN ==================================================== */}
       <Route path="/super-admin/login" element={<SuperAdminLogin />} />
 
-      {/* ================= SUPER ADMIN PANEL ================= */}
+{/* =================================================================== SUPER ADMIN PANEL ==================================================== */}
       <Route
         path="/super-admin"
         element={

@@ -9,15 +9,15 @@ export default function UserLayout() {
   return (
     <div className="flex h-screen bg-gray-900">
       {/* Sidebar */}
-     <UserSidebar
+     {/* <UserSidebar
         collapsed={collapsed}
         setCollapsed={setCollapsed}
-      />
+      /> */}
 
 
       {/* Main */}
       <div className="flex flex-col flex-1">
-        <UserHeader/>
+        {/* <UserHeader/> */}
 
         <main className="flex-1 overflow-y-auto p-6 bg-gray-900">
           <Outlet />

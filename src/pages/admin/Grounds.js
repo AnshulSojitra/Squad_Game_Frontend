@@ -6,19 +6,18 @@ import { getGroundById ,updateGround , toggleGroundBlockApi} from "../../service
 import ConfirmModal from "../../components/common/ConfirmModal";
 import ToggleSwitch from "../../components/common/ToggleSwitch";
 import ReviewList from "../../components/common/ReviewList";
+import Pagination from "../../components/common/Pagination";
 
 const IMAGE_BASE=process.env.REACT_APP_IMAGE_URL
 
 
 export default function Grounds() {
   const navigate = useNavigate();
-  const pageSize = 5;
   const [searchParams] = useSearchParams();
   const groundId = searchParams.get("id");
   const [grounds, setGrounds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedGroundId, setSelectedGroundId] = useState(null);
   const PAGE_SIZE = 6; // show 6 grounds per page
@@ -135,13 +134,14 @@ const paginatedGrounds = filteredGrounds.slice(
 
 
   return (
-    <div>
-
-
+    <div className="space-y-6 animate-fade-in">
       {/* HEADER ROW */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold"> Grounds </h1>
-       <div className="mb-6 flex justify-between items-center">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Grounds Management</h1>
+          <p className="text-gray-400">Manage all your sports grounds</p>
+        </div>
+       <div className="flex items-center gap-4">
           <input
             type="text"
             placeholder="Search ground by name..."
@@ -150,50 +150,63 @@ const paginatedGrounds = filteredGrounds.slice(
               setSearch(e.target.value);
               setCurrentPage(1); // reset page when searching
             }}
-            className="w-80 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
+            className="w-80 px-4 py-3 border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-800 text-white placeholder-gray-400 transition-all duration-300"
           />
-        </div>
         {/* Add Ground Button (TOP RIGHT) */}
         <button
           onClick={() => navigate("/admin/addground")}
-          className="px-5 py-2 font-medium transition bg-indigo-600 rounded-lg hover:bg-indigo-700"
+          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
         >
-          ➕ Add Ground
+          <span className="flex items-center gap-2">
+            <span className="text-lg">➕</span>
+            Add Ground
+          </span>
         </button>
        </div>
+       </div>
 
-       <div className="overflow-x-auto bg-gray shadow rounded-xl">
+       <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6">
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredGrounds.length === 0 ? (
-                <p className="col-span-full text-center text-gray-400">
-                  No grounds available
-                </p>
+                <div className="col-span-full text-center py-12">
+                  <div className="text-6xl mb-4">🏟️</div>
+                  <p className="text-gray-400 text-lg">No grounds available</p>
+                  <p className="text-gray-500 text-sm">Add your first ground to get started</p>
+                </div>
               ) : (
                 paginatedGrounds.map((ground) => (
-                // console.log("GROUND OBJECT 👉", ground);
                 <div
                   key={ground.id}
                    onClick={() => navigate(`/admin/grounds/${ground.id}`)}
-                  className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden"
+                  className="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:scale-105 cursor-pointer border border-gray-700"
                 >
                   
                   {/* Image */}
-                  <div className="h-40 w-full bg-gray-100">
+                  <div className="h-48 w-full bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden">
                     <img
                       src={`${process.env.REACT_APP_IMAGE_URL}${ground.images[0].imageUrl}`}
                       alt={ground.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                     />
-              </div>
+                    <div className="absolute top-3 right-3">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        ground.isBlocked 
+                          ? 'bg-red-500/90 text-white' 
+                          : 'bg-green-500/90 text-white'
+                      }`}>
+                        {ground.isBlocked ? 'Blocked' : 'Active'}
+                      </span>
+                    </div>
+                  </div>
 
               {/* Content */}
-              <div className="p-4 space-y-2 mb-2">
-                <h3 className="text-lg font-semibold text-gray-800">
+              <div className="p-6 space-y-3">
+                <h3 className="text-xl font-bold text-white">
                   {ground.name}
                 </h3>
 
-                <p className="text-sm text-gray-500">
-                  {[
+                <p className="text-sm text-gray-400">
+                  📍 {[
                     ground.area,
                     ground.city,
                     ground.state,
@@ -203,23 +216,24 @@ const paginatedGrounds = filteredGrounds.slice(
                     .join(", ")}
                 </p>
 
-                <div className="flex flex-wrap gap-2 text-sm mt-2">
-                  <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded">
-                    {ground.game}
+                <div className="flex flex-wrap gap-2 text-sm">
+                  <span className="px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full border border-indigo-500/30">
+                    🎮 {ground.game}
                   </span>
 
-                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded">
-                    ₹{ground.pricePerSlot}/Slot
+                  <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full border border-green-500/30">
+                    💰 ₹{ground.pricePerSlot}/Slot
                   </span>
                 </div>
 
-                <p className="text-sm text-gray-600">
-                  ⏰ {ground.openingTime} – {ground.closingTime}
-                </p>
-
-                <p className="text-sm text-gray-600">
-                  📞 {ground.contactNo}
-                </p>
+                <div className="flex items-center gap-4 text-sm text-gray-400">
+                  <span className="flex items-center gap-1">
+                    ⏰ {ground.openingTime} – {ground.closingTime}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    📞 {ground.contactNo}
+                  </span>
+                </div>
                {ground.amenities?.length > 0 && (
                   <div className="mt-2 mb-2">
                     <p className="text-xs text-gray-400 mb-1">Amenities</p>
@@ -250,9 +264,9 @@ const paginatedGrounds = filteredGrounds.slice(
                     navigate(`/admin/addground?id=${ground.id}`);
                     
                   }}
-                  className="text-blue-600 hover:underline text-sm"
+                  className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-200 flex items-center gap-1"
                 >
-                  Edit
+                  ✏️ Edit
                 </button>
 
 
@@ -261,9 +275,9 @@ const paginatedGrounds = filteredGrounds.slice(
                   e.stopPropagation();
                   openDeleteModal(ground.id);
                 }}
-                  className="text-red-600 hover:underline text-sm"
+                  className="text-red-400 hover:text-red-300 text-sm font-medium transition-colors duration-200 flex items-center gap-1"
                 >
-                  Delete
+                  🗑️ Delete
                 </button>
                 
                  {/* <div>
@@ -303,37 +317,7 @@ const paginatedGrounds = filteredGrounds.slice(
        </div>
 
         {/* Pagination Controls */}
-        <div className="flex justify-center items-center gap-3 mt-6">
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-3 py-1 rounded bg-gray-700 text-white disabled:opacity-50"
-          >
-            Prev
-          </button>
-
-          {Array.from({ length: totalPages }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentPage(index + 1)}
-              className={`px-3 py-1 rounded ${
-                currentPage === index + 1
-                  ? "bg-indigo-600 text-white"
-                  : "bg-gray-200"
-              }`}
-            >
-              {index + 1}
-            </button>
-          ))}
-
-          <button
-            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 rounded bg-gray-700 text-white disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       </div>
   

@@ -38,7 +38,7 @@ export default function SearchInput({
       placeholder={placeholder}
       className={`w-80 px-4 py-2 border rounded-lg 
         focus:outline-none focus:ring-2 focus:ring-indigo-500
-        text-black placeholder-gray-400 ${className}`}
+       bg-gray-800 text-white placeholder-gray-400 transition-all duration-300 ${className}`}
     />
   );
 }

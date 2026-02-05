@@ -1,22 +1,25 @@
 import { useEffect, useState } from "react";
 
-export default function ScrollToTopButton() {
-  const [visible, setVisible] = useState(false);
+export default function ScrollToTopButton({ onScrollToTop, visible: visibleProp }) {
+  const [visibleState, setVisibleState] = useState(false);
+  const visible = visibleProp !== undefined ? visibleProp : visibleState;
 
   useEffect(() => {
-    const onScroll = () => {
-      setVisible(window.scrollY > 300);
-    };
-
+    if (visibleProp !== undefined) return;
+    const onScroll = () => setVisibleState(window.scrollY > 300);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [visibleProp]);
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    if (onScrollToTop) {
+      onScrollToTop();
+    } else {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   };
 
   return (
@@ -30,10 +33,11 @@ export default function ScrollToTopButton() {
         text-white
         shadow-xl shadow-indigo-500/30
         flex items-center justify-center
-        transition-all duration-300 ease-out
-        hover:scale-110 hover:shadow-indigo-500/50
+        transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
+        hover:scale-110 hover:shadow-2xl hover:shadow-indigo-500/40
         active:scale-95
-        ${visible ? "opacity-100 scale-100" : "opacity-0 scale-75 pointer-events-none"}
+        backdrop-blur-sm border border-white/10
+        ${visible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-4 pointer-events-none"}
       `}
     >
       {/* Arrow Icon */}
