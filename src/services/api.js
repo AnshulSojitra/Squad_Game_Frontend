@@ -322,20 +322,6 @@ export const getAdminDashboard = () => {
 };
 
 // ADMIN BOOKINGS CHART
-// export const getAdminBookingsChart = (fromDate) => {
-//   const token = localStorage.getItem("adminToken");
-
-//   return api.get("/admin/charts/bookings", {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//     params: {
-//       fromDate, // YYYY-MM-DD
-//     },
-//   });
-// };
-
-
 export const getAdminBookingsChart = (days) => {
   const token = localStorage.getItem("adminToken");
 
@@ -436,9 +422,13 @@ export const confirmBooking = (payload) => {
   });
 };
 
-export const getPublicGroundById = (id) =>{
- return api.get(`/grounds/${id}`);
-}
+export const getPublicGroundById = (id, date) => {
+  return api.get(`/grounds/${id}`, {
+    params: date ? { date } : {}, // ✅ IMPORTANT
+  });
+};
+
+
 
 
 // GET BOOKINGS (My Bookings)

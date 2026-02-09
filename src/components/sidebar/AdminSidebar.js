@@ -11,11 +11,11 @@ export default function AdminSidebar({ collapsed, setCollapsed }) {
       <div className="h-16 flex items-center justify-between px-4 border-b border-slate-700/50 bg-gradient-to-r from-slate-800/50 to-slate-900/50">
         {!collapsed && (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">BA</span>
-            </div>
+            {/* <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-sm">GO</span>
+            </div> */}
             <span className="text-lg font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              BoxArena
+              Ground Owner
             </span>
           </div>
         )}
@@ -26,7 +26,7 @@ export default function AdminSidebar({ collapsed, setCollapsed }) {
           className="w-8 h-8 rounded-lg bg-slate-800/50 hover:bg-slate-700/70 text-slate-300 hover:text-white transition-all duration-300 flex items-center justify-center group shadow-md hover:shadow-lg"
         >
           <span className={`text-sm transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`}>
-            {collapsed ? '→' : '←'}
+            {collapsed ? '=' : '='}
           </span>
         </button>
       </div>

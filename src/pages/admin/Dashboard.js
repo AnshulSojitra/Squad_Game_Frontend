@@ -4,6 +4,7 @@ import { getAdminDashboard } from "../../services/api";
 import AdminBookingsChart from "../../components/common/AdminBookingsChart";
 import AdminRevenueChart from "../../components/common/AdminRevenueChart";
 import AdminGroundsChart from "../../components/common/AdminGroundsChart";
+import { ZoomIn } from "lucide-react";
 
 
 const Dashboard = () => {
@@ -93,7 +94,7 @@ const Dashboard = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">
-            Admin Dashboard
+            Ground Owner Dashboard
           </h1>
           <p className="text-gray-400">
             Welcome back! Here's what's happening today.
@@ -153,7 +154,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold text-white">Bookings Overview</h2>
             <span className="text-xs text-gray-400 hidden sm:inline">
-              Click to enlarge
+              < ZoomIn/>
             </span>
           </div>
           <div className="h-80">
@@ -169,7 +170,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold text-white">Revenue Overview</h2>
             <span className="text-xs text-gray-400 hidden sm:inline">
-              Click to enlarge
+              < ZoomIn/>
             </span>
           </div>
           <div className="h-80">
@@ -186,7 +187,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-white">Grounds Overview</h2>
             <span className="text-xs text-gray-400 hidden sm:inline">
-              Click to enlarge
+              < ZoomIn/>
             </span>
           </div>
           <div className="h-96">

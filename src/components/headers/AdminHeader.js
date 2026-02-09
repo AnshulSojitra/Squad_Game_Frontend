@@ -52,7 +52,7 @@ export default function AdminHeader() {
       <BackButton />
       {/* Left */}
       <div className="flex items-center gap-4">
-        <h1 className="text-lg font-semibold">BoxArena Admin</h1>
+        <h1 className="text-lg font-semibold"> Ground Owner</h1>
       </div>
 
       {/* Right */}

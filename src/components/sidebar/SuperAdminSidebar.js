@@ -1,9 +1,9 @@
 import { NavLink } from "react-router-dom";
 
 const menuItems = [
-  { to: "/super-admin/dashboard", label: "Dashboard", icon: "📊" },
+   { to: "/super-admin/dashboard", label: "Dashboard", icon: "📊" },
   { to: "/super-admin/users", label: "Users", icon: "👥" },
-  { to: "/super-admin/admins", label: "Admins", icon: "🛡️" },
+  { to: "/super-admin/admins", label: "Ground Owner", icon: "🛡️" },
   { to: "/super-admin/grounds", label: "Grounds", icon: "🏟️" },
   { to: "/super-admin/bookings", label: "Bookings", icon: "📅" },
 ];
@@ -19,9 +19,9 @@ export default function SuperAdminSidebar({ collapsed, setCollapsed }) {
       <div className="flex items-center justify-between px-4 h-16 border-b border-slate-700/50 bg-gradient-to-r from-slate-800/50 to-slate-900/50">
         {!collapsed && (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg">
+            {/* <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-sm">SA</span>
-            </div>
+            </div> */}
             <span className="text-lg font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
               Super Admin
             </span>
@@ -33,7 +33,7 @@ export default function SuperAdminSidebar({ collapsed, setCollapsed }) {
           className="w-8 h-8 rounded-lg bg-slate-800/50 hover:bg-slate-700/70 text-slate-300 hover:text-white transition-all duration-300 flex items-center justify-center group shadow-md hover:shadow-lg"
         >
           <span className={`text-sm transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`}>
-            {collapsed ? '→' : '←'}
+            {collapsed ? '=' : '='}
           </span>
         </button>
       </div>

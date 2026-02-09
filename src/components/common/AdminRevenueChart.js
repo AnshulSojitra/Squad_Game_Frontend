@@ -37,9 +37,9 @@ export default function AdminRevenueChart({ showHeader = true } = {}) {
       {/* HEADER */}
       {showHeader && (
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-          <h2 className="text-lg font-semibold text-white">
+          {/* <h2 className="text-lg font-semibold text-white">
             Revenue Overview
-          </h2>
+          </h2> */}
 
           {/* DAYS SELECTOR */}
           <div className="flex items-center gap-2">
@@ -51,10 +51,12 @@ export default function AdminRevenueChart({ showHeader = true } = {}) {
                          border border-gray-600 focus:outline-none
                          focus:ring-2 focus:ring-emerald-500"
             >
-              <option value={2}>2 days</option>
+              <option value={3}>3 days</option>
+              <option value={5}>5 days</option>
               <option value={7}>7 days</option>
               <option value={14}>14 days</option>
               <option value={30}>30 days</option>
+              <option value={60}>60 days</option>
             </select>
           </div>
         </div>

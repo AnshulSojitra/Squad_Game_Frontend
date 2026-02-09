@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { getAdminProfile } from "../../services/api";
 import BackButton from "../../components/common/BackButton";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminProfile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -106,7 +108,9 @@ export default function AdminProfile() {
             <button className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
               Edit Profile
             </button>
-            <button className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
+            <button className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+               onClick={() => navigate("/admin/change-password")}
+               >
               Change Password
             </button>
           </div>

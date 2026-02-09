@@ -42,7 +42,7 @@ export default function ReviewList({ groundId }) {
           {counts.map(({ r, count }) => {
             const pct = total ? Math.round((count / total) * 100) : 0;
             return (
-              <div key={r} className="flex items-center gap-3 text-sm mb-2">
+              <div key={r} className="flex items-center gap-3 text-sm mb-2 text-white">
                 <div className="w-8 text-sm">{r}★</div>
                 <div className="flex-1 h-2 bg-gray-200 rounded overflow-hidden">
                   <div className="h-2 bg-yellow-400 rounded transition-all" style={{ width: `${pct}%` }} />

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getUserBookings, cancelUserBooking } from "../../services/api";
 import Pagination from "../../components/common/Pagination";
 import Toast from "../../components/common/Toast";
+import ConfirmModal from "../../components/common/ConfirmModal";
+
 
 export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
@@ -11,6 +13,10 @@ export default function MyBookings() {
   const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'cancelled'
   const [activePage, setActivePage] = useState(1);
   const [cancelledPage, setCancelledPage] = useState(1);
+
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
+
   const [toast, setToast] = useState({
     show: false,
     type: "success",
@@ -47,27 +53,57 @@ const showToast = (type, message) => {
   // };
 
 
-  const handleCancel = async (bookingId) => {
-    if (!window.confirm("Are you sure you want to cancel this booking?")) return;
+  // const handleCancel = async (bookingId) => {
+  //   if (!window.confirm("Are you sure you want to cancel this booking?")) return;
 
-    try {
-      setCancelLoading(bookingId);
-      await cancelUserBooking(bookingId);
+  //   try {
+  //     setCancelLoading(bookingId);
+  //     await cancelUserBooking(bookingId);
 
-      // Update UI instantly
-      setBookings((prev) =>
-        prev.map((b) =>
-          b.bookingId === bookingId
-            ? { ...b, status: "cancelled" }
-            : b
-        )
-      );
-    } catch (err) {
-      showToast("error","Failed to cancel booking");
-    } finally {
-      setCancelLoading(null);
-    }
-  };
+  //     // Update UI instantly
+  //     setBookings((prev) =>
+  //       prev.map((b) =>
+  //         b.bookingId === bookingId
+  //           ? { ...b, status: "cancelled" }
+  //           : b
+  //       )
+  //     );
+  //   } catch (err) {
+  //     showToast("error","Failed to cancel booking");
+  //   } finally {
+  //     setCancelLoading(null);
+  //   }
+  // };
+
+  const openCancelModal = (bookingId) => {
+  setSelectedBookingId(bookingId);
+  setShowConfirm(true);
+};
+
+
+const confirmCancelBooking = async () => {
+  try {
+    setCancelLoading(selectedBookingId);
+    await cancelUserBooking(selectedBookingId);
+
+    setBookings((prev) =>
+      prev.map((b) =>
+        b.bookingId === selectedBookingId
+          ? { ...b, status: "cancelled" }
+          : b
+      )
+    );
+
+    showToast("success", "Booking cancelled successfully");
+  } catch (err) {
+    showToast("error", "Failed to cancel booking");
+  } finally {
+    setCancelLoading(null);
+    setShowConfirm(false);
+    setSelectedBookingId(null);
+  }
+};
+
 
   // Filter bookings
   const activeBookings = bookings.filter(b => b.status === "confirmed" || b.status === "completed");
@@ -147,7 +183,7 @@ const showToast = (type, message) => {
                 <div className="flex items-end">
                   {booking.status === "confirmed" && (
                     <button
-                      onClick={() => handleCancel(booking.bookingId)}
+                     onClick={() => openCancelModal(booking.bookingId)}
                       disabled={cancelLoading === booking.bookingId}
                       className={`w-full px-3 py-2 text-xs font-medium rounded-lg text-white transition-colors ${
                         cancelLoading === booking.bookingId
@@ -251,7 +287,7 @@ const showToast = (type, message) => {
                   <td className="px-4 lg:px-6 py-4">
                     {booking.status === "confirmed" && (
                       <button
-                        onClick={() => handleCancel(booking.bookingId)}
+                        onClick={() => openCancelModal(booking.bookingId)}
                         disabled={cancelLoading === booking.bookingId}
                         className={`px-3 py-2 text-xs font-medium rounded-lg text-white transition-colors ${
                           cancelLoading === booking.bookingId
@@ -359,6 +395,8 @@ const showToast = (type, message) => {
                     totalPages={totalCancelledPages}
                     onPageChange={setCancelledPage}
                   />
+                  
+
                 </div>
               </>
             )}
@@ -366,6 +404,17 @@ const showToast = (type, message) => {
         )}
 
       </div>
+
+        <ConfirmModal
+                    isOpen={showConfirm}
+                    title="Cancel Booking"
+                    message="Are you sure you want to cancel this booking?"
+                    onConfirm={confirmCancelBooking}
+                    onCancel={() => {
+                      setShowConfirm(false);
+                      setSelectedBookingId(null);
+                    }}
+                  />
 
       <Toast
         show={toast.show}

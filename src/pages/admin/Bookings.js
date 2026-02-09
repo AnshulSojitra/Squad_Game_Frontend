@@ -34,21 +34,6 @@ const [groundFilter, setGroundFilter] = useState("all");
   };
 
 
-// const uniqueGrounds = Array.from(
-//   new Map(
-//     bookings
-//       .map((b) => {
-//         if (b.ground?.id) {
-//           return [b.ground.id, b.ground];
-//         }
-//         if (b.groundId && b.groundName) {
-//           return [b.groundId, { id: b.groundId, name: b.groundName }];
-//         }
-//         return null;
-//       })
-//       .filter(Boolean)
-//   ).values()
-// );
 const uniqueGrounds = Array.from(
   new Set(
     bookings
@@ -57,36 +42,6 @@ const uniqueGrounds = Array.from(
   )
 );
 
-
-
-
-//   const filteredBookings = bookings.filter((booking) => {
-//   if (!booking) return false;
-
-//   // 🔍 Search filter
-//   const searchText = search.toLowerCase();
-//   const matchesSearch =
-//     (booking.user?.name || "").toLowerCase().includes(searchText) ||
-//     (booking.user?.email || "").toLowerCase().includes(searchText) ||
-//     (booking.ground?.name || "").toLowerCase().includes(searchText) ||
-//     (booking.status || "").toLowerCase().includes(searchText);
-
-//   // 📌 Status filter
-//   const matchesStatus =
-//     statusFilter === "all" ||
-//     booking.status?.toLowerCase() === statusFilter;
-
-//   // const matchesGround =
-//   // groundFilter === "all" ||
-//   // booking.ground?.id === Number(groundFilter) ||
-//   // booking.groundId === Number(groundFilter);
-
-// const matchesGround =
-//   groundFilter === "all" ||
-//   booking.ground?.name === groundFilter;
-
-//   return matchesSearch && matchesStatus && matchesGround;
-// });
 
 
 const filteredBookings = bookings.filter((booking) => {

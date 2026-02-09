@@ -125,22 +125,51 @@ const handleRatingSubmit = async ({ rating, feedback }) => {
 
 
   /* ================= FETCH GROUND ================= */
+
   useEffect(() => {
-    const fetchGround = async () => {
-      try {
-        const res = await getPublicGroundById(groundId);
-        setGround(res.data);
-      } catch {
-        showToast("error", "Failed to load ground details");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchGround();
-  }, [groundId]);
+  if (!groundId) return;
+
+  const fetchGround = async () => {
+    try {
+      const res = await getPublicGroundById(groundId);
+      setGround(res.data);
+    } catch {
+      showToast("error", "Failed to load ground details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchGround();
+}, [groundId]);
+
+  /* ================= FETCH GROUND WITH DATE ================= */
+
+  useEffect(() => {
+  if (!groundId || !selectedDate) return;
+
+  const fetchSlotsForDate = async () => {
+    try {
+      const res = await getPublicGroundById(groundId, selectedDate);
+
+      // 🔥 only replace slots, not entire ground
+      setGround((prev) => ({
+        ...prev,
+        slots: res.data.slots,
+      }));
+
+      setSelectedSlots([]); // reset selection on date change
+    } catch {
+      showToast("error", "Failed to load slots");
+    }
+  };
+
+  fetchSlotsForDate();
+}, [groundId, selectedDate]);
 
   
-const images = ground?.images || [];
+// Image View
+  const images = ground?.images || [];
   const [touchStartX, setTouchStartX] = useState(null);
 
   // Auto-rotate images every 5s unless paused by hover
@@ -220,18 +249,23 @@ const now = new Date();
   const totalPrice =
     selectedSlots.length * Number(ground.pricePerSlot || 0);
 
-  const handleSlotSelect = (slot) => {
-    if (!token) {
-      navigate("/user/login", { state: { from: location.pathname } });
-      return;
-    }
-    setSelectedSlots((prev) =>
-      prev.some((s) => s.id === slot.id)
-        ? prev.filter((s) => s.id !== slot.id)
-        : [...prev, slot]
-    );
-  };
+    const handleSlotSelect = (slot) => {
+      // 🚫 Block booked slots
+      if (!slot.available) return;
 
+      if (!token) {
+        navigate("/user/login", { state: { from: location.pathname } });
+        return;
+      }
+
+      setSelectedSlots((prev) =>
+        prev.some((s) => s.id === slot.id)
+          ? prev.filter((s) => s.id !== slot.id)
+          : [...prev, slot]
+      );
+      console.log("SLOT DEBUG", slot.id, slot.available, typeof slot.available);
+
+    };
 
 
 
@@ -440,25 +474,40 @@ const now = new Date();
             </p>
 
             <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-4">
-              {validSlots.map((slot) => {
-                const selected = isSlotSelected(slot);
-                return (
-                  <button
-                    key={slot.id}
-                    onClick={() => handleSlotSelect(slot)}
-                    className={`py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors
-                      ${
-                        selected
-                          ? "bg-indigo-600 text-white"
-                          : "border border-gray-300 hover:border-indigo-500 text-gray-700"
-                      }`}
-                  >
-                    {formatTime12(slot.startTime)} -{" "}
-                    {formatTime12(slot.endTime)}
-                  </button>
-                );
-              })}
-            </div>
+                {validSlots.map((slot) => {
+                    const selected = isSlotSelected(slot);
+                    const isBooked = !Boolean(slot.available);
+
+                    return (
+                      <button
+                        key={slot.id}
+                        disabled={isBooked}
+                        onClick={() => handleSlotSelect(slot)}
+                        className={`py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-all
+                          ${
+                            isBooked
+                              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                              : selected
+                              ? "bg-indigo-600 text-white"
+                              : "border border-gray-300 hover:border-indigo-500 text-gray-700"
+                          }
+                        `}
+                        title={isBooked ? "Slot already booked" : ""}
+                      >
+                        {formatTime12(slot.startTime)} - {formatTime12(slot.endTime)}
+                        {isBooked && (
+                          <span className="block text-[10px] text-red-500 mt-1">
+                            Booked
+                          </span>
+                        )}
+                      </button>
+                    );
+                })}
+              </div>
+
+            
+ 
+
 
             <p className="font-bold text-base sm:text-lg mt-4 sm:mt-6">
               Total: <span className="text-green-600">₹{totalPrice}</span>

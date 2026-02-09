@@ -134,22 +134,6 @@ export default function LandingPage() {
                 </h2>
                 <p className="text-gray-400 text-lg">Quickly find grounds near you and book instantly.</p>
               </div>
-
-            {/* <div className="flex gap-3 items-center animate-slide-in-right">
-              <Link
-                to="/grounds"
-                className="text-gray-300 hover:text-white text-sm font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 group"
-              >
-                View all grounds
-                <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
-              </Link>
-              <Link
-                to="/user/UserRegister"
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/25"
-              >
-                Get Started
-              </Link>
-            </div> */}
           </div>
 
           {/* Search sticker placed under the heading for clarity */}

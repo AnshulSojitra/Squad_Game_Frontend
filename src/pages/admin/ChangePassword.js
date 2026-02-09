@@ -96,29 +96,35 @@ export default function AdminChangePassword() {
 
   return (
     <div className="min-h-screen overflow-hidden flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 px-4">
-      <div className="h-full overflow-y-auto w-full max-w-md bg-white rounded-2xl shadow-2xl text-gray-800">
-
+      <div className="w-full max-w-md bg-white/5 backdrop-blur-xl rounded-3xl shadow-[0_20px_45px_rgba(15,23,42,0.8)] border border-white/10 overflow-hidden">
         {/* HEADER */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-6 text-white text-center">
-          <h2 className="text-2xl font-bold">Admin Change Password</h2>
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-7 text-white text-center">
+          <h2 className="text-2xl font-bold tracking-wide">
+            Admin Change Password
+          </h2>
           <p className="text-sm opacity-90 mt-1">
             Update your admin credentials securely
           </p>
         </div>
 
         {/* FORM */}
-        <div className="space-y-6">
+        <div className="px-8 py-7 space-y-6 bg-slate-900/60">
+          <p className="text-xs text-slate-300/90 bg-slate-800/60 border border-slate-700/70 rounded-2xl px-4 py-3 leading-relaxed">
+            For your security, make sure your new password is at least{" "}
+            <span className="font-semibold text-indigo-300">6 characters</span>{" "}
+            long and is different from your previous passwords.
+          </p>
+
           {serverError && (
-            <div className="text-sm text-red-400 bg-red-500/20 border border-red-500/30 px-4 py-3 rounded-xl">
+            <div className="text-sm text-red-200 bg-red-500/15 border border-red-500/40 px-4 py-3 rounded-2xl">
               {serverError}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* CURRENT PASSWORD */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-100">
                 Current Password
               </label>
               <div className="relative">
@@ -127,27 +133,27 @@ export default function AdminChangePassword() {
                   name="oldPassword"
                   value={form.oldPassword}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 pr-12 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
+                  className="w-full px-4 py-3 pr-14 rounded-2xl border border-slate-600/80 bg-slate-800/80 text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/80 focus:border-transparent transition-all duration-200"
                   placeholder="Enter current password"
                 />
                 <button
                   type="button"
                   onClick={() => setShow({ ...show, old: !show.old })}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-400 transition-colors duration-200"
+                  className="absolute inset-y-0 right-0 flex items-center px-4 text-xs font-semibold uppercase tracking-wide text-indigo-300 hover:text-white transition-colors duration-150"
                 >
                   {show.old ? "Hide" : "Show"}
                 </button>
               </div>
               {errors.oldPassword && (
-                <p className="text-xs text-red-400 mt-2 animate-pulse">
+                <p className="text-xs text-red-300 mt-1">
                   {errors.oldPassword}
                 </p>
               )}
             </div>
 
             {/* NEW PASSWORD */}
-            <div>
-              <label className="block text-sm font-medium mb-1">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-100">
                 New Password
               </label>
               <div className="relative">
@@ -156,28 +162,27 @@ export default function AdminChangePassword() {
                   name="newPassword"
                   value={form.newPassword}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 pr-12 border rounded-lg
-                             focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-4 py-3 pr-14 rounded-2xl border border-slate-600/80 bg-slate-800/80 text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/80 focus:border-transparent transition-all duration-200"
+                  placeholder="Create a new password"
                 />
                 <button
                   type="button"
                   onClick={() => setShow({ ...show, new: !show.new })}
-                  className="absolute right-3 top-1/2 -translate-y-1/2
-                             text-sm font-medium text-indigo-600"
+                  className="absolute inset-y-0 right-0 flex items-center px-4 text-xs font-semibold uppercase tracking-wide text-indigo-300 hover:text-white transition-colors duration-150"
                 >
                   {show.new ? "Hide" : "Show"}
                 </button>
               </div>
               {errors.newPassword && (
-                <p className="text-xs text-red-600 mt-1">
+                <p className="text-xs text-red-300 mt-1">
                   {errors.newPassword}
                 </p>
               )}
             </div>
 
             {/* CONFIRM PASSWORD */}
-            <div>
-              <label className="block text-sm font-medium mb-1">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-100">
                 Confirm New Password
               </label>
               <div className="relative">
@@ -186,22 +191,21 @@ export default function AdminChangePassword() {
                   name="confirmPassword"
                   value={form.confirmPassword}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 pr-12 border rounded-lg
-                             focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-4 py-3 pr-14 rounded-2xl border border-slate-600/80 bg-slate-800/80 text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/80 focus:border-transparent transition-all duration-200"
+                  placeholder="Re-enter new password"
                 />
                 <button
                   type="button"
                   onClick={() =>
                     setShow({ ...show, confirm: !show.confirm })
                   }
-                  className="absolute right-3 top-1/2 -translate-y-1/2
-                             text-sm font-medium text-indigo-600"
+                  className="absolute inset-y-0 right-0 flex items-center px-4 text-xs font-semibold uppercase tracking-wide text-indigo-300 hover:text-white transition-colors duration-150"
                 >
                   {show.confirm ? "Hide" : "Show"}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="text-xs text-red-600 mt-1">
+                <p className="text-xs text-red-300 mt-1">
                   {errors.confirmPassword}
                 </p>
               )}
@@ -211,23 +215,24 @@ export default function AdminChangePassword() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform ${
+              className={`w-full mt-3 py-3.5 rounded-2xl font-semibold text-sm tracking-wide transition-all duration-200 flex items-center justify-center gap-2 ${
                 loading
-                  ? "bg-gray-600 cursor-not-allowed scale-95"
-                  : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105"
+                  ? "bg-slate-700 text-slate-300 cursor-not-allowed opacity-80"
+                  : "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-900/40 hover:shadow-xl hover:from-indigo-500/95 hover:to-purple-500/95 hover:-translate-y-0.5"
               }`}
             >
               {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="animate-spin">⏳</span>
+                <>
+                  <span className="h-4 w-4 border-2 border-white/40 border-t-transparent rounded-full animate-spin" />
                   Updating...
-                </span>
+                </>
               ) : (
                 "Update Password"
               )}
             </button>
           </form>
         </div>
+
         <Toast
           show={toast.show}
           type={toast.type}
