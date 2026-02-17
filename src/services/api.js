@@ -131,6 +131,9 @@ export const deleteUser = (userId) => {
 };
 
 
+
+
+
 // <=============================================== ADMIN ================================================>
 
 // READ - Login Admin
@@ -532,6 +535,27 @@ export const changeUserName = (name) => {
     }
   );
 };
+
+//PAYMENT ORDER
+export const createPaymentOrder = (data) =>{
+   const token = localStorage.getItem("userToken");
+  api.post("/payments/razorpay/order", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  });
+}
+
+//VERIFY PAYMENT
+export const verifyPayment = (data) =>{
+   const token = localStorage.getItem("userToken");
+  api.post("/payments/razorpay/verify", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  });
+}
+
 
 
 export default api;

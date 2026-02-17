@@ -5,13 +5,15 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
-import { getPublicGroundById, confirmBooking , getGroundReviews , submitGroundReview} from "../../services/api";
+import { getPublicGroundById, confirmBooking , getGroundReviews , submitGroundReview, getUserProfile} from "../../services/api";
 import Toast from "../../components/common/Toast";
 import BackButton from "../../components/common/BackButton";
 import RateVenueModal from "../../components/common/RateVenueModal";
 import Footer from "../../components/common/Footer";
 import ReviewList from "../../components/common/ReviewList";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import RazorpayPayment from "../../components/payment/RazorpayPayment"
+
 
 
 
@@ -29,6 +31,7 @@ export default function GroundDetails({ groundId: propGroundId }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isImagePaused, setIsImagePaused] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,28 +59,26 @@ export default function GroundDetails({ groundId: propGroundId }) {
   const showToast = (type, message) =>
     setToast({ show: true, type, message });
   
+
+// ------------------- Fetch User Profile ------------------- //
+useEffect(() => {
+  if (!token) return;
+  
+  const fetchUserProfile = async () => {
+    try {
+      const res = await getUserProfile();
+      setUser(res.data);
+    } catch (err) {
+      console.error("Failed to fetch user profile", err);
+      showToast("error", "Failed to load user profile");
+    }
+  };
+
+  fetchUserProfile();
+}, [token]);
+
+  
 // ------------------ RATING SUBMISSION ------------------ //
-//   const handleRatingSubmit = async ({ rating, feedback }) => {
-//   try {
-//     await submitGroundReview(groundId, {
-//       rating,
-//       comment: feedback,
-//     });
-
-//     showToast("success", "Thanks for your feedback ⭐");
-
-//     // 🔄 Refresh reviews instantly
-//     const res = await getGroundReviews(groundId);
-//     setReviewsData(res.data);
-
-//     setShowRatingModal(false);
-//   } catch (err) {
-//     showToast(
-//       "error",
-//       err.response?.data?.message || "Failed to submit review"
-//     );
-//   }
-// };
 const handleRatingSubmit = async ({ rating, feedback }) => {
   if (!token) {
     showToast("error", "Please login to rate this venue");
@@ -287,6 +288,11 @@ const now = new Date();
       showToast("error", err.response?.data?.message || "Booking failed");
     }
   };
+
+  const selectedSlotIds = selectedSlots.map(slot => slot.id);
+
+
+  
 
   /* ================= UI ================= */
   return (
@@ -513,14 +519,44 @@ const now = new Date();
               Total: <span className="text-green-600">₹{totalPrice}</span>
             </p>
 
-            <button
-              onClick={() =>
-                token ? handleConfirmBooking() : navigate("/user/login")
-              }
-              className="w-full mt-3 sm:mt-4 py-2 sm:py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-sm sm:text-base transition-colors"
-            >
-              {token ? "Confirm Booking" : "Login to Book"}
-            </button>
+            {/* {selectedDate && selectedSlots.length > 0 && user && totalPrice > 0 ? (
+              <RazorpayPayment
+                amount={totalPrice}
+                bookingId={selectedSlotIds}
+                user={user}
+                selectedDate={selectedDate}
+              />
+            ) : (
+              <button
+                onClick={() => {
+                  if (!token) {
+                    navigate("/user/login");
+                  } else if (!selectedDate || selectedSlots.length === 0) {
+                    showToast("error", "Please select date and slots");
+                  }
+                }}
+                disabled={totalPrice === 0}
+                className="w-full mt-4 sm:mt-6 py-2 sm:py-3 bg-gray-400 text-white rounded-lg font-medium text-sm sm:text-base transition-colors cursor-not-allowed"
+              >
+                {token ? "Select date and slots" : "Login to Book"}
+              </button>
+            )} */}
+
+            {selectedDate && selectedSlots.length > 0 ? (
+              <RazorpayPayment
+                slotIds={selectedSlotIds}
+                selectedDate={selectedDate}
+                amount={totalPrice}
+              />
+            ) : (
+              <button
+                disabled
+                className="w-full mt-4 py-3 bg-gray-400 text-white rounded-lg"
+              >
+                Select date and slots
+              </button>
+            )}
+
 
             {ground.locationUrl && (
               <div className="mt-4 sm:mt-6 bg-white rounded-xl shadow p-3 sm:p-4">

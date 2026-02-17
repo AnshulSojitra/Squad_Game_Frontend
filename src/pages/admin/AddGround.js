@@ -203,13 +203,6 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
 
       setImages(g.images);
     setExistingImages(g.images || []);
-
-
-    // setLocation({
-    //   lat: Number(g.latitude),
-    //   lng: Number(g.longitude),
-    // });
-
   
 
 // Load states and cities based on existing data
@@ -219,10 +212,7 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
     const citiesRes = await getCitiesByState(g.state);
     setCities(citiesRes.data);
 
-    setAdvanceBookingDays(g.advanceBookingDays ?? 0);
-
-
-    
+    setAdvanceBookingDays(g.advanceBookingDays ?? 0);    
   };
 
 console.log("EDIT MODE:", groundId);

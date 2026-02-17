@@ -20,12 +20,16 @@ export default function LandingPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
   const [game, setGame] = useState("");
 
 
   // for filter
   const cities = [...new Set(grounds.map(g => g.city).filter(Boolean))];
   const games = [...new Set(grounds.map(g => g.game).filter(Boolean))];
+  const states = [...new Set(grounds.map(g => g.state).filter(Boolean))];
+  const countrys = [...new Set(grounds.map(g => g.country).filter(Boolean))];
 
 
 
@@ -107,7 +111,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white flex flex-col overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white flex flex-col overflow-hidden">
       {/* Animated gradient orbs - ambient background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-1/4 -left-32 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-float" />
@@ -141,12 +145,15 @@ export default function LandingPage() {
             <StickySearch
               search={search}
               setSearch={setSearch}
+              state={state}
+              setState={setState}
               city={city}
               setCity={setCity}
               game={game}
               setGame={setGame}
               cities={cities}
               games={games}
+              states={states}
               onClear={clearFilters}
               overlay={false}
             />

@@ -4,32 +4,32 @@ import ScrollReveal from "./ScrollReveal";
 const cities = [
   {
     name: "Ahmedabad",
-    grounds: 125,
+    // grounds: 125,
     image: "/assets/cities/ahmedabad.jpg",
   },
   {
     name: "Surat",
-    grounds: 89,
+   // grounds: 89,
     image: "/assets/cities/surat.jpg",
   },
   {
     name: "Vadodara",
-    grounds: 67,
+   // grounds: 67,
     image: "/assets/cities/vadodara.jpg",
   },
   {
     name: "Rajkot",
-    grounds: 45,
+   // grounds: 45,
     image: "/assets/cities/rajkot.jpg",
   },
   {
     name: "Gandhinagar",
-    grounds: 38,
+   // grounds: 38,
     image: "/assets/cities/gandhinagar.jpg",
   },
   {
     name: "Bharuch",
-    grounds: 22,
+   // grounds: 22,
     image: "/assets/cities/bharuch.jpg",
   },
 ];
@@ -80,9 +80,9 @@ export default function ExploreByCity() {
                 <h3 className="text-white font-semibold text-lg drop-shadow-lg group-hover:translate-y-0 transition-transform duration-300">
                   {city.name}
                 </h3>
-                <p className="text-gray-300 text-sm mt-0.5">
+                {/* <p className="text-gray-300 text-sm mt-0.5">
                   {city.grounds} Grounds
-                </p>
+                </p> */}
               </div>
             </button>
             </ScrollReveal>

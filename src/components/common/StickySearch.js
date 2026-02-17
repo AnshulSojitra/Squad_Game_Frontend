@@ -4,12 +4,16 @@ import { useState } from "react";
 export default function StickySearch({
   search,
   setSearch,
+  state,
+  setState,
   city,
   setCity,
   game,
   setGame,
   cities = [],
   games = [],
+  states = [],
+  
   onClear,
   overlay = true,
 }) {
@@ -26,13 +30,14 @@ export default function StickySearch({
           <SearchInput
             value={search}
             onChange={setSearch}
-            placeholder="Search for grounds, areas or cities"
+            placeholder="Search for grounds or cities"
             delay={300}
           />
         </div>
 
         <div className="hidden sm:flex gap-3 items-center text-black">
           <select
+            name="city"
             value={city}
             onChange={(e) => setCity(e.target.value)}
             className="border border-white/10 text-black px-3 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 transition-all duration-300"
@@ -40,6 +45,17 @@ export default function StickySearch({
             <option value="">All cities</option>
             {cities.map((c) => (
               <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+
+          <select
+            value={state}
+            onChange={(e) => setState(e.target.value)}
+            className="border border-white/10 text-black px-3 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 transition-all duration-300"
+          >
+            <option value="">All State</option>
+            {states.map((s) => (
+              <option key={s} value={s}>{s}</option>
             ))}
           </select>
 
