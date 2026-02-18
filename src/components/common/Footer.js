@@ -25,7 +25,7 @@ export default function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/user/bookingslot" className="hover:text-white transition-colors duration-300">
+              <Link to="/Grounds" className="hover:text-white transition-colors duration-300">
                 Grounds
               </Link>
             </li>
@@ -34,11 +34,11 @@ export default function Footer() {
                 Login
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/user/UserRegister" className="hover:text-white transition-colors duration-300">
                 Sign Up
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
 

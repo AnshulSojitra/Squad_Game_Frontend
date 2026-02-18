@@ -100,7 +100,8 @@ export default function LandingPage() {
     return (
       text.includes(search.toLowerCase()) &&
       (!city || g.city === city) &&
-      (!game || g.game === game)
+      (!game || g.game === game) &&
+      (!state || g.state === state) 
     );
   });
 
@@ -242,7 +243,7 @@ export default function LandingPage() {
                 Join Game Squad and make booking effortless. Discover amazing venues and connect with fellow players.
               </p>
               <button
-                onClick={() => navigate("/user/UserRegister")}
+                onClick={() => navigate("/user/login")}
                 className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-500 ease-smooth transform hover:scale-105 hover:shadow-xl shadow-lg group animate-float"
               >
                 Get Started Today

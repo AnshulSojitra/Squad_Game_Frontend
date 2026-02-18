@@ -210,6 +210,9 @@ const confirmCancelBooking = async () => {
         <table className="w-full">
           <thead className={isCancelledSection ? 'bg-red-800' : 'bg-gray-600'}>
             <tr>
+              {/* <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                No
+              </th> */}
               <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                 Ground
               </th>
@@ -234,7 +237,7 @@ const confirmCancelBooking = async () => {
           </thead>
 
           <tbody className={isCancelledSection ? 'divide-y divide-red-700' : 'divide-y divide-gray-600'}>
-            {bookings.map((booking) => (
+            {bookings.map((booking , index) => (
               <tr
                 key={booking.bookingId}
                 className={`transition-colors ${
@@ -243,6 +246,9 @@ const confirmCancelBooking = async () => {
                     : 'hover:bg-gray-600'
                 }`}
               >
+                {/* <td className="px-4 lg:px-6 py-4 text-gray-300 text-sm">
+                  {index + 1 + (isCancelledSection ? activeBookings.length : 0) + (isCancelledSection ? (cancelledPage - 1) * ITEMS_PER_PAGE : (activePage - 1) * ITEMS_PER_PAGE)}
+                </td> */}
                 <td className="px-4 lg:px-6 py-4">
                   <div>
                     <p className="font-semibold text-white text-sm">
@@ -317,7 +323,7 @@ const confirmCancelBooking = async () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 px-4 sm:px-6 lg:px-8 py-6">
+    <div className="min-h-screen bg-gray-900 px-4 sm:px-6 lg:px-8 py-6 pt-16">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">My Bookings</h1>
 

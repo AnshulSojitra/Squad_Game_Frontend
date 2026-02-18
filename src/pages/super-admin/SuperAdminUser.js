@@ -8,6 +8,8 @@ import {
 import Pagination from "../../components/common/Pagination";
 import ToggleSwitch from "../../components/common/ToggleSwitch";
 import { Users, UserCheck, UserX, Search } from "lucide-react";
+import ConfirmModal from "../../components/common/ConfirmModal";
+
 
 export default function SuperAdminUsers() {
   const [users, setUsers] = useState([]);
@@ -16,6 +18,9 @@ export default function SuperAdminUsers() {
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 10;
   const [page, setPage] = useState(1);
+  const [showConfirm, setShowConfirm] = useState(false);
+const [selectedUserId, setSelectedUserId] = useState(null);
+
 
   /* ---------------- Fetch Users ---------------- */
   const fetchUsers = async () => {
@@ -43,20 +48,38 @@ export default function SuperAdminUsers() {
     }
   };
 
-  // Delete User
-  const handleDeleteUser = async (userId) => {
-  const confirmed = window.confirm(
-    "⚠️ Are you sure?\nThis will permanently delete the user and all related data."
-  );
+  //----------------- Delete User------------------------//
+//   const handleDeleteUser = async (userId) => {
+//   const confirmed = window.confirm(
+//     "⚠️ Are you sure?\nThis will permanently delete the user and all related data."
+//   );
 
-  if (!confirmed) return;
+//   if (!confirmed) return;
 
+//   try {
+//     await deleteUser(userId);
+//     await fetchUsers(); // refresh list
+//   } catch (error) {
+//     console.error("Failed to delete user", error);
+//     alert("Failed to delete user");
+//   }
+// };
+
+const handleDeleteUser = (userId) => {
+  setSelectedUserId(userId);
+  setShowConfirm(true);
+};
+
+const confirmDelete = async () => {
   try {
-    await deleteUser(userId);
-    await fetchUsers(); // refresh list
+    await deleteUser(selectedUserId);
+    await fetchUsers();
   } catch (error) {
     console.error("Failed to delete user", error);
     alert("Failed to delete user");
+  } finally {
+    setShowConfirm(false);
+    setSelectedUserId(null);
   }
 };
 
@@ -224,7 +247,7 @@ export default function SuperAdminUsers() {
                     >
                       View Bookings
                     </button>
-                    <button
+                    {/* <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteUser(user.id);
@@ -232,7 +255,17 @@ export default function SuperAdminUsers() {
                       className="px-3 py-1.5 text-xs font-medium text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors mt-2 ml-2"
                     >
                       Delete
+                    </button> */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteUser(user.id);
+                      }}
+                       className="px-3 py-1.5 text-xs font-medium text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors mt-2 ml-2"
+                    >
+                      Delete
                     </button>
+
                   </td>
                 </tr>
               ))}
@@ -266,6 +299,17 @@ export default function SuperAdminUsers() {
           </div>
         )}
       </div>
+      <ConfirmModal
+        isOpen={showConfirm}
+        title="Delete User?"
+        message=" This will permanently delete the user and all related data. This action cannot be undone."
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setShowConfirm(false);
+          setSelectedUserId(null);
+        }}
+      />
+
     </div>
   );
 }

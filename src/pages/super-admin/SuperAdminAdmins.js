@@ -124,7 +124,7 @@ const paginatedAdmins = filteredAdmins.slice(
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Admin Management</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Ground Owner Management</h1>
           <p className="text-gray-400">Manage and monitor all admin accounts</p>
         </div>
 
@@ -155,7 +155,7 @@ const paginatedAdmins = filteredAdmins.slice(
               <ShieldCheck className="w-6 h-6 text-blue-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-400">Total Admins</p>
+              <p className="text-sm text-gray-400">Total Ground Owner</p>
               <p className="text-2xl font-bold text-white">{filteredAdmins.length}</p>
             </div>
           </div>
@@ -167,7 +167,7 @@ const paginatedAdmins = filteredAdmins.slice(
               <Activity className="w-6 h-6 text-green-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-400">Active Admins</p>
+              <p className="text-sm text-gray-400">Active Ground Owner</p>
               <p className="text-2xl font-bold text-white">
                 {filteredAdmins.filter(admin => !admin.isBlocked).length}
               </p>
@@ -181,7 +181,7 @@ const paginatedAdmins = filteredAdmins.slice(
               <ShieldCheck className="w-6 h-6 text-red-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-400">Blocked Admins</p>
+              <p className="text-sm text-gray-400">Blocked Ground Owner</p>
               <p className="text-2xl font-bold text-white">
                 {filteredAdmins.filter(admin => admin.isBlocked).length}
               </p>
@@ -210,7 +210,7 @@ const paginatedAdmins = filteredAdmins.slice(
       {/* Admins Table */}
       <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-700">
-          <h2 className="text-lg font-semibold text-white">All Admins</h2>
+          <h2 className="text-lg font-semibold text-white">All Ground Owner</h2>
         </div>
 
         <div className="overflow-x-auto">
@@ -218,7 +218,7 @@ const paginatedAdmins = filteredAdmins.slice(
             <thead className="bg-slate-700/50">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
-                  #
+                  No
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                   Admin Details

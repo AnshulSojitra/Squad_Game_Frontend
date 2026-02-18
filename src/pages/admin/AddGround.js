@@ -9,18 +9,20 @@ import LocationPicker from "../../components/common/LocationPicker";
 
 
 export default function AddGround() {
-  const [form, setForm] = useState({
-    groundName: "",
-    contact: "",
-    pricePerHour: "",
-    game: "",
-    area: "",
-    country: "",
-    state: "",
-    city: "",
-    locationUrl: "",
-    slots: [],
-  });
+const [form, setForm] = useState({
+  groundName: "",
+  contact: "",
+  pricePerHour: "",
+  game: "",
+  area: "",
+  country: "",
+  state: "",
+  city: "",
+  locationUrl: "",
+  slots: [],
+  gstPercentage: "0",   // ✅ ADD THIS
+});
+
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
@@ -180,8 +182,9 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
       state: g.state,
       city: g.city,
       locationUrl: g.locationUrl || "",
-      latitude: g.lat,
-      longitude: g.lng,
+      gstPercentage: g.gstPercentage
+      ? String(parseFloat(g.gstPercentage))
+      : "0",
     });
 
     setAmenities(
@@ -312,6 +315,10 @@ const handleImages = (e) => {
         if (amenities.length === 0) {
           newErrors.amenities = "Please add at least one amenity";
         }
+        if (!["0", "5", "12", "18", "28"].includes(form.gstPercentage)) {
+          newErrors.gstPercentage = "Invalid GST percentage";
+        }
+
 
         setErrors(newErrors);
 
@@ -339,6 +346,7 @@ const handleSubmit = async (e) => {
     formData.append("groundName", form.groundName);
     formData.append("contact", form.contact);
     formData.append("pricePerHour", form.pricePerHour);
+    formData.append("gstPercentage",parseFloat(form.gstPercentage));
     formData.append("game", form.game);
 
     // Address fields
@@ -760,6 +768,31 @@ const handleSubmit = async (e) => {
           {errors.pricePerHour && (
             <p className="text-red-500 text-xs mt-1">{errors.pricePerHour}</p>
           )}
+
+          {/* GST Percentage */}
+            <label className="block text-sm font-medium mb-1 mt-4">
+              GST Percentage (%)
+            </label>
+
+            <select
+              name="gstPercentage"
+              className="input-style"
+              value={form.gstPercentage}
+              onChange={(e) =>
+                setForm({ ...form, gstPercentage: e.target.value })
+              }
+            >
+              <option value="0">0%</option>
+              <option value="5">5%</option>
+              <option value="12">12%</option>
+              <option value="18">18%</option>
+              <option value="28">28%</option>
+            </select>
+
+          {errors.gstPercentage && (
+            <p className="text-red-500 text-xs mt-1">{errors.gstPercentage}</p>
+          )}
+
 
 
           </div>

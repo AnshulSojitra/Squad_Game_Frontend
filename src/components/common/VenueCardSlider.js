@@ -125,7 +125,7 @@ export default function VenueCardSlider({ grounds, loading }) {
         {/* Scrollable cards */}
         <div
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto overflow-y-hidden pb-4 hide-scrollbar scroll-smooth"
+          className="flex gap-6 overflow-x-auto overflow-y-hidden pb-14 pt-4 hide-scrollbar scroll-smooth"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {limitedGrounds.map((ground) => (

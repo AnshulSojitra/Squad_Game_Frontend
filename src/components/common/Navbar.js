@@ -89,6 +89,14 @@ export default function Navbar() {
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
 
+            <Link
+              to="/user/mybooking"
+              className="text-gray-300 hover:text-white text-sm font-medium transition-all duration-300 hover:scale-105 relative group"
+            >
+              My Bookings
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>
+            </Link>
+
             {/* AUTH SECTION */}
             {!token ? (
               /* 🔵 LOGIN BUTTON */

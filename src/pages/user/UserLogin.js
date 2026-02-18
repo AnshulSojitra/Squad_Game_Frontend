@@ -61,32 +61,6 @@ const showToast = (type, message) => {
   };
 
   /* ---------------- VERIFY OTP ---------------- */
-  // const handleVerifyOtp = async () => {
-  //   if (!otp) return alert("Enter OTP");
-
-  //   try {
-  //     const res = await verifyOtp({
-  //       login,
-  //       otp,
-  //     });
-
-  //     // EXISTING USER → LOGIN
-  //     if (!res.data.isNewUser) {
-  //       localStorage.setItem("userToken", res.data.token);
-  //       localStorage.setItem("user", JSON.stringify(res.data.user));
-  //       onClose?.();
-  //       navigate("/");
-  //       return;
-  //     }
-
-  //     // NEW USER → COMPLETE PROFILE
-  //     setIsNewUser(true);
-  //     setStep("PROFILE");
-  //   } catch (err) {
-  //     alert(err.response?.data?.message || "OTP verification failed");
-  //   }
-  // };
-
   const handleVerifyOtp = async () => {
   if (!otp) return showToast("error","Enter OTP");
   if (isVerifyingOtp) return;
@@ -156,7 +130,7 @@ const handleCompleteProfile = async () => {
       <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
       <div className="bg-gradient-to-tr from-indigo-600 to-blue-500 w-[420px] rounded-2xl p-6 relative shadow-2xl overflow-hidden">
         <button
-          onClick={onClose}
+          onClick={() => navigate("/")}
           className="absolute right-4 top-4 text-white text-xl"
           aria-label="Close"
         >

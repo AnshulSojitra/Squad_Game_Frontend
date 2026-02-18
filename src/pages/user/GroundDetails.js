@@ -32,7 +32,7 @@ export default function GroundDetails({ groundId: propGroundId }) {
   const [isImagePaused, setIsImagePaused] = useState(false);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-
+  const gstPercentage = ground?.gstPercentage || 0;
   const navigate = useNavigate();
   const location = useLocation();
   const token = localStorage.getItem("userToken");
@@ -249,6 +249,12 @@ const now = new Date();
 
   const totalPrice =
     selectedSlots.length * Number(ground.pricePerSlot || 0);
+// GST AMOUNT
+  const gstAmount = ((totalPrice * gstPercentage) / 100).toFixed(2);
+
+// total amount after tax
+  const totalAmount = (Number(totalPrice) + Number(gstAmount)).toFixed(2);
+
 
     const handleSlotSelect = (slot) => {
       // 🚫 Block booked slots
@@ -512,11 +518,23 @@ const now = new Date();
               </div>
 
             
- 
+              <hr className="my-3 sm:my-4" />
 
 
+            {/* <p className="font-bold text-base sm:text-lg mt-4 sm:mt-6"> */}
+            <p className="font-bold text-base sm:text-base mt-4 sm:mt-6">
+              Ground Price : <span className="text-green-600">₹{totalPrice}</span>
+            </p>
+            <p className="font-bold text-base sm:text-base mt-4 sm:mt-6">
+              Tax : <span className="text-green-600">{gstPercentage}%</span>
+            </p>
+            
+            <p className="font-bold text-base sm:text-sm mt-4 sm:mt-6">
+              Total Tax : <span className="text-green-600"> {gstAmount}</span>
+            </p> 
+            <hr className="my-3 sm:my-4" />
             <p className="font-bold text-base sm:text-lg mt-4 sm:mt-6">
-              Total: <span className="text-green-600">₹{totalPrice}</span>
+              Total Amount : <span className="text-green-600">₹{totalAmount}</span>
             </p>
 
             {/* {selectedDate && selectedSlots.length > 0 && user && totalPrice > 0 ? (
@@ -546,7 +564,7 @@ const now = new Date();
               <RazorpayPayment
                 slotIds={selectedSlotIds}
                 selectedDate={selectedDate}
-                amount={totalPrice}
+                amount={totalAmount}
               />
             ) : (
               <button
