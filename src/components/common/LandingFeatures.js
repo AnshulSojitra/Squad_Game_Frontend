@@ -1,17 +1,23 @@
 import ScrollReveal from "./ScrollReveal";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function LandingFeatures() {
+  const { isDarkMode } = useTheme();
   return (
     <>
       {/* ================= WHO IS BOXARENA FOR ================= */}
-      <section className="py-28 bg-gradient-to-b from-gray-900/95 via-gray-950 to-black relative overflow-hidden">
+      <section className={`py-28  relative overflow-hidden ${
+      isDarkMode
+        ? 'bg-gradient-to-b from-gray-900/95 via-gray-950 to-black text-gray-100'
+        : 'bg-gradient-to-b from-white via-blue-50/40 to-slate-100/60 text-gray-900'
+    }`}>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(99,102,241,0.03)_0%,_transparent_70%)]" />
         <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
 
           <span className="inline-block text-indigo-400/90 text-sm font-medium tracking-wider uppercase mb-4">
             Built for Everyone
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
             Who Is BoxArena For?
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto mb-16 text-lg">
@@ -55,7 +61,7 @@ export default function LandingFeatures() {
                 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-4 hover:shadow-2xl hover:shadow-indigo-500/5"
               >
                 <div className="text-4xl mb-5 transition-transform duration-500 group-hover:scale-110">{item.icon}</div>
-                <h3 className="text-xl font-semibold text-white mb-4">
+                <h3 className="text-xl font-semibold mb-4">
                   {item.title}
                 </h3>
                 <ul className="space-y-3 text-gray-400 text-sm">
@@ -73,13 +79,17 @@ export default function LandingFeatures() {
       </section>
 
       {/* ================= WHY CHOOSE BOXARENA ================= */}
-      <section className="py-28 bg-gray-950 text-white relative">
+      <section className={`py-28 relative ${
+      isDarkMode
+        ? 'bg-gradient-to-b from-gray-900/95 via-gray-950 to-black text-gray-100'
+        : 'bg-gradient-to-b from-slate-50 via-blue-50 to-white text-gray-900'
+       }`}>
         <div className="max-w-7xl mx-auto px-6 text-center">
 
           <span className="inline-block text-indigo-400/90 text-sm font-medium tracking-wider uppercase mb-4">
             The Complete Solution
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-100 mb-3 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-3 tracking-tight">
             Why Choose BoxArena?
           </h2>
           <p className="text-gray-500 mb-16 text-lg max-w-xl mx-auto">

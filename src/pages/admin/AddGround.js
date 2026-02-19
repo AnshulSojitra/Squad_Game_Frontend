@@ -428,7 +428,7 @@ const handleSubmit = async (e) => {
               type="text"
               name="groundName"
               placeholder="Ground Name"
-              className="input-style transition-all duration-300 focus:scale-105"
+              className="input-style"
               value={form.groundName}
                onChange={(e) =>
                 setForm({ ...form, groundName: e.target.value })

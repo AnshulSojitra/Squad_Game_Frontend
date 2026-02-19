@@ -1,5 +1,6 @@
 import SearchInput from "./SearchInput";
 import { useState } from "react";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function StickySearch({
   search,
@@ -22,10 +23,11 @@ export default function StickySearch({
   const outerClass = overlay
     ? "w-full max-w-4xl mx-auto transform -translate-y-12 relative z-30"
     : "w-full max-w-4xl mx-auto relative z-10 mt-2";
+  const { isDarkMode } = useTheme();
 
   return (
     <div className={outerClass}>
-      <div className="bg-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-xl flex gap-3 items-center transition-all duration-500 hover:border-white/20">
+      <div className={`${isDarkMode ? 'bg-white/[0.04] backdrop-blur-xl border border-white/10 text-white' : 'bg-white/80 backdrop-blur-lg shadow-lg border border-blue-100/40 text-gray-900'} rounded-2xl p-4 flex gap-3 items-center transition-all duration-500 ${isDarkMode ? 'hover:border-white/20' : 'hover:shadow-xl'}`}>
         <div className="flex-1">
           <SearchInput
             value={search}
@@ -35,12 +37,12 @@ export default function StickySearch({
           />
         </div>
 
-        <div className="hidden sm:flex gap-3 items-center text-black">
+        <div className="hidden sm:flex gap-3 items-center">
           <select
             name="city"
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            className="border border-white/10 text-black px-3 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 transition-all duration-300"
+            className={`${isDarkMode ? 'border border-white/10 bg-gray-800 text-white placeholder-gray-400' : 'border border-blue-200/60 bg-white/90 text-gray-900 placeholder-gray-500 focus:border-blue-400'} px-3 py-2 rounded-lg transition-all duration-300`}
           >
             <option value="">All cities</option>
             {cities.map((c) => (
@@ -51,7 +53,7 @@ export default function StickySearch({
           <select
             value={state}
             onChange={(e) => setState(e.target.value)}
-            className="border border-white/10 text-black px-3 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 transition-all duration-300"
+            className={`${isDarkMode ? 'border border-white/10 bg-gray-800 text-white placeholder-gray-400' : 'border border-blue-200/60 bg-white/90 text-gray-900 placeholder-gray-500 focus:border-blue-400'} px-3 py-2 rounded-lg transition-all duration-300`}
           >
             <option value="">All State</option>
             {states.map((s) => (
@@ -62,7 +64,7 @@ export default function StickySearch({
           <select
             value={game}
             onChange={(e) => setGame(e.target.value)}
-            className="border border-white/10 text-black px-3 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 transition-all duration-300"
+            className={`${isDarkMode ? 'border border-white/10 bg-gray-800 text-white placeholder-gray-400' : 'border border-blue-200/60 bg-white/90 text-gray-900 placeholder-gray-500 focus:border-blue-400'} px-3 py-2 rounded-lg transition-all duration-300`}
           >
             <option value="">All games</option>
             {games.map((g) => (
@@ -72,7 +74,7 @@ export default function StickySearch({
 
           <button
             onClick={onClear}
-            className="text-sm text-gray-300 hover:text-white"
+            className={`${isDarkMode ? 'text-sm text-gray-300 hover:text-white' : 'text-sm text-gray-600 hover:text-gray-800'}`}
           >
             Clear
           </button>

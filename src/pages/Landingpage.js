@@ -10,6 +10,7 @@ import ScrollToTopButton from "../components/common/ScrollToTopButton";
 import StickySearch from "../components/common/StickySearch";
 import VenueCardSlider from "../components/common/VenueCardSlider";
 import ScrollReveal from "../components/common/ScrollReveal";
+import { useTheme } from "../context/ThemeContext";
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -21,7 +22,6 @@ export default function LandingPage() {
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
   const [game, setGame] = useState("");
 
 
@@ -29,8 +29,7 @@ export default function LandingPage() {
   const cities = [...new Set(grounds.map(g => g.city).filter(Boolean))];
   const games = [...new Set(grounds.map(g => g.game).filter(Boolean))];
   const states = [...new Set(grounds.map(g => g.state).filter(Boolean))];
-  const countrys = [...new Set(grounds.map(g => g.country).filter(Boolean))];
-
+  const { isDarkMode } = useTheme();
 
 
 
@@ -112,7 +111,12 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white flex flex-col overflow-hidden">
+    <div className={`min-h-screen flex flex-col overflow-hidden transition-colors duration-300
+    ${
+      isDarkMode
+        ? 'bg-gray-900 text-gray-100'
+        : 'bg-gradient-to-b from-slate-50 via-blue-50/30 to-white text-gray-900'
+    }`}>
       {/* Animated gradient orbs - ambient background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-1/4 -left-32 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-float" />
@@ -134,10 +138,14 @@ export default function LandingPage() {
           <section className="px-4 sm:px-6 lg:px-8 py-20 max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
               <div>
-                <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent mb-2">
+                <h2 className={`text-3xl sm:text-4xl font-bold  mb-2 ${
+                  isDarkMode
+                    ? 'text-white'
+                    : 'text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700'
+                }`}>
                   Find a Ground
                 </h2>
-                <p className="text-gray-400 text-lg">Quickly find grounds near you and book instantly.</p>
+                <p className={isDarkMode ? 'text-gray-500 text-lg' : 'text-gray-600 text-lg'}>Quickly find grounds near you and book instantly.</p>
               </div>
           </div>
 
@@ -162,20 +170,20 @@ export default function LandingPage() {
 
           {/* Category chips */}
           <div className="flex gap-3 overflow-x-auto pb-3 hide-scrollbar mb-8">
-            <button
-              onClick={() => { setGame(""); }}
-              className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 whitespace-nowrap ${
-                game === "" ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" : "bg-white/10 text-gray-300 hover:bg-white/20"
-              }`}
-            >
-              All Games
-            </button>
+    <button
+      onClick={() => { setGame(""); }}
+      className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 whitespace-nowrap ${
+        game === "" ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" : isDarkMode ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-white text-gray-700 border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-300"
+      }`}
+    >
+      All Games
+    </button>
             {games.map((g, index) => (
               <button
                 key={g}
                 onClick={() => setGame(g)}
                 className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 whitespace-nowrap ${
-                  game === g ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" : "bg-white/10 text-gray-300 hover:bg-white/20"
+                  game === g ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" : isDarkMode ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-white text-gray-700 border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-300"
                 }`}
               >
                 {g}
@@ -185,9 +193,13 @@ export default function LandingPage() {
 
           {/* Listings - Horizontal Slider */}
           {filteredGrounds.length === 0 && !loading ? (
-            <div className="text-center text-gray-400 py-16 animate-fade-in">
+            <div className={`text-center py-16 animate-fade-in rounded-2xl transition-colors duration-300 ${
+              isDarkMode 
+                ? 'text-gray-400'
+                : 'text-gray-600 bg-gradient-to-br from-blue-50 to-indigo-50'
+            }`}>
               <div className="text-6xl mb-4">🏟️</div>
-              <h3 className="text-xl font-semibold mb-2">No grounds found</h3>
+              <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>No grounds found</h3>
               <p className="mb-4">Try clearing your filters or search for something else.</p>
               <button
                 onClick={clearFilters}

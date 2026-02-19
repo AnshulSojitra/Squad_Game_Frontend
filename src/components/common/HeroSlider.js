@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../context/ThemeContext";
 
 const slides = [
   {
@@ -28,7 +28,7 @@ const slides = [
 
 export default function HeroSlider() {
   const [index, setIndex] = useState(0);
-  const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
 
   /* ================= AUTO SLIDE ================= */
   useEffect(() => {
@@ -66,21 +66,22 @@ export default function HeroSlider() {
           />
 
           {/* Elegant gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-black/80" />
-          <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/10 via-transparent to-purple-900/10" />
+          {/* <div className={`absolute inset-0 ${isDarkMode ? 'bg-gradient-to-b from-black/75 via-black/45 to-black/80' : 'bg-gradient-to-b from-white/60 via-white/30 to-white/40'}`} />
+          <div className={`absolute inset-0 ${isDarkMode ? 'bg-gradient-to-r from-indigo-900/10 via-transparent to-purple-900/10' : 'bg-gradient-to-r from-indigo-50/10 via-transparent to-purple-50/10'}`} /> */}
         </div>
       ))}
 
       {/* CONTENT */}
       <div className="relative z-20 h-full flex flex-col items-center justify-center text-center px-6">
-        <h1 key={`title-${index}`} className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white drop-shadow-2xl animate-slide-up-reveal-smooth tracking-tight">
+        <h1 key={`title-${index}`} 
+            className="text-white text-4xl md:text-6xl lg:text-7xl font-extrabold drop-shadow-2xl animate-slide-up-reveal-smooth tracking-tight">
           {slides[index].title}{" "}
-          <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+          <span className={`${isDarkMode ? 'bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent' : 'bg-gradient-to-r from-indigo-600 via-purple-500 to-indigo-600 bg-clip-text text-transparent'}`}>
             {slides[index].highlight}
           </span>
         </h1>
 
-        <p key={`sub-${index}`} className="mt-6 max-w-2xl text-lg md:text-xl text-gray-200/95 animate-slide-up-reveal-smooth" style={{ animationDelay: "0.12s", animationFillMode: "both" }}>
+        <p key={`sub-${index}`} className={`mt-6 max-w-2xl text-lg md:text-xl ${isDarkMode ? 'text-gray-200/95' : 'text-gray-700'} animate-slide-up-reveal-smooth`} style={{ animationDelay: "0.12s", animationFillMode: "both" }}>
           {slides[index].subtitle}
         </p>
 

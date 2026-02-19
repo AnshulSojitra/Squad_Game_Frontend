@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { getUserProfile, changeUserName } from "../../services/api";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function EditProfile() {
+  const { isDarkMode } = useTheme();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -87,59 +89,86 @@ export default function EditProfile() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-24">
-      <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6 sm:p-8">
-        <h1 className="text-2xl font-bold text-white mb-6">Edit Profile</h1>
+    <div className={`max-w-2xl mx-auto mt-24 transition-colors duration-300 ${
+      isDarkMode ? 'bg-gray-900 min-h-screen' : 'bg-white min-h-screen'
+    }`}>
+      <div className={`rounded-2xl p-6 sm:p-8 transition-colors duration-300 ${
+        isDarkMode
+          ? 'bg-slate-800/60 border border-slate-700'
+          : 'bg-gray-50 border border-gray-200'
+      }`}>
+        <h1 className={`text-2xl font-bold mb-6 transition-colors duration-300 ${
+          isDarkMode ? 'text-white' : 'text-gray-900'
+        }`}>Edit Profile</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* NAME */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Name</label>
+            <label className={`block text-sm mb-1 transition-colors duration-300 ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-500'
+            }`}>Name</label>
             <input
               type="text"
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg
-                         text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className={`w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300 ${
+                isDarkMode
+                  ? 'bg-slate-700 border border-slate-600 text-white'
+                  : 'bg-white border border-gray-300 text-gray-900'
+              }`}
             />
           </div>
 
           {/* EMAIL */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Email</label>
+            <label className={`block text-sm mb-1 transition-colors duration-300 ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-500'
+            }`}>Email</label>
             <input
               type="email"
               value={formData.email}
               disabled
-              className="w-full px-4 py-3 bg-slate-700/60 border border-slate-600
-                         rounded-lg text-gray-400 cursor-not-allowed"
+              className={`w-full px-4 py-3 rounded-lg cursor-not-allowed transition-colors duration-300 ${
+                isDarkMode
+                  ? 'bg-slate-700/60 border border-slate-600 text-gray-400'
+                  : 'bg-gray-100 border border-gray-300 text-gray-600'
+              }`}
             />
           </div>
 
           {/* PHONE */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">
+            <label className={`block text-sm mb-1 transition-colors duration-300 ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-500'
+            }`}>
               Phone Number
             </label>
             <input
               type="text"
               value={formData.phone}
               disabled
-              className="w-full px-4 py-3 bg-slate-700/60 border border-slate-600
-                         rounded-lg text-gray-400 cursor-not-allowed"
+              className={`w-full px-4 py-3 rounded-lg cursor-not-allowed transition-colors duration-300 ${
+                isDarkMode
+                  ? 'bg-slate-700/60 border border-slate-600 text-gray-400'
+                  : 'bg-gray-100 border border-gray-300 text-gray-600'
+              }`}
             />
           </div>
 
           {/* STATUS */}
           {status === "success" && (
-            <p className="text-sm text-green-400 text-center">
+            <p className={`text-sm text-center ${
+              isDarkMode ? 'text-green-400' : 'text-green-600'
+            }`}>
               ✅ Name updated successfully
             </p>
           )}
 
           {status === "error" && (
-            <p className="text-sm text-red-400 text-center">
+            <p className={`text-sm text-center ${
+              isDarkMode ? 'text-red-400' : 'text-red-600'
+            }`}>
               ❌ Failed to update name
             </p>
           )}
@@ -147,10 +176,11 @@ export default function EditProfile() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600
-                       hover:from-indigo-700 hover:to-purple-700
-                       text-white py-3 rounded-lg font-semibold
-                       transition-all duration-300 disabled:opacity-50"
+            className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 disabled:opacity-50 ${
+              isDarkMode
+                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white'
+                : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white'
+            }`}
           >
             {loading ? "Saving..." : "Save Changes"}
           </button>

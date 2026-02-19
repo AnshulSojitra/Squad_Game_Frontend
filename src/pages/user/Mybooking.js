@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getUserBookings, cancelUserBooking } from "../../services/api";
+import { useTheme } from "../../context/ThemeContext";
 import Pagination from "../../components/common/Pagination";
 import Toast from "../../components/common/Toast";
 import ConfirmModal from "../../components/common/ConfirmModal";
@@ -9,6 +10,7 @@ export default function MyBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancelLoading, setCancelLoading] = useState(null);
+  const { isDarkMode } = useTheme();
   const ITEMS_PER_PAGE = 10;
   const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'cancelled'
   const [activePage, setActivePage] = useState(1);
@@ -133,17 +135,21 @@ const confirmCancelBooking = async () => {
             key={booking.bookingId}
             className={`rounded-xl p-4 border transition-all duration-200 ${
               isCancelledSection
-                ? 'bg-red-900/20 border-red-700 hover:bg-red-800/30'
-                : 'bg-gray-800 border-gray-700 hover:bg-gray-750'
+                ? isDarkMode
+                  ? 'bg-red-900/20 border-red-700 hover:bg-red-800/30'
+                  : 'bg-red-50 border-red-200 hover:bg-red-100'
+                : isDarkMode
+                ? 'bg-gray-800 border-gray-700 hover:bg-gray-750'
+                : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
             }`}
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
-                <h3 className="font-semibold text-white text-sm mb-1">
+                <h3 className={`font-semibold text-sm mb-1 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                   {booking.ground.name}
                 </h3>
-                <p className="text-xs text-gray-400">
+                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   {booking.ground.area}, {booking.ground.state}, {booking.ground.country}
                 </p>
               </div>
@@ -165,19 +171,19 @@ const confirmCancelBooking = async () => {
             {/* Details Grid */}
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div>
-                <p className="text-xs text-gray-500 mb-1">Date</p>
-                <p className="text-sm text-white font-medium">{booking.date}</p>
+                <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-600'}`}>Date</p>
+                <p className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{booking.date}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 mb-1">Time</p>
-                <p className="text-sm text-white font-medium">
+                <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-600'}`}>Time</p>
+                <p className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                   {/* {formatTime(booking.startTime)} - {formatTime(booking.endTime)} */}
                   {booking.startTime}-{booking.endTime}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 mb-1">Price</p>
-                <p className="text-sm font-semibold text-green-400">₹{booking.totalPrice}</p>
+                <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-600'}`}>Price</p>
+                <p className={`text-sm font-semibold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>₹{booking.totalPrice}</p>
               </div>
               {showCancelButton && (
                 <div className="flex items-end">
@@ -204,46 +210,118 @@ const confirmCancelBooking = async () => {
       {/* DESKTOP TABLE VIEW */}
       <div className={`hidden md:block overflow-x-auto rounded-lg shadow-lg border ${
         isCancelledSection
-          ? 'bg-red-900/20 border-red-700'
-          : 'bg-gray-700 border-gray-600'
+          ? isDarkMode
+            ? 'bg-red-900/20 border-red-700'
+            : 'bg-red-50 border-red-200'
+          : isDarkMode
+          ? 'bg-gray-800 border-gray-700'
+          : 'bg-gray-50 border-gray-200'
       }`}>
         <table className="w-full">
-          <thead className={isCancelledSection ? 'bg-red-800' : 'bg-gray-600'}>
+          <thead className={`${
+            isCancelledSection
+              ? isDarkMode
+                ? 'bg-red-800'
+                : 'bg-red-100'
+              : isDarkMode
+              ? 'bg-gray-700'
+              : 'bg-gray-100'
+          }`}>
             <tr>
               {/* <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                 No
               </th> */}
-              <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+              <th className={`px-4 lg:px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
+                isCancelledSection
+                  ? isDarkMode
+                    ? 'text-red-300'
+                    : 'text-red-700'
+                  : isDarkMode
+                  ? 'text-gray-300'
+                  : 'text-gray-700'
+              }`}>
                 Ground
               </th>
-              <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+              <th className={`px-4 lg:px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
+                isCancelledSection
+                  ? isDarkMode
+                    ? 'text-red-300'
+                    : 'text-red-700'
+                  : isDarkMode
+                  ? 'text-gray-300'
+                  : 'text-gray-700'
+              }`}>
                 Date
               </th>
-              <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+              <th className={`px-4 lg:px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
+                isCancelledSection
+                  ? isDarkMode
+                    ? 'text-red-300'
+                    : 'text-red-700'
+                  : isDarkMode
+                  ? 'text-gray-300'
+                  : 'text-gray-700'
+              }`}>
                 Slot
               </th>
-              <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+              <th className={`px-4 lg:px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
+                isCancelledSection
+                  ? isDarkMode
+                    ? 'text-red-300'
+                    : 'text-red-700'
+                  : isDarkMode
+                  ? 'text-gray-300'
+                  : 'text-gray-700'
+              }`}>
                 Price
               </th>
-              <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+              <th className={`px-4 lg:px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
+                isCancelledSection
+                  ? isDarkMode
+                    ? 'text-red-300'
+                    : 'text-red-700'
+                  : isDarkMode
+                  ? 'text-gray-300'
+                  : 'text-gray-700'
+              }`}>
                 Status
               </th>
               {showCancelButton && (
-                <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                <th className={`px-4 lg:px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
+                  isCancelledSection
+                    ? isDarkMode
+                      ? 'text-red-300'
+                      : 'text-red-700'
+                    : isDarkMode
+                    ? 'text-gray-300'
+                    : 'text-gray-700'
+                }`}>
                   Action
                 </th>
               )}
             </tr>
           </thead>
 
-          <tbody className={isCancelledSection ? 'divide-y divide-red-700' : 'divide-y divide-gray-600'}>
+          <tbody className={`divide-y ${
+            isCancelledSection
+              ? isDarkMode
+                ? 'divide-red-700'
+                : 'divide-red-200'
+              : isDarkMode
+              ? 'divide-gray-700'
+              : 'divide-gray-200'
+          }`}>
             {bookings.map((booking , index) => (
               <tr
                 key={booking.bookingId}
                 className={`transition-colors ${
                   isCancelledSection
-                    ? 'hover:bg-red-800/30'
-                    : 'hover:bg-gray-600'
+                    ? isDarkMode
+                      ? 'hover:bg-red-800/30'
+                      : 'hover:bg-red-100'
+                    : isDarkMode
+                    ? 'hover:bg-gray-700'
+                    : 'hover:bg-gray-100'
                 }`}
               >
                 {/* <td className="px-4 lg:px-6 py-4 text-gray-300 text-sm">
@@ -251,25 +329,25 @@ const confirmCancelBooking = async () => {
                 </td> */}
                 <td className="px-4 lg:px-6 py-4">
                   <div>
-                    <p className="font-semibold text-white text-sm">
+                    <p className={`font-semibold text-sm ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                       {booking.ground.name}
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                       {booking.ground.area}, {booking.ground.city}, {booking.ground.state}
                     </p>
                   </div>
                 </td>
 
-                <td className="px-4 lg:px-6 py-4 text-gray-300 text-sm">
+                <td className={`px-4 lg:px-6 py-4 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                   {booking.date}
                 </td>
 
-                <td className="px-4 lg:px-6 py-4 text-gray-300 text-sm">
+                <td className={`px-4 lg:px-6 py-4 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                   {/* {formatTime(booking.startTime)} – {formatTime(booking.endTime)} */}
                     {booking.slot.startTime} - {booking.slot.endTime}
                 </td>
 
-                <td className="px-4 lg:px-6 py-4 font-semibold text-green-400 text-sm">
+                <td className={`px-4 lg:px-6 py-4 font-semibold text-sm ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
                   ₹{booking.totalPrice}
                 </td>
 
@@ -323,18 +401,28 @@ const confirmCancelBooking = async () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 px-4 sm:px-6 lg:px-8 py-6 pt-16">
+    <div className={`min-h-screen px-4 sm:px-6 lg:px-8 py-6 pt-16 transition-colors duration-300 ${
+      isDarkMode
+        ? 'bg-gray-900'
+        : 'bg-white'
+    }`}>
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">My Bookings</h1>
+        <h1 className={`text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 transition-colors duration-300 ${
+          isDarkMode ? 'text-white' : 'text-gray-900'
+        }`}>My Bookings</h1>
 
         {/* Tab Navigation */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-1 mb-6 sm:mb-8 bg-gray-800 p-1 rounded-lg w-full sm:w-fit">
+        <div className={`flex flex-col sm:flex-row gap-2 sm:gap-1 mb-6 sm:mb-8 p-1 rounded-lg w-full sm:w-fit transition-colors duration-300 ${
+          isDarkMode ? 'bg-gray-800' : 'bg-gray-100'
+        }`}>
           <button
             onClick={() => setActiveTab('bookings')}
             className={`px-4 sm:px-6 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
               activeTab === 'bookings'
                 ? 'bg-green-600 text-white shadow-md'
-                : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                : isDarkMode
+                ? 'text-gray-400 hover:bg-gray-700 hover:text-white'
+                : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
             }`}
           >
             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
@@ -345,7 +433,9 @@ const confirmCancelBooking = async () => {
             className={`px-4 sm:px-6 py-2 rounded-md text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
               activeTab === 'cancelled'
                 ? 'bg-red-600 text-white shadow-md'
-                : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                : isDarkMode
+                ? 'text-gray-400 hover:bg-gray-700 hover:text-white'
+                : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
             }`}
           >
             <span className="w-2 h-2 bg-red-500 rounded-full"></span>
@@ -356,13 +446,17 @@ const confirmCancelBooking = async () => {
         {activeTab === 'bookings' && (
           <div>
             {activeBookings.length === 0 ? (
-              <div className="text-center py-12 sm:py-16 bg-gray-700 rounded-lg border border-gray-600">
+              <div className={`text-center py-12 sm:py-16 rounded-lg border transition-colors ${
+                isDarkMode
+                  ? 'bg-gray-800 border-gray-700'
+                  : 'bg-gray-50 border-gray-200'
+              }`}>
                 <div className="text-4xl sm:text-5xl mb-4">📅</div>
-                <p className="text-gray-400 text-lg sm:text-xl">
-                  No active bookings
+                <p className={`text-lg sm:text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  No bookings yet
                 </p>
-                <p className="text-gray-500 text-sm sm:text-base mt-2 px-4">
-                  Your confirmed and completed bookings will appear here
+                <p className={`text-sm sm:text-base mt-2 px-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Start exploring and book your favorite grounds!
                 </p>
               </div>
             ) : (
@@ -380,15 +474,20 @@ const confirmCancelBooking = async () => {
           </div>
         )}
 
+        {/* Tab Content - Cancelled Bookings */}
         {activeTab === 'cancelled' && (
           <div>
             {cancelledBookings.length === 0 ? (
-              <div className="text-center py-12 sm:py-16 bg-red-900/20 rounded-lg border border-red-700">
+              <div className={`text-center py-12 sm:py-16 rounded-lg border transition-colors ${
+                isDarkMode
+                  ? 'bg-red-900/20 border-red-700'
+                  : 'bg-red-50 border-red-200'
+              }`}>
                 <div className="text-4xl sm:text-5xl mb-4">🚫</div>
-                <p className="text-gray-400 text-lg sm:text-xl">
+                <p className={`text-lg sm:text-xl ${isDarkMode ? 'text-red-300' : 'text-red-700'}`}>
                   No cancelled bookings
                 </p>
-                <p className="text-gray-500 text-sm sm:text-base mt-2 px-4">
+                <p className={`text-sm sm:text-base mt-2 px-4 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>
                   Your cancelled bookings will appear here
                 </p>
               </div>
@@ -401,26 +500,22 @@ const confirmCancelBooking = async () => {
                     totalPages={totalCancelledPages}
                     onPageChange={setCancelledPage}
                   />
-                  
-
                 </div>
               </>
             )}
           </div>
         )}
 
-      </div>
-
-        <ConfirmModal
-                    isOpen={showConfirm}
-                    title="Cancel Booking"
-                    message="Are you sure you want to cancel this booking?"
-                    onConfirm={confirmCancelBooking}
-                    onCancel={() => {
-                      setShowConfirm(false);
-                      setSelectedBookingId(null);
-                    }}
-                  />
+      <ConfirmModal
+        isOpen={showConfirm}
+        title="Cancel Booking"
+        message="Are you sure you want to cancel this booking?"
+        onConfirm={confirmCancelBooking}
+        onCancel={() => {
+          setShowConfirm(false);
+          setSelectedBookingId(null);
+        }}
+      />
 
       <Toast
         show={toast.show}
@@ -428,6 +523,7 @@ const confirmCancelBooking = async () => {
         message={toast.message}
         onClose={() => setToast({ ...toast, show: false })}
       />
+      </div>
     </div>
   );
 }

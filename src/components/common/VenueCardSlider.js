@@ -1,8 +1,10 @@
 import { useRef, useState, useEffect, useMemo } from "react";
 import VenueCard from "./VenueCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function VenueCardSlider({ grounds, loading }) {
+  const { isDarkMode } = useTheme();
   const scrollRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(4);
@@ -85,7 +87,7 @@ export default function VenueCardSlider({ grounds, loading }) {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="flex-shrink-0 w-[300px] h-72 bg-gray-800/50 rounded-2xl animate-pulse"
+            className={`flex-shrink-0 w-[300px] h-72 rounded-2xl animate-pulse ${isDarkMode ? 'bg-gray-800/50' : 'bg-gray-100'}`}
           />
         ))}
       </div>
@@ -103,7 +105,7 @@ export default function VenueCardSlider({ grounds, loading }) {
         {/* Left arrow */}
         <button
           onClick={scrollPrev}
-          className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-sm flex items-center justify-center text-white transition-all duration-300 -translate-x-2 sm:translate-x-0 sm:-left-4 ${
+          className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full ${isDarkMode ? 'bg-black/60 text-white' : 'bg-white/90 text-gray-800 border border-gray-200'} backdrop-blur-sm flex items-center justify-center transition-all duration-300 -translate-x-2 sm:translate-x-0 sm:-left-4 ${
             !canScrollLeft ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
           aria-label="Previous"
@@ -114,7 +116,7 @@ export default function VenueCardSlider({ grounds, loading }) {
         {/* Right arrow */}
         <button
           onClick={scrollNext}
-          className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-sm flex items-center justify-center text-white transition-all duration-300 translate-x-2 sm:translate-x-0 sm:-right-4 ${
+          className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full ${isDarkMode ? 'bg-black/60 text-white' : 'bg-white/90 text-gray-800 border border-gray-200'} backdrop-blur-sm flex items-center justify-center transition-all duration-300 translate-x-2 sm:translate-x-0 sm:-right-4 ${
             !canScrollRight ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
           aria-label="Next"

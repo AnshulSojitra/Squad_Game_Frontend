@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 import { getUserProfile } from "../../services/api";
 
 
+import { useTheme } from "../../context/ThemeContext";
+
 export default function UserProfileSidebar() {
+  const { isDarkMode } = useTheme();
 //   const user = {
 //     name: "Niraj Soni",
 //     email: "soniniraj369@gmail.com",
@@ -45,7 +48,7 @@ export default function UserProfileSidebar() {
   }
 
   return (
-    <div className="w-72 bg-gray-800 rounded-xl shadow-lg p-4 border border-gray-700">
+    <div className={`w-72 rounded-xl shadow-lg p-4 ${isDarkMode ? 'bg-gray-800 border border-gray-700 text-gray-200' : 'bg-white border border-gray-200 text-gray-900'}`}>
       
       {/* User Info */}
       <div className="flex flex-col items-center text-center mb-6">
@@ -61,6 +64,18 @@ export default function UserProfileSidebar() {
 
       {/* Menu */}
       <nav className="space-y-2">
+        <NavLink
+          to="/profile/profile"
+          className={({ isActive }) =>
+            `block px-4 py-3 rounded-lg transition-colors ${
+              isActive
+                ? "bg-indigo-600 text-white shadow-md"
+                : "text-gray-300 hover:bg-gray-700 hover:text-white"
+            }`
+          }
+        >
+          My Profile
+        </NavLink>
         <NavLink
           to="/profile/mybooking"
           className={({ isActive }) =>

@@ -5,7 +5,8 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
-import { getPublicGroundById, confirmBooking , getGroundReviews , submitGroundReview, getUserProfile} from "../../services/api";
+import { getPublicGroundById, getGroundReviews, submitGroundReview} from "../../services/api";
+import { useTheme } from "../../context/ThemeContext";
 import Toast from "../../components/common/Toast";
 import BackButton from "../../components/common/BackButton";
 import RateVenueModal from "../../components/common/RateVenueModal";
@@ -25,13 +26,13 @@ export default function GroundDetails({ groundId: propGroundId }) {
   const selectedDate = searchParams.get("date");
   const { groundId: paramGroundId } = useParams();
   const groundId = propGroundId || paramGroundId;
+  const { isDarkMode } = useTheme();
 
   const [ground, setGround] = useState(null);
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isImagePaused, setIsImagePaused] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
   const gstPercentage = ground?.gstPercentage || 0;
   const navigate = useNavigate();
   const location = useLocation();
@@ -61,22 +62,6 @@ export default function GroundDetails({ groundId: propGroundId }) {
   
 
 // ------------------- Fetch User Profile ------------------- //
-useEffect(() => {
-  if (!token) return;
-  
-  const fetchUserProfile = async () => {
-    try {
-      const res = await getUserProfile();
-      setUser(res.data);
-    } catch (err) {
-      console.error("Failed to fetch user profile", err);
-      showToast("error", "Failed to load user profile");
-    }
-  };
-
-  fetchUserProfile();
-}, [token]);
-
   
 // ------------------ RATING SUBMISSION ------------------ //
 const handleRatingSubmit = async ({ rating, feedback }) => {
@@ -277,32 +262,14 @@ const now = new Date();
 
 
 
-//------------------- CONFIRM BOOKING HANDLER ---------------------//
-  const handleConfirmBooking = async () => {
-    if (!selectedDate || selectedSlots.length === 0) {
-      showToast("error", "Select date and slots");
-      return;
-    }
-    try {
-      await confirmBooking({
-        slotIds: selectedSlots.map((s) => s.id),
-        date: selectedDate,
-      });
-      showToast("success", "Booking confirmed 🎉");
-      setSelectedSlots([]);
-    } catch (err) {
-      showToast("error", err.response?.data?.message || "Booking failed");
-    }
-  };
-
-  const selectedSlotIds = selectedSlots.map(slot => slot.id);
-
-
-  
-
-  /* ================= UI ================= */
+//================= UI ================= */
   return (
-    <div className="min-h-screen bg-gray-900 overflow-y-auto pt-10 pb-16 text-gray-800">
+    <>
+    <div className={`min-h-screen overflow-y-auto pt-10 pb-16 transition-colors duration-300 ${
+      isDarkMode
+        ? 'bg-gray-900 text-gray-100'
+        : 'bg-white text-gray-900'
+    }`}>
           
      
 
@@ -315,7 +282,9 @@ const now = new Date();
              <BackButton to="/user/bookingslot" />
             {/* IMAGE SLIDER */}
             <div
-              className="relative rounded-xl lg:rounded-2xl overflow-hidden h-[280px] sm:h-[350px] lg:h-[420px] bg-gray-800"
+              className={`relative rounded-xl lg:rounded-2xl overflow-hidden h-[280px] sm:h-[350px] lg:h-[420px] transition-colors duration-300 ${
+                isDarkMode ? 'bg-gray-800' : 'bg-gray-200'
+              }`}
               onMouseEnter={() => setIsImagePaused(true)}
               onMouseLeave={() => setIsImagePaused(false)}
               onTouchStart={onTouchStart}
@@ -373,20 +342,24 @@ const now = new Date();
             </div>
 
             {/* BASIC INFO */}
-            <div className="bg-white rounded-xl lg:rounded-2xl p-4 sm:p-6 shadow">
+            <div className={`rounded-xl lg:rounded-2xl p-4 sm:p-6 shadow transition-colors duration-300 ${
+              isDarkMode
+                ? 'bg-gray-800/50 text-white'
+                : 'bg-gray-50 text-gray-900 border border-gray-200'
+            }`}>
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                 <div className="flex-1">
                   <h1 className="text-xl sm:text-2xl font-bold">{ground.name}</h1>
-                  <p className="text-gray-600 mt-1 text-sm sm:text-base">
+                  <p className={`mt-1 text-sm sm:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     ⏰ {ground.openingTime} – {ground.closingTime}
                   </p>
-                  <p className="text-indigo-600 font-medium mt-1 text-sm sm:text-base">
+                  <p className={`font-medium mt-1 text-sm sm:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     🎮 {ground.game}
                   </p>
-                  <p className="text-indigo-600 font-medium mt-1 text-sm sm:text-base">
+                  <p className={`font-medium mt-1 text-sm sm:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     📞 {ground.contactNo}
                   </p>
-                  <p className="text-gray-600 mt-2 text-sm sm:text-base">
+                  <p className={`mt-2 text-sm sm:text-base ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     {ground.area}, {ground.city}, {ground.state}, {ground.country}
                   </p>
                 </div>
@@ -410,12 +383,12 @@ const now = new Date();
                       const total = reviewsData.totalReviews || 0;
                       const pct = total ? Math.round((count / total) * 100) : 0;
                       return (
-                        <div key={r} className="flex items-center gap-2 text-xs">
+                        <div key={r} className={`flex items-center gap-2 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                           <span className="w-4">{r}★</span>
-                          <div className="h-2 bg-gray-200 rounded flex-1 overflow-hidden">
+                          <div className={`h-2 rounded flex-1 overflow-hidden ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
                             <div className="h-2 bg-yellow-400 rounded transition-all" style={{ width: `${pct}%` }} />
                           </div>
-                          <span className="w-6 text-right text-gray-500">{pct}%</span>
+                          <span className={`w-6 text-right ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>{pct}%</span>
                         </div>
                       )
                     })}
@@ -425,7 +398,9 @@ const now = new Date();
                     onClick={() =>
                       token ? setShowRatingModal(true) : navigate("/user/login")
                     }
-                    className="text-indigo-600 text-sm font-medium hover:underline whitespace-nowrap"
+                    className={`text-sm font-medium hover:underline whitespace-nowrap ${
+                      isDarkMode ? 'text-indigo-600' : 'text-indigo-600'
+                    }`}
                   >
                     Rate Venue
                   </button>
@@ -434,7 +409,11 @@ const now = new Date();
             </div>
 
             {/* AMENITIES */}
-            <div className="bg-white rounded-xl lg:rounded-2xl p-4 sm:p-6 shadow">
+            <div className={`rounded-xl lg:rounded-2xl p-4 sm:p-6 shadow transition-colors duration-300 ${
+              isDarkMode
+                ? 'bg-gray-800/50 text-white'
+                : 'bg-gray-50 text-gray-900 border border-gray-200'
+            }`}>
               <h2 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4">Amenities</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 text-sm">
                 {ground.amenities?.map((a, i) => (
@@ -446,23 +425,33 @@ const now = new Date();
             </div>
 
             {/* ABOUT */}
-            <div className="bg-white rounded-xl lg:rounded-2xl p-4 sm:p-6 shadow">
+            <div className={`rounded-xl lg:rounded-2xl p-4 sm:p-6 shadow transition-colors duration-300 ${
+              isDarkMode
+                ? 'bg-gray-800/50 text-white'
+                : 'bg-gray-50 text-gray-900 border border-gray-200'
+            }`}>
               <h2 className="font-semibold text-base sm:text-lg mb-2">About Venue</h2>
-              <p className="text-gray-600 text-sm sm:text-base">
+              <p className={`text-sm sm:text-base ${
+                isDarkMode ? 'text-gray-300' : 'text-gray-600'
+              }`}>
                 {ground.description || "No description available"}
               </p>
             </div>
           </div>
 
           {/* RIGHT COLUMN */}
-          <div className="bg-white rounded-xl lg:rounded-2xl p-4 sm:p-6 shadow-xl h-fit lg:sticky lg:top-24">
+          <div className={`rounded-xl lg:rounded-2xl p-4 sm:p-6 shadow-xl h-fit lg:sticky lg:top-24 transition-colors duration-300 ${
+            isDarkMode
+              ? 'bg-gray-800/50 text-white'
+              : 'bg-gray-50 text-gray-900 border border-gray-200'
+          }`}>
 
             <h4 className="font-semibold mb-2 text-base sm:text-lg">Price</h4>
 
             <p className="text-2xl sm:text-3xl font-bold text-green-600">
               ₹{ground.pricePerSlot}
             </p>
-            <p className="text-sm text-gray-500">per slot</p>
+            <p className="text-sm text-gray-300">per slot</p>
 
             <hr className="my-3 sm:my-4" />
 
@@ -478,14 +467,20 @@ const now = new Date();
               onChange={(e) => {
                 setSearchParams({ date: e.target.value });
               }}
-              className="input-style w-full"
+              className={`input-style w-full text-sm sm:text-base rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-300 ${
+                isDarkMode
+                  ? 'text-white bg-gray-700 border border-gray-600'
+                  : 'text-gray-900 bg-white border border-gray-300'
+              }`}
             />
 
-            <p className="text-xs text-gray-500 mt-1">
+            <p className={`text-xs mt-1 ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}>
               Booking allowed till {maxBookingDateObj.toLocaleDateString()}
             </p>
 
-            <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-4">
+             <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-4">
                 {validSlots.map((slot) => {
                     const selected = isSlotSelected(slot);
                     const isBooked = !Boolean(slot.available);
@@ -498,10 +493,14 @@ const now = new Date();
                         className={`py-2 px-2 sm:px-3 rounded-lg text-xs sm:text-sm font-medium transition-all
                           ${
                             isBooked
-                              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                              ? isDarkMode
+                                ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
                               : selected
                               ? "bg-indigo-600 text-white"
-                              : "border border-gray-300 hover:border-indigo-500 text-gray-700"
+                              : isDarkMode
+                              ? "border border-gray-600 hover:border-indigo-500 text-gray-300"
+                              : "border border-gray-300 hover:border-indigo-500 text-gray-900"
                           }
                         `}
                         title={isBooked ? "Slot already booked" : ""}
@@ -515,27 +514,40 @@ const now = new Date();
                       </button>
                     );
                 })}
-              </div>
+             </div>
 
             
               <hr className="my-3 sm:my-4" />
 
-
-            {/* <p className="font-bold text-base sm:text-lg mt-4 sm:mt-6"> */}
-            <p className="font-bold text-base sm:text-base mt-4 sm:mt-6">
-              Ground Price : <span className="text-green-600">₹{totalPrice}</span>
-            </p>
-            <p className="font-bold text-base sm:text-base mt-4 sm:mt-6">
-              Tax : <span className="text-green-600">{gstPercentage}%</span>
-            </p>
-            
-            <p className="font-bold text-base sm:text-sm mt-4 sm:mt-6">
-              Total Tax : <span className="text-green-600"> {gstAmount}</span>
-            </p> 
-            <hr className="my-3 sm:my-4" />
-            <p className="font-bold text-base sm:text-lg mt-4 sm:mt-6">
-              Total Amount : <span className="text-green-600">₹{totalAmount}</span>
-            </p>
+              {selectedDate && selectedSlots.length > 0 ? (
+                <>
+                  {/* <p className="font-bold text-base sm:text-lg mt-4 sm:mt-6"> */}
+                  <p className={`font-bold text-base sm:text-base mt-4 sm:mt-6 ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    Ground Price : <span className="text-green-600">₹{totalPrice}</span>
+                  </p>
+                  <p className={`font-bold text-base sm:text-base mt-4 sm:mt-6 ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    Tax : <span className="text-green-600">{gstPercentage}%</span>
+                  </p>
+                  
+                  <p className={`font-bold text-base sm:text-sm mt-4 sm:mt-6 ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    Total Tax : <span className="text-green-600"> {gstAmount}</span>
+                  </p> 
+                  <hr className={`my-3 sm:my-4 ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`} />
+                  <p className={`font-bold text-base sm:text-lg mt-4 sm:mt-6 ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    Total Amount : <span className="text-green-600">₹{totalAmount}</span>
+                  </p>
+                </>
+              ) : (
+                    <p className={`mt-4 sm:mt-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Select date and slots to see price details</p>
+              )}
 
             {/* {selectedDate && selectedSlots.length > 0 && user && totalPrice > 0 ? (
               <RazorpayPayment
@@ -562,22 +574,29 @@ const now = new Date();
 
             {selectedDate && selectedSlots.length > 0 ? (
               <RazorpayPayment
-                slotIds={selectedSlotIds}
+                slotIds={selectedSlots.map(s => s.id)}
                 selectedDate={selectedDate}
                 amount={totalAmount}
               />
             ) : (
               <button
                 disabled
-                className="w-full mt-4 py-3 bg-gray-400 text-white rounded-lg"
+                className={`w-full mt-4 py-3 rounded-lg font-medium transition-colors cursor-not-allowed ${
+                  isDarkMode
+                    ? 'bg-gray-700 text-gray-400'
+                    : 'bg-gray-300 text-gray-500'
+                }`}
               >
                 Select date and slots
               </button>
             )}
 
-
             {ground.locationUrl && (
-              <div className="mt-4 sm:mt-6 bg-white rounded-xl shadow p-3 sm:p-4">
+              <div className={`mt-4 sm:mt-6 rounded-xl shadow p-3 sm:p-4 transition-colors duration-300 ${
+                isDarkMode
+                  ? 'bg-gray-700 text-white'
+                  : 'bg-gray-100 text-gray-900'
+              }`}>
                 <h3 className="text-base sm:text-lg font-semibold mb-2">📍 Location</h3>
                 <button
                   onClick={() => window.open(ground.locationUrl, '_blank')}
@@ -593,7 +612,9 @@ const now = new Date();
 
         {/* REVIEW SECTION */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-          <h1 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-white">Ground Reviews</h1>
+          <h1 className={`text-lg sm:text-xl font-bold mb-3 sm:mb-4 transition-colors duration-300 ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
+          }`}>Ground Reviews</h1>
           <ReviewList groundId={groundId} />
         </div>
       </div>
@@ -612,7 +633,8 @@ const now = new Date();
       />
 
         <hr className="my-10 border-t border-gray-700" />
-            <Footer/>
     </div>
+            <Footer/>
+    </>
   );
 }

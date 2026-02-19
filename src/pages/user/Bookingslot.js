@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getPublicGround } from "../../services/api";
+import { useTheme } from "../../context/ThemeContext";
 import Pagination from "../../components/common/Pagination";
 import Footer from "../../components/common/Footer";
 import StickySearch from "../../components/common/StickySearch";
@@ -8,6 +9,7 @@ import VenueCard from "../../components/common/VenueCard";
 export default function Bookingslot() {
   const [grounds, setGrounds] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isDarkMode } = useTheme();
   
   const [search, setSearch] = useState("");
   const [city, setCity] = useState("");
@@ -23,15 +25,13 @@ export default function Bookingslot() {
     setGame("");
   };
 
-  const ITEMS_PER_PAGE = 12;
+  const ITEMS_PER_PAGE = 28;
   const [page, setPage] = useState(1);
 
 
 
   // for filter
   const cities = [...new Set(grounds.map(g => g.city).filter(Boolean))];
-  const states = [...new Set(grounds.map(g => g.state).filter(Boolean))];
-  const countries = [...new Set(grounds.map(g => g.country).filter(Boolean))];
   const games = [...new Set(grounds.map(g => g.game).filter(Boolean))];
 
 
@@ -81,20 +81,25 @@ useEffect(() => {
   if (totalPages > 0 && page > totalPages) {
     setPage(totalPages);
   }
-}, [totalPages]);
+}, [totalPages, page]);
 
 
 
 
   /* ================= GROUNDS LIST ================= */
   return (
-    <div className="min-h-screen bg-gray-900 px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+    <>
+    <div className={`min-h-screen px-4 sm:px-6 lg:px-8 py-16 sm:py-20 transition-colors duration-300 ${
+      isDarkMode
+        ? 'bg-gray-900'
+        : 'bg-white'
+    }`}>
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 text-center text-white">
+        <h1 className={`text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 text-center ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
           Select a Ground
         </h1>
 
-        <p className="text-center text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base max-w-2xl mx-auto">
+        <p className={`text-center mb-6 sm:mb-8 text-sm sm:text-base max-w-2xl mx-auto ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
           Find and book the perfect sports ground for your game. Choose from various locations and amenities.
         </p>
 
@@ -195,8 +200,8 @@ useEffect(() => {
         {/* BOTTOM SPACING FOR FOOTER */}
         <div className="h-8"></div>
       </div>
-
+        </div>
       <Footer/>
-    </div>
+    </>
   );
 }
