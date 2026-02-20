@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getGames, addGame, deleteGame } from "../../services/api";
-import ConfirmModal from "../../components/common/ConfirmModal";
-import Toast from "../../components/common/Toast";
+import ConfirmModal from "../../components/utils/ConfirmModal";
+import Toast from "../../components/utils/Toast";
 
 export const Games = () => {
   const [games, setGames] = useState([]);

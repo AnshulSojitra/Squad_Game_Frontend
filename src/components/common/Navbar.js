@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getUserProfile } from "../../services/api";
-import ThemeToggle from "./ThemeToggle";
+import ThemeToggle from "../utils/ThemeToggle";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function Navbar() {

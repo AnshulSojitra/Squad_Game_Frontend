@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAdminGrounds, toggleGroundBlock, deleteGroundBySuperAdmin } from "../../services/api";
-import ToggleSwitch from "../../components/common/ToggleSwitch";
-import Pagination from "../../components/common/Pagination";
-import ConfirmModal from "../../components/common/ConfirmModal";
+import ToggleSwitch from "../../components/utils/ToggleSwitch";
+import Pagination from "../../components/utils/Pagination";
+import ConfirmModal from "../../components/utils/ConfirmModal";
 import { ArrowLeft, User, MapPin, Phone, Mail, Building2, DollarSign, Calendar, Trash2, Eye, Search } from "lucide-react";
 
 export default function SuperAdminAdminDetails() {

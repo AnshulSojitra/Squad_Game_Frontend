@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import Toast from "../../components/common/Toast";
+import Toast from "../../components/utils/Toast";
 
 const RazorpayPayment = ({ slotIds, selectedDate, amount }) => {
   const [loading, setLoading] = useState(false);

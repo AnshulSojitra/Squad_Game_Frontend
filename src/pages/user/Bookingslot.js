@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getPublicGround } from "../../services/api";
 import { useTheme } from "../../context/ThemeContext";
-import Pagination from "../../components/common/Pagination";
+import Pagination from "../../components/utils/Pagination";
 import Footer from "../../components/common/Footer";
 import StickySearch from "../../components/common/StickySearch";
 import VenueCard from "../../components/common/VenueCard";

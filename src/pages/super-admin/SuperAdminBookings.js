@@ -3,8 +3,8 @@ import {
   getAllBookingsBySuperAdmin,
   cancelBookingBySuperAdmin,
 } from "../../services/api";
-import ConfirmModal from "../../components/common/ConfirmModal";
-import Pagination from "../../components/common/Pagination";
+import ConfirmModal from "../../components/utils/ConfirmModal";
+import Pagination from "../../components/utils/Pagination";
 import { Calendar, Users, MapPin, DollarSign, Filter } from "lucide-react";
 
 export default function SuperAdminBookings() {

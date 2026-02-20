@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { changeAdminPassword } from "../../services/api";
-import Toast from "../../components/common/Toast";
+import Toast from "../../components/utils/Toast";
 
 export default function AdminChangePassword() {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getGroundBookings, cancelBookingBySuperAdmin } from "../../services/api";
-import ConfirmModal from "../../components/common/ConfirmModal";
+import ConfirmModal from "../../components/utils/ConfirmModal";
 import { Calendar, Clock, DollarSign, Users, X, ArrowLeft, Search } from "lucide-react";
 
 export default function SuperAdminGroundsBooking() {

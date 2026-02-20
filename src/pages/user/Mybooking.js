@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { getUserBookings, cancelUserBooking } from "../../services/api";
 import { useTheme } from "../../context/ThemeContext";
-import Pagination from "../../components/common/Pagination";
-import Toast from "../../components/common/Toast";
-import ConfirmModal from "../../components/common/ConfirmModal";
+import Pagination from "../../components/utils/Pagination";
+import Toast from "../../components/utils/Toast";
+import ConfirmModal from "../../components/utils/ConfirmModal";
 
 
 export default function MyBookings() {

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import BackButton from "../common/BackButton";
+import BackButton from "../utils/BackButton";
 
 export default function SuperAdminHeader() {
   const [open, setOpen] = useState(false);

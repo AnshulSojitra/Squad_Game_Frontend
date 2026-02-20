@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAdminBookings } from "../../services/api";
-import Pagination from "../../components/common/Pagination";
-import SearchInput from "../../components/common/SearchInput";
+import Pagination from "../../components/utils/Pagination";
+import SearchInput from "../../components/utils/SearchInput";
 
 export default function AdminBookings() {
   const [bookings, setBookings] = useState([]);

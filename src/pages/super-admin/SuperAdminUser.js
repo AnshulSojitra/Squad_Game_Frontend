@@ -5,10 +5,10 @@ import {
   toggleUserBlock,
   deleteUser
 } from "../../services/api";
-import Pagination from "../../components/common/Pagination";
-import ToggleSwitch from "../../components/common/ToggleSwitch";
+import Pagination from "../../components/utils/Pagination";
+import ToggleSwitch from "../../components/utils/ToggleSwitch";
 import { Users, UserCheck, UserX, Search } from "lucide-react";
-import ConfirmModal from "../../components/common/ConfirmModal";
+import ConfirmModal from "../../components/utils/ConfirmModal";
 
 
 export default function SuperAdminUsers() {

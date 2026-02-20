@@ -4,8 +4,8 @@ import {
   SupAdigetUserBookings,
   cancelBookingBySuperAdmin,
 } from "../../services/api";
-import ConfirmModal from "../../components/common/ConfirmModal";
-import Pagination from "../../components/common/Pagination";
+import ConfirmModal from "../../components/utils/ConfirmModal";
+import Pagination from "../../components/utils/Pagination";
 import {
   ArrowLeft,
   Calendar,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getUserProfile } from "../../services/api";
 import { useTheme } from "../../context/ThemeContext";
-import BackButton from "../../components/common/BackButton";
+import BackButton from "../../components/utils/BackButton";
 
 export default function UserProfile() {
   const [user, setUser] = useState(null);

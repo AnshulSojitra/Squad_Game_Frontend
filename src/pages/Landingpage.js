@@ -3,9 +3,9 @@ import { useNavigate, Link } from "react-router-dom";
 import Lenis from "lenis";
 import Footer from "../components/common/Footer";
 import { getPublicGround } from "../services/api";
-import LandingFeatures from "../components/common/LandingFeatures";
-import HeroSlider from "../components/common/HeroSlider";
-import ExplorebyCity from "../components/common/ExplorebyCities";
+import LandingFeatures from "../components/homepagefeature/LandingFeatures";
+import HeroSlider from "../components/homepagefeature/HeroSlider";
+import ExplorebyCity from "../components/homepagefeature/ExplorebyCities";
 import ScrollToTopButton from "../components/common/ScrollToTopButton";
 import StickySearch from "../components/common/StickySearch";
 import VenueCardSlider from "../components/common/VenueCardSlider";
@@ -173,7 +173,7 @@ export default function LandingPage() {
     <button
       onClick={() => { setGame(""); }}
       className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 whitespace-nowrap ${
-        game === "" ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" : isDarkMode ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-white text-gray-700 border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-300"
+        game === "" ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" : isDarkMode ? "bg-gray-800 text-gray-300 hover:bg-gray-600" : "bg-white text-gray-700 border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-300"
       }`}
     >
       All Games
@@ -183,7 +183,7 @@ export default function LandingPage() {
                 key={g}
                 onClick={() => setGame(g)}
                 className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 whitespace-nowrap ${
-                  game === g ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" : isDarkMode ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-white text-gray-700 border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-300"
+                  game === g ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" : isDarkMode ? "bg-gray-800 text-gray-300 hover:bg-gray-600" : "bg-white text-gray-700 border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-300"
                 }`}
               >
                 {g}

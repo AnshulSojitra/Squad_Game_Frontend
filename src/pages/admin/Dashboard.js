@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getAdminDashboard } from "../../services/api";
-import AdminBookingsChart from "../../components/common/AdminBookingsChart";
-import AdminRevenueChart from "../../components/common/AdminRevenueChart";
-import AdminGroundsChart from "../../components/common/AdminGroundsChart";
+import AdminBookingsChart from "../../components/charts/AdminBookingsChart";
+import AdminRevenueChart from "../../components/charts/AdminRevenueChart";
+import AdminGroundsChart from "../../components/charts/AdminGroundsChart";
 import { ZoomIn } from "lucide-react";
 
 

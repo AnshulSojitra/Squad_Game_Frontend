@@ -1,4 +1,4 @@
-import ScrollReveal from "./ScrollReveal";
+import ScrollReveal from "../common/ScrollReveal";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function LandingFeatures() {

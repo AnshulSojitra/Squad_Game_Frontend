@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllGroundsSupAdi, toggleGroundBlock, deleteGroundBySuperAdmin } from "../../services/api";
-import Pagination from "../../components/common/Pagination";
-import ToggleSwitch from "../../components/common/ToggleSwitch";
-import ConfirmModal from "../../components/common/ConfirmModal";
+import Pagination from "../../components/utils/Pagination";
+import ToggleSwitch from "../../components/utils/ToggleSwitch";
+import ConfirmModal from "../../components/utils/ConfirmModal";
 import { MapPin, DollarSign, Clock, Users, Search, Trash2, Eye } from "lucide-react";
 
 const IMAGE_BASE = process.env.REACT_APP_IMAGE_URL;

@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { userResetPassword } from "../../services/api";
-import Toast from "../../components/common/Toast";
+import Toast from "../../components/utils/Toast";
 
 export default function UserResetPassword() {
   const location = useLocation();

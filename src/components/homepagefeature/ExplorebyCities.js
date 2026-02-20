@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import ScrollReveal from "./ScrollReveal";
+import ScrollReveal from "../common/ScrollReveal";
 import { useTheme } from "../../context/ThemeContext";
 
 const cities = [

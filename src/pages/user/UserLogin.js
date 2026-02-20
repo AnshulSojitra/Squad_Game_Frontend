@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { sendOtp, verifyOtp, completeProfile } from "../../services/api";
-import Toast from "../../components/common/Toast";
+import Toast from "../../components/utils/Toast";
 
 export default function UserLogin({ onClose }) {
   const navigate = useNavigate();

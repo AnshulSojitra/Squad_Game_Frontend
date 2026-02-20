@@ -3,10 +3,9 @@ import { getGrounds, deleteGround } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { getGroundById ,updateGround , toggleGroundBlockApi} from "../../services/api";
-import ConfirmModal from "../../components/common/ConfirmModal";
-import ToggleSwitch from "../../components/common/ToggleSwitch";
-import ReviewList from "../../components/common/ReviewList";
-import Pagination from "../../components/common/Pagination";
+import ConfirmModal from "../../components/utils/ConfirmModal";
+import ToggleSwitch from "../../components/utils/ToggleSwitch";
+import Pagination from "../../components/utils/Pagination";
 
 const IMAGE_BASE=process.env.REACT_APP_IMAGE_URL
 

@@ -7,8 +7,8 @@ import {
 } from "react-router-dom";
 import { getPublicGroundById, getGroundReviews, submitGroundReview} from "../../services/api";
 import { useTheme } from "../../context/ThemeContext";
-import Toast from "../../components/common/Toast";
-import BackButton from "../../components/common/BackButton";
+import Toast from "../../components/utils/Toast";
+import BackButton from "../../components/utils/BackButton";
 import RateVenueModal from "../../components/common/RateVenueModal";
 import Footer from "../../components/common/Footer";
 import ReviewList from "../../components/common/ReviewList";

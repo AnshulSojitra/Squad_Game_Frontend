@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAdminProfile } from "../../services/api";
-import BackButton from "../../components/common/BackButton";
+import BackButton from "../../components/utils/BackButton";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminProfile() {

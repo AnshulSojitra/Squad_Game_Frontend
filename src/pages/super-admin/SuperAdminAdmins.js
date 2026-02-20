@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllAdmins, toggleAdminBlock , deleteAdminBySuperAdmin} from "../../services/api";
-import Pagination from "../../components/common/Pagination";
-import ConfirmModal from "../../components/common/ConfirmModal";
+import Pagination from "../../components/utils/Pagination";
+import ConfirmModal from "../../components/utils/ConfirmModal";
 import { ShieldCheck, Activity, Search } from "lucide-react";
 
 
