@@ -713,7 +713,7 @@ const handleSubmit = async (e) => {
                     {slots.map((slot,index) => (
                       <div
                         key={index}
-                        className="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-lg"
+                        className="flex justify-between items-center bg-gray-100 px-4 py-2 border border-gray-300 rounded-lg"
                       >
                         <span className="text-sm">
                           {slot.start} - {slot.end}

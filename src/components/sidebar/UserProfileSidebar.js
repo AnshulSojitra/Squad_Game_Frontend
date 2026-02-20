@@ -57,9 +57,9 @@ export default function UserProfileSidebar() {
           alt="user"
           className="w-20 h-20 rounded-full mb-3 border-2 border-gray-600"
         />
-        <h3 className="font-semibold text-white">{user.name}</h3>
-        <p className="text-sm text-gray-400">{user.email}</p>
-        <p className="text-sm text-gray-400">{user.phoneNumber}</p>
+        <h3 className="font-semibold">{user.name}</h3>
+        <p className="text-sm ">{user.email}</p>
+        <p className="text-sm">{user.phoneNumber}</p>
       </div>
 
       {/* Menu */}

@@ -8,6 +8,9 @@ import {
   TrendingUp,
   Activity,
   DollarSign,
+  AlertTriangle,
+  Star,
+  Zap,
 } from "lucide-react";
 import { getSuperAdminDashboard } from "../../services/api";
 
@@ -20,9 +23,14 @@ export default function SuperAdminDashboard() {
     totalUsers: 0,
     totalAdmins: 0,
     totalGrounds: 0,
+    activeGrounds: 0,
+    inactiveGrounds: 0,
     totalBookings: 0,
     bookingsToday: 0,
     totalRevenue: 0,
+    revenueToday: 0,
+    newUsersToday: 0,
+    newGroundsToday: 0,
   });
 
   /* ================= FETCH DASHBOARD DATA ================= */
@@ -36,7 +44,7 @@ export default function SuperAdminDashboard() {
         console.error("Failed to load super admin dashboard", error);
         setError(
           error?.response?.data?.message ||
-            "Couldn’t load dashboard data. Please try again."
+            "Couldn't load dashboard data. Please try again."
         );
       } finally {
         setLoading(false);
@@ -48,6 +56,8 @@ export default function SuperAdminDashboard() {
 
   const platform = dashboard?.platformStats || {};
   const today = dashboard?.todayStats || {};
+  const topGrounds = dashboard?.topGrounds || [];
+  const alerts = dashboard?.alerts || {};
 
   const formatInt = (n) =>
     new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(
@@ -65,17 +75,27 @@ export default function SuperAdminDashboard() {
       totalUsers: Number(platform.totalUsers || 0),
       totalAdmins: Number(platform.totalAdmins || 0),
       totalGrounds: Number(platform.totalGrounds || 0),
+      activeGrounds: Number(platform.activeGrounds || 0),
+      inactiveGrounds: Number(platform.inactiveGrounds || 0),
       totalBookings: Number(platform.totalBookings || 0),
       bookingsToday: Number(today.bookingsToday || 0),
       totalRevenue: Number(platform.totalRevenue || 0),
+      revenueToday: Number(today.revenueToday || 0),
+      newUsersToday: Number(today.newUsersToday || 0),
+      newGroundsToday: Number(today.newGroundsToday || 0),
     }),
     [
       platform.totalUsers,
       platform.totalAdmins,
       platform.totalGrounds,
+      platform.activeGrounds,
+      platform.inactiveGrounds,
       platform.totalBookings,
       platform.totalRevenue,
       today.bookingsToday,
+      today.revenueToday,
+      today.newUsersToday,
+      today.newGroundsToday,
     ]
   );
 
@@ -85,9 +105,14 @@ export default function SuperAdminDashboard() {
       totalUsers: 0,
       totalAdmins: 0,
       totalGrounds: 0,
+      activeGrounds: 0,
+      inactiveGrounds: 0,
       totalBookings: 0,
       bookingsToday: 0,
       totalRevenue: 0,
+      revenueToday: 0,
+      newUsersToday: 0,
+      newGroundsToday: 0,
     };
     setAnimated(start);
 
@@ -103,9 +128,14 @@ export default function SuperAdminDashboard() {
         totalUsers: Math.round(targets.totalUsers * easeOutCubic),
         totalAdmins: Math.round(targets.totalAdmins * easeOutCubic),
         totalGrounds: Math.round(targets.totalGrounds * easeOutCubic),
+        activeGrounds: Math.round(targets.activeGrounds * easeOutCubic),
+        inactiveGrounds: Math.round(targets.inactiveGrounds * easeOutCubic),
         totalBookings: Math.round(targets.totalBookings * easeOutCubic),
         bookingsToday: Math.round(targets.bookingsToday * easeOutCubic),
         totalRevenue: Math.round(targets.totalRevenue * easeOutCubic),
+        revenueToday: Math.round(targets.revenueToday * easeOutCubic),
+        newUsersToday: Math.round(targets.newUsersToday * easeOutCubic),
+        newGroundsToday: Math.round(targets.newGroundsToday * easeOutCubic),
       });
 
       if (t < 1) rafId = requestAnimationFrame(tick);
@@ -115,7 +145,7 @@ export default function SuperAdminDashboard() {
     return () => cancelAnimationFrame(rafId);
   }, [targets]);
 
-  const statCards = [
+  const rolesCards = [
     {
       key: "totalUsers",
       title: "Total Users",
@@ -139,6 +169,20 @@ export default function SuperAdminDashboard() {
       onClick: () => navigate("/super-admin/admins"),
     },
     {
+      key: "newUsersToday",
+      title: "New Users Today",
+      value: formatInt(animated.newUsersToday),
+      sub: "New registrations today",
+      icon: Users,
+      color: "from-violet-500 to-purple-600",
+      ring: "ring-violet-500/20",
+      glow: "bg-violet-500/10",
+      onClick: () => navigate("/super-admin/users"),
+    },
+  ];
+
+  const groundsCards = [
+    {
       key: "totalGrounds",
       title: "Total Grounds",
       value: formatInt(animated.totalGrounds),
@@ -149,6 +193,42 @@ export default function SuperAdminDashboard() {
       glow: "bg-emerald-500/10",
       onClick: () => navigate("/super-admin/grounds"),
     },
+    {
+      key: "activeGrounds",
+      title: "Active Grounds",
+      value: formatInt(animated.activeGrounds),
+      sub: "Currently operational venues",
+      icon: Zap,
+      color: "from-lime-500 to-green-600",
+      ring: "ring-lime-500/20",
+      glow: "bg-lime-500/10",
+      onClick: () => navigate("/super-admin/grounds"),
+    },
+    {
+      key: "inactiveGrounds",
+      title: "Inactive Grounds",
+      value: formatInt(animated.inactiveGrounds),
+      sub: "Temporarily unavailable venues",
+      icon: AlertTriangle,
+      color: "from-red-500 to-orange-600",
+      ring: "ring-red-500/20",
+      glow: "bg-red-500/10",
+      onClick: () => navigate("/super-admin/grounds"),
+    },
+    {
+      key: "newGroundsToday",
+      title: "New Grounds Today",
+      value: formatInt(animated.newGroundsToday),
+      sub: "New venues added today",
+      icon: Star,
+      color: "from-yellow-500 to-orange-600",
+      ring: "ring-yellow-500/20",
+      glow: "bg-yellow-500/10",
+      onClick: () => navigate("/super-admin/grounds"),
+    },
+  ];
+
+  const bookingsRevenueCards = [
     {
       key: "totalBookings",
       title: "Total Bookings",
@@ -164,7 +244,7 @@ export default function SuperAdminDashboard() {
       key: "bookingsToday",
       title: "Bookings Today",
       value: formatInt(animated.bookingsToday),
-      sub: "Today’s activity",
+      sub: "Today's activity",
       icon: Activity,
       color: "from-cyan-500 to-sky-600",
       ring: "ring-cyan-500/20",
@@ -182,7 +262,58 @@ export default function SuperAdminDashboard() {
       glow: "bg-emerald-500/10",
       onClick: () => navigate("/super-admin/bookings"),
     },
+    {
+      key: "revenueToday",
+      title: "Revenue Today",
+      value: formatINR(animated.revenueToday),
+      sub: "Today's platform revenue",
+      icon: TrendingUp,
+      color: "from-fuchsia-500 to-pink-600",
+      ring: "ring-fuchsia-500/20",
+      glow: "bg-fuchsia-500/10",
+      onClick: () => navigate("/super-admin/bookings"),
+    },
   ];
+
+  const renderStatCards = (cards) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {cards.map((stat, index) => (
+        <button
+          key={stat.key || index}
+          type="button"
+          onClick={stat.onClick}
+          className={`group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/40 p-6 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50`}
+        >
+          <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+            <div className={`absolute -top-20 -right-20 h-56 w-56 rounded-full ${stat.glow} blur-2xl`} />
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent" />
+          </div>
+
+          <div className="relative flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-sm text-slate-400">{stat.title}</p>
+              <p className="mt-2 text-3xl font-bold text-white truncate">
+                {stat.value}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">{stat.sub}</p>
+            </div>
+
+            <div
+              className={`shrink-0 rounded-2xl p-3 ring-1 ${stat.ring} bg-gradient-to-br ${stat.color} shadow-lg shadow-black/20`}
+            >
+              <stat.icon size={22} className="text-white" />
+            </div>
+          </div>
+
+          <div className="relative mt-6 h-[3px] w-full overflow-hidden rounded-full bg-slate-800">
+            <div
+              className={`h-full w-2/3 rounded-full bg-gradient-to-r ${stat.color} opacity-70 transition-all duration-300 group-hover:w-full`}
+            />
+          </div>
+        </button>
+      ))}
+    </div>
+  );
 
   if (loading) {
     return (
@@ -256,43 +387,168 @@ export default function SuperAdminDashboard() {
         </div>
       </div>
 
-      {/* STATS GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {statCards.map((stat, index) => (
-          <button
-            key={stat.key || index}
-            type="button"
-            onClick={stat.onClick}
-            className={`group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/40 p-6 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-400/50`}
-          >
-            <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-              <div className={`absolute -top-20 -right-20 h-56 w-56 rounded-full ${stat.glow} blur-2xl`} />
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent" />
-            </div>
+      {/* ROLES SECTION */}
+      <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/40 p-6 sm:p-8">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 -right-24 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-purple-500/10 blur-3xl" />
+        </div>
 
-            <div className="relative flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-sm text-slate-400">{stat.title}</p>
-                <p className="mt-2 text-3xl font-bold text-white truncate">
-                  {stat.value}
-                </p>
-                <p className="mt-1 text-xs text-slate-500">{stat.sub}</p>
-              </div>
+        <div className="relative mb-6">
+          <h2 className="text-xl font-semibold text-white">Users & Roles</h2>
+          <p className="mt-1 text-sm text-slate-400">
+            Users, admins, and registration activity.
+          </p>
+        </div>
 
-              <div
-                className={`shrink-0 rounded-2xl p-3 ring-1 ${stat.ring} bg-gradient-to-br ${stat.color} shadow-lg shadow-black/20`}
-              >
-                <stat.icon size={22} className="text-white" />
-              </div>
-            </div>
+        {renderStatCards(rolesCards)}
+      </div>
 
-            <div className="relative mt-6 h-[3px] w-full overflow-hidden rounded-full bg-slate-800">
-              <div
-                className={`h-full w-2/3 rounded-full bg-gradient-to-r ${stat.color} opacity-70 transition-all duration-300 group-hover:w-full`}
-              />
+      {/* GROUNDS SECTION */}
+      <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/40 p-6 sm:p-8">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 -right-24 h-56 w-56 rounded-full bg-emerald-500/10 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-lime-500/10 blur-3xl" />
+        </div>
+
+        <div className="relative mb-6">
+          <h2 className="text-xl font-semibold text-white">Grounds</h2>
+          <p className="mt-1 text-sm text-slate-400">
+            Total venues, active status, and new additions.
+          </p>
+        </div>
+
+        {renderStatCards(groundsCards)}
+      </div>
+
+      {/* BOOKINGS & REVENUE SECTION */}
+      <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/40 p-6 sm:p-8">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 -left-24 h-56 w-56 rounded-full bg-orange-500/10 blur-3xl" />
+          <div className="absolute -bottom-24 -right-24 h-56 w-56 rounded-full bg-cyan-500/10 blur-3xl" />
+        </div>
+
+        <div className="relative mb-6">
+          <h2 className="text-xl font-semibold text-white">Bookings & Revenue</h2>
+          <p className="mt-1 text-sm text-slate-400">
+            Total and today's bookings, all-time and today's revenue.
+          </p>
+        </div>
+
+        {renderStatCards(bookingsRevenueCards)}
+      </div>
+
+      {/* TOP PERFORMING GROUNDS */}
+      <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/40 p-6 sm:p-8">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 -right-24 h-56 w-56 rounded-full bg-purple-500/10 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-cyan-500/10 blur-3xl" />
+        </div>
+
+        <div className="relative mb-6">
+          <h2 className="text-xl font-semibold text-white">Top Performing Grounds</h2>
+          <p className="mt-1 text-sm text-slate-400">
+            Your best performing venues by bookings and revenue.
+          </p>
+        </div>
+
+        {topGrounds && topGrounds.length > 0 ? (
+          <div className="relative overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-700">
+                  <th className="px-4 py-3 text-left text-slate-400 font-semibold">Rank</th>
+                  <th className="px-4 py-3 text-left text-slate-400 font-semibold">Ground Name</th>
+                  <th className="px-4 py-3 text-center text-slate-400 font-semibold">Bookings</th>
+                  <th className="px-4 py-3 text-right text-slate-400 font-semibold">Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topGrounds.map((ground, idx) => (
+                  <tr
+                    key={ground.groundId}
+                    className="border-b border-slate-700/50 hover:bg-slate-900/30 transition-colors"
+                  >
+                    <td className="px-4 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-xs font-bold">
+                          {idx + 1}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <p className="text-white font-medium">{ground.groundName}</p>
+                    </td>
+                    <td className="px-4 py-4 text-center">
+                      <span className="inline-flex items-center gap-1 rounded-lg bg-blue-500/10 px-3 py-1 text-blue-200">
+                        <Calendar size={14} />
+                        {ground.bookings}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4 text-right">
+                      <p className="font-semibold text-emerald-400">{formatINR(ground.revenue)}</p>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-slate-700 bg-slate-900/20 px-6 py-8 text-center">
+            <p className="text-slate-400">No ground data available yet</p>
+          </div>
+        )}
+      </div>
+
+      {/* ALERTS & WARNINGS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Grounds with Zero Bookings */}
+        <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/40 p-6 sm:p-8">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-24 -left-24 h-56 w-56 rounded-full bg-amber-500/10 blur-3xl" />
+            <div className="absolute -bottom-24 -right-24 h-56 w-56 rounded-full bg-orange-500/10 blur-3xl" />
+          </div>
+
+          <div className="relative flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-orange-900/20">
+              <AlertTriangle size={24} className="text-white" />
             </div>
-          </button>
-        ))}
+            <div>
+              <p className="text-slate-400 text-sm">Grounds with Zero Bookings</p>
+              <p className="text-3xl font-bold text-white">{alerts.groundsWithZeroBookings || 0}</p>
+            </div>
+          </div>
+
+          <div className="relative mt-4 rounded-xl bg-amber-500/10 px-4 py-3 text-sm text-amber-200 border border-amber-500/20">
+            {alerts.groundsWithZeroBookings > 0
+              ? `${alerts.groundsWithZeroBookings} ground${alerts.groundsWithZeroBookings !== 1 ? 's' : ''} have not received any bookings yet. Consider running promotions or reviewing their details.`
+              : "All grounds have received bookings! Great work!"}
+          </div>
+        </div>
+
+        {/* Inactive Admins */}
+        <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/40 p-6 sm:p-8">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-24 -right-24 h-56 w-56 rounded-full bg-red-500/10 blur-3xl" />
+            <div className="absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-rose-500/10 blur-3xl" />
+          </div>
+
+          <div className="relative flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-900/20">
+              <ShieldCheck size={24} className="text-white" />
+            </div>
+            <div>
+              <p className="text-slate-400 text-sm">Inactive Admins</p>
+              <p className="text-3xl font-bold text-white">{alerts.inactiveAdmins || 0}</p>
+            </div>
+          </div>
+
+          <div className="relative mt-4 rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-200 border border-red-500/20">
+            {alerts.inactiveAdmins > 0
+              ? `${alerts.inactiveAdmins} admin${alerts.inactiveAdmins !== 1 ? 's are' : ' is'} currently inactive. Check their status and re-engage if needed.`
+              : "All admins are active! Everything is running smoothly."}
+          </div>
+        </div>
       </div>
 
       {/* QUICK ACTIONS */}

@@ -28,7 +28,7 @@ API.interceptors.request.use((req) => {
 // <=============================================== SUPER ADMIN ================================================>
 
 /* ================= SUPER ADMIN LOGIN ================= */
-export const superAdminLogin = (data) =>{ 
+export const superAdminLogin = (data) => {
   return api.post("/super-admin/login", data)
 };
 
@@ -53,7 +53,7 @@ export const SupAdigetUserBookings = (userId) =>
 
 
 export const cancelBookingBySuperAdmin = (bookingId) => {
-   API.patch(`/super-admin/bookings/${bookingId}/cancel`);
+  API.patch(`/super-admin/bookings/${bookingId}/cancel`);
 };
 
 // Get all bookings (Super Admin)
@@ -63,8 +63,8 @@ export const getAllBookingsBySuperAdmin = () => {
 
 
 // Admin Registration
-export const createAdmin = (data) =>{
- return API.post("/super-admin/admins", data);
+export const createAdmin = (data) => {
+  return API.post("/super-admin/admins", data);
 }
 
 // get all admins
@@ -73,7 +73,7 @@ export const getAllAdmins = () =>
 
 // delete admin
 export const deleteAdminBySuperAdmin = (adminId) => {
-    return API.delete(`/super-admin/admin/${adminId}`
+  return API.delete(`/super-admin/admin/${adminId}`
   );
 };
 
@@ -110,23 +110,14 @@ export const getSuperAdminProfile = () => {
 };
 
 
-// SUPER ADMIN – DELETE GROUND
-export const deleteGroundBySuperAdmin = (groundId) => {
-  return API.delete(`/super-admin/ground/${groundId}`);
-};
-
-// SUPER ADMIN DASHBOARD
-export const getSuperAdminDashboard = () => {
-  return API.get("/super-admin/dashboard");
-};
 
 
 export const deleteUser = (userId) => {
   const token = localStorage.getItem("superAdminToken");
-  API.delete(`/super-admin/user/${userId}`,{
+  API.delete(`/super-admin/user/${userId}`, {
     headers: {
-     Authorization: `Bearer ${token}`,
-     },
+      Authorization: `Bearer ${token}`,
+    },
   });
 };
 
@@ -199,7 +190,7 @@ export const getGrounds = () => {
 
 // Get single ground
 export const getGroundById = (id) => {
-  return api.get(`/admin/grounds/${id}`,{
+  return api.get(`/admin/grounds/${id}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
       "ngrok-skip-browser-warning": "true",
@@ -229,18 +220,18 @@ export const updateGround = (id, formData) =>
 
 // LOCATION APIs
 export const getCountries = () => api.get("/location/countries", {
-  headers:{"ngrok-skip-browser-warning": "true",}
+  headers: { "ngrok-skip-browser-warning": "true", }
 });
 
 export const getStatesByCountry = (countryId) =>
   api.get(`/location/states/${countryId}`, {
-  headers:{"ngrok-skip-browser-warning": "true",}
-});
+    headers: { "ngrok-skip-browser-warning": "true", }
+  });
 
 export const getCitiesByState = (stateId) =>
   api.get(`/location/cities/${stateId}`, {
-  headers:{"ngrok-skip-browser-warning": "true",}
-});
+    headers: { "ngrok-skip-browser-warning": "true", }
+  });
 
 
 // <===== ADMIN SHOWING USER GROUND BOOKING ========>
@@ -417,7 +408,7 @@ export const getPublicGround = () => {
 // confirm booking
 export const confirmBooking = (payload) => {
   console.log(localStorage.getItem("userToken"));
-  
+
   return api.post("/bookings", payload, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("userToken")}`,
@@ -469,14 +460,14 @@ export const changeUserPassword = (data) => {
 // GET ground reviews (public)
 export const getGroundReviews = (groundId) => {
   return api.get(`/grounds/${groundId}/reviews`);
-  }
+}
 
 
 // SUBMIT GROUND REVIEWS
 export const submitGroundReview = (groundId, data) => {
   const token = localStorage.getItem("userToken");
-  
-  return api.post(`/grounds/${groundId}/reviews`, data , {
+
+  return api.post(`/grounds/${groundId}/reviews`, data, {
     headers: {
       Authorization: `Bearer ${token}`,
     }
@@ -501,7 +492,7 @@ export const userResetPassword = ({ email, otp, newPassword }) => {
 
 // send OTP in Email
 export const sendOtp = (login) => {
-  return api.post("/user/send-otp", { login }  );
+  return api.post("/user/send-otp", { login });
 };
 
 // Verify OTP in Email
@@ -512,7 +503,7 @@ export const verifyOtp = (payload) => {
 
 /* ================= COMPLETE PROFILE ================= */
 export const completeProfile = (data) => {
-   const token = localStorage.getItem("userToken");
+  const token = localStorage.getItem("userToken");
   // data = { name, email OR phoneNumber }
   return api.put("/user/complete-profile", data, {
     headers: {
@@ -536,9 +527,20 @@ export const changeUserName = (name) => {
   );
 };
 
+// SUPER ADMIN – DELETE GROUND
+export const deleteGroundBySuperAdmin = (groundId) => {
+  return API.delete(`/super-admin/ground/${groundId}`);
+};
+
+// SUPER ADMIN DASHBOARD
+export const getSuperAdminDashboard = () => {
+  return API.get("/super-admin/dashboard");
+};
+
+
 //PAYMENT ORDER
-export const createPaymentOrder = (data) =>{
-   const token = localStorage.getItem("userToken");
+export const createPaymentOrder = (data) => {
+  const token = localStorage.getItem("userToken");
   api.post("/payments/razorpay/order", data, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -547,8 +549,8 @@ export const createPaymentOrder = (data) =>{
 }
 
 //VERIFY PAYMENT
-export const verifyPayment = (data) =>{
-   const token = localStorage.getItem("userToken");
+export const verifyPayment = (data) => {
+  const token = localStorage.getItem("userToken");
   api.post("/payments/razorpay/verify", data, {
     headers: {
       Authorization: `Bearer ${token}`,

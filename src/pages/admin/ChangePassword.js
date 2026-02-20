@@ -100,7 +100,7 @@ export default function AdminChangePassword() {
         {/* HEADER */}
         <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-7 text-white text-center">
           <h2 className="text-2xl font-bold tracking-wide">
-            Admin Change Password
+            Ground Owner Change Password
           </h2>
           <p className="text-sm opacity-90 mt-1">
             Update your admin credentials securely
