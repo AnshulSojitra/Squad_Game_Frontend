@@ -11,6 +11,7 @@ export default function SuperAdminGroundsBooking() {
   const [searchTerm, setSearchTerm] = useState("");
   const { groundId } = useParams();
   const [bookings, setBookings] = useState([]);
+  const [ground, setGround] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function SuperAdminGroundsBooking() {
     try {
       const res = await getGroundBookings(groundId);
       setBookings(res.data.bookings || []);
+      setGround(res.data.ground || { name: "Ground" });
     } catch (error) {
       console.error("Failed to fetch bookings", error);
     }
@@ -85,7 +87,7 @@ export default function SuperAdminGroundsBooking() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Ground Bookings</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">{ground?.name || "Ground"} Bookings</h1>
             <p className="text-gray-400">Manage bookings for this sports ground</p>
           </div>
         </div>

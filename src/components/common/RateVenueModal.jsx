@@ -25,7 +25,7 @@ export default function RateVenueModal({ isOpen, onClose, onSubmit }) {
           ✕
         </button>
 
-        <h2 className="text-lg font-semibold mb-4">
+        <h2 className="text-lg font-semibold mb-4 text-gray-800">
           Rate this Venue
         </h2>
 
@@ -53,14 +53,14 @@ export default function RateVenueModal({ isOpen, onClose, onSubmit }) {
           placeholder="What can be improved?"
           value={feedback}
           onChange={(e) => setFeedback(e.target.value)}
-          className="w-full border rounded-lg p-3 text-sm resize-none h-24"
+          className="w-full border rounded-lg p-3 text-sm resize-none h-24 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200"
         />
 
         {/* Buttons */}
         <div className="flex justify-end gap-3 mt-4">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border"
+            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
           >
             Cancel
           </button>

@@ -169,7 +169,7 @@ export default function LandingPage() {
           </div>
 
           {/* Category chips */}
-          <div className="flex gap-3 overflow-x-auto pb-3 hide-scrollbar mb-8">
+          <div className="flex gap-3 overflow-x-auto pb-3 hide-scrollbar mb-8 mt-6">
     <button
       onClick={() => { setGame(""); }}
       className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 whitespace-nowrap ${

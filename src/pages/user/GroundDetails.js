@@ -16,9 +16,6 @@ import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import RazorpayPayment from "../../components/payment/RazorpayPayment"
 
 
-
-
-
 const IMAGE_BASE = process.env.REACT_APP_IMAGE_URL;
 
 export default function GroundDetails({ groundId: propGroundId }) {
@@ -221,13 +218,22 @@ const now = new Date();
 
 
 //---------slots according to the date selected --------//
-  const validSlots = Array.isArray(ground.slots)
+  // const validSlots = Array.isArray(ground.slots)
+  //   ? ground.slots.filter((slot) => {
+  //       if (!selectedDate) return true;
+  //       const slotStart = new Date(`${selectedDate}T${slot.startTime}`);
+  //       return selectedDate !== todayStr || slotStart > now;
+  //     })
+  //   : [];
+
+const validSlots =
+  selectedDate && Array.isArray(ground.slots)
     ? ground.slots.filter((slot) => {
-        if (!selectedDate) return true;
         const slotStart = new Date(`${selectedDate}T${slot.startTime}`);
         return selectedDate !== todayStr || slotStart > now;
       })
     : [];
+
 
   const isSlotSelected = (slot) =>
     selectedSlots.some((s) => s.id === slot.id);
@@ -480,6 +486,16 @@ const now = new Date();
               Booking allowed till {maxBookingDateObj.toLocaleDateString()}
             </p>
 
+
+            {!selectedDate ? (
+              <div className="mt-4 p-4 text-center rounded-lg border border-dashed border-gray-500 text-gray-400">
+                📅 Please select a date to view available slots
+              </div>
+            ) : validSlots.length === 0 ? (
+              <div className="mt-4 p-4 text-center rounded-lg border border-dashed border-gray-500 text-gray-400">
+                ❌ No available slots for selected date
+              </div>
+            ) : (
              <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-4">
                 {validSlots.map((slot) => {
                     const selected = isSlotSelected(slot);
@@ -515,6 +531,8 @@ const now = new Date();
                     );
                 })}
              </div>
+            )
+            }
 
             
               <hr className="my-3 sm:my-4" />

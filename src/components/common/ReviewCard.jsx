@@ -13,7 +13,7 @@ export default function ReviewCard({ review }) {
           className="w-10 h-10 rounded-full"
         />
         <div>
-          <p className="font-semibold text-sm">{User?.name}</p>
+          <p className="font-semibold text-sm text-gray-800">{User?.name}</p>
           <p className="text-xs text-gray-500">{new Date(createdAt).toLocaleDateString()}</p>
         </div>
       </div>
@@ -22,7 +22,7 @@ export default function ReviewCard({ review }) {
       <div className="flex items-center gap-2 mb-2">
         <div className="flex items-center bg-yellow-100 px-2 py-1 rounded">
           <Star size={14} className="text-yellow-500" />
-          <span className="ml-1 text-sm font-semibold">{rating}</span>
+          <span className="ml-1 text-sm font-semibold text-gray-800">{rating}</span>
         </div>
       </div>
 

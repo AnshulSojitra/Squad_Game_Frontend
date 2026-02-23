@@ -33,7 +33,7 @@ export default function Bookingslot() {
   // for filter
   const cities = [...new Set(grounds.map(g => g.city).filter(Boolean))];
   const games = [...new Set(grounds.map(g => g.game).filter(Boolean))];
-
+  const states = [...new Set(grounds.map(g => g.state).filter(Boolean))];
 
   useEffect(() => {
     const fetchGrounds = async () => {
@@ -112,6 +112,9 @@ useEffect(() => {
             setCity={setCity}
             game={game}
             setGame={setGame}
+            state={state}
+            setState={setState}
+            states={states}
             cities={cities}
             games={games}
             onClear={clearFilters}

@@ -109,6 +109,15 @@ export const getSuperAdminProfile = () => {
   });
 };
 
+// SUPER ADMIN – DELETE GROUND
+export const deleteGroundBySuperAdmin = (groundId) => {
+  return API.delete(`/super-admin/ground/${groundId}`);
+};
+
+// SUPER ADMIN DASHBOARD
+export const getSuperAdminDashboard = () => {
+  return API.get("/super-admin/dashboard");
+};
 
 
 
@@ -527,15 +536,6 @@ export const changeUserName = (name) => {
   );
 };
 
-// SUPER ADMIN – DELETE GROUND
-export const deleteGroundBySuperAdmin = (groundId) => {
-  return API.delete(`/super-admin/ground/${groundId}`);
-};
-
-// SUPER ADMIN DASHBOARD
-export const getSuperAdminDashboard = () => {
-  return API.get("/super-admin/dashboard");
-};
 
 
 //PAYMENT ORDER

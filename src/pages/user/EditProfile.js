@@ -89,10 +89,10 @@ export default function EditProfile() {
   };
 
   return (
-    <div className={`max-w-2xl mx-auto mt-24 transition-colors duration-300 ${
+    <div className={`max-w-2xl mx-auto transition-colors duration-300 ${
       isDarkMode ? 'bg-gray-900 min-h-screen' : 'bg-white min-h-screen'
     }`}>
-      <div className={`rounded-2xl p-6 sm:p-8 transition-colors duration-300 ${
+      <div className={`rounded-2xl mt-4 p-6 sm:p-8 transition-colors duration-300 ${
         isDarkMode
           ? 'bg-slate-800/60 border border-slate-700'
           : 'bg-gray-50 border border-gray-200'

@@ -27,14 +27,14 @@ export default function StickySearch({
 
   return (
     <div className={outerClass}>
-      <div className={`${isDarkMode ? 'bg-white/[0.04] backdrop-blur-xl border border-white/10 text-white' : 'bg-white/80 backdrop-blur-lg shadow-lg border border-blue-100/40 text-black'} rounded-2xl p-4 flex gap-3 items-center transition-all duration-500 ${isDarkMode ? 'hover:border-white/20' : 'hover:shadow-xl'}`}>
+      <div className={`${isDarkMode ? 'bg-white/[0.04] backdrop-blur-xl border border-white/10 ' : 'bg-white/80 backdrop-blur-lg shadow-lg border border-blue-100/40'} rounded-2xl p-4 flex gap-3 items-center transition-all duration-500 ${isDarkMode ? 'hover:border-white/20' : 'hover:shadow-xl'}`}>
         <div className="flex-1">
           <SearchInput
             value={search}
             onChange={setSearch}
             placeholder="Search for grounds or cities"
             delay={300}
-            className={`${isDarkMode ? 'bg-gray-800 text-white placeholder-gray-400 focus:ring-indigo-500/30' : 'bg-white text-black placeholder-gray-500 focus:ring-blue-300'} w-full rounded-lg border border-gray-700/50 focus:border-blue-400 focus:ring-2 focus:ring-blue-200/50 transition-all duration-300`}
+            className={`${isDarkMode ? 'bg-gray-800 text-white placeholder-gray-300 focus:ring-indigo-500/30' : 'bg-white text-gray-900 placeholder-gray-500 focus:ring-blue-300'} w-full rounded-lg border border-gray-700/50 focus:border-blue-400 focus:ring-2 focus:ring-blue-200/50 transition-all duration-300`}
           />
         </div>
 

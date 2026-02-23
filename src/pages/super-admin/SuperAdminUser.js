@@ -49,37 +49,35 @@ const [selectedUserId, setSelectedUserId] = useState(null);
   };
 
   //----------------- Delete User------------------------//
-//   const handleDeleteUser = async (userId) => {
-//   const confirmed = window.confirm(
-//     "⚠️ Are you sure?\nThis will permanently delete the user and all related data."
-//   );
-
-//   if (!confirmed) return;
-
-//   try {
-//     await deleteUser(userId);
-//     await fetchUsers(); // refresh list
-//   } catch (error) {
-//     console.error("Failed to delete user", error);
-//     alert("Failed to delete user");
-//   }
-// };
-
 const handleDeleteUser = (userId) => {
   setSelectedUserId(userId);
   setShowConfirm(true);
 };
 
+
 const confirmDelete = async () => {
+  if (!selectedUserId) return;
+
   try {
+    setLoadingId(selectedUserId);
+
     await deleteUser(selectedUserId);
-    await fetchUsers();
+
+    // ✅ Remove user instantly from UI
+    setUsers(prev => prev.filter(u => u.id !== selectedUserId));
+
   } catch (error) {
     console.error("Failed to delete user", error);
-    alert("Failed to delete user");
+
+    if (error.response?.status === 400) {
+      alert("User cannot be deleted (possibly already removed or protected).");
+    } else {
+      alert("Failed to delete user");
+    }
   } finally {
     setShowConfirm(false);
     setSelectedUserId(null);
+    setLoadingId(null);
   }
 };
 
@@ -103,6 +101,7 @@ const confirmDelete = async () => {
   };
 
   return (
+    <>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -247,24 +246,17 @@ const confirmDelete = async () => {
                     >
                       View Bookings
                     </button>
-                    {/* <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteUser(user.id);
-                      }}
-                      className="px-3 py-1.5 text-xs font-medium text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors mt-2 ml-2"
-                    >
-                      Delete
-                    </button> */}
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteUser(user.id);
-                      }}
-                       className="px-3 py-1.5 text-xs font-medium text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors mt-2 ml-2"
-                    >
-                      Delete
-                    </button>
+                        disabled={loadingId === user.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteUser(user.id);
+                        }}
+                        className="px-3 py-1.5 text-xs font-medium text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors mt-2 ml-2 disabled:opacity-50"
+                      >
+                        Delete
+                      </button>
+
 
                   </td>
                 </tr>
@@ -311,5 +303,6 @@ const confirmDelete = async () => {
       />
 
     </div>
+    </>
   );
 }

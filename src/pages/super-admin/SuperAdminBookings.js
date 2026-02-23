@@ -175,8 +175,9 @@ const formatTime12 = (timeStr) => {
               className="bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[140px]"
             >
               <option value="all">All Bookings</option>
-              <option value="confirmed">Active Only</option>
-              <option value="cancelled">Cancelled Only</option>
+              <option value="confirmed">Active</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="completed">Completed</option>
             </select>
           </div>
         </div>

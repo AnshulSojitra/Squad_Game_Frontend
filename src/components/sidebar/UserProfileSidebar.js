@@ -69,8 +69,8 @@ export default function UserProfileSidebar() {
           className={({ isActive }) =>
             `block px-4 py-3 rounded-lg transition-colors ${
               isActive
-                ? "bg-indigo-600 text-white shadow-md"
-                : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                ? `${isDarkMode ? 'bg-indigo-600 text-white shadow-md' : 'bg-indigo-600 text-white shadow-md'}`
+                : `${isDarkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-700 hover:bg-gray-200 hover:text-gray-900'}`
             }`
           }
         >
@@ -81,8 +81,8 @@ export default function UserProfileSidebar() {
           className={({ isActive }) =>
             `block px-4 py-3 rounded-lg transition-colors ${
               isActive
-                ? "bg-indigo-600 text-white shadow-md"
-                : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                ? `${isDarkMode ? 'bg-indigo-600 text-white shadow-md' : 'bg-indigo-600 text-white shadow-md'}`
+                : `${isDarkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-700 hover:bg-gray-200 hover:text-gray-900'}`
             }`
           }
         >
@@ -94,8 +94,8 @@ export default function UserProfileSidebar() {
           className={({ isActive }) =>
             `block px-4 py-3 rounded-lg transition-colors ${
               isActive
-                ? "bg-indigo-600 text-white shadow-md"
-                : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                ? `${isDarkMode ? 'bg-indigo-600 text-white shadow-md' : 'bg-indigo-600 text-white shadow-md'}`
+                : `${isDarkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-700 hover:bg-gray-200 hover:text-gray-900'}`
             }`
           }
         >
@@ -105,10 +105,10 @@ export default function UserProfileSidebar() {
         <NavLink
           to="/profile/feedback"
           className={({ isActive }) =>
-            `block px-4 py-3 rounded-lg transition-colors ${
+             `block px-4 py-3 rounded-lg transition-colors ${
               isActive
-                ? "bg-indigo-600 text-white shadow-md"
-                : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                ? `${isDarkMode ? 'bg-indigo-600 text-white shadow-md' : 'bg-indigo-600 text-white shadow-md'}`
+                : `${isDarkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-700 hover:bg-gray-200 hover:text-gray-900'}`
             }`
           }
         >
