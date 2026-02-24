@@ -397,8 +397,8 @@ const handleSubmit = async (e) => {
   }, 1200);
 
 } catch (err) {
-  console.error(err);
-  showToast("error", "Failed to save ground");
+  console.error(err.response?.data?.message || "Failed to save ground");
+  showToast("error", err.response?.data?.message || "Failed to save ground");
   setLoading(false); // UNLOCK BUTTON
 }
 };

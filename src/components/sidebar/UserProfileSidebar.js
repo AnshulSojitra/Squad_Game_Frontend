@@ -9,8 +9,8 @@ export default function UserProfileSidebar() {
   const { isDarkMode } = useTheme();
 //   const user = {
 //     name: "Niraj Soni",
-//     email: "soniniraj369@gmail.com",
-//     phone: "9327639991",
+//     email: "dasniru369@gmail.com",
+//     phone: "9999999999",
 //   };
  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
