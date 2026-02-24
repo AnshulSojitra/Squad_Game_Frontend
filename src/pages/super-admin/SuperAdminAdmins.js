@@ -223,6 +223,9 @@ const paginatedAdmins = filteredAdmins.slice(
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                   Admin Details
                 </th>
+                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                  Play Type
+                </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
                   Role
                 </th>
@@ -260,6 +263,12 @@ const paginatedAdmins = filteredAdmins.slice(
                         <p className="text-sm text-gray-400">{admin.email}</p>
                       </div>
                     </div>
+                  </td>
+
+                 <td className="px-6 py-4">
+                    <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                      {admin.planType}
+                    </span>
                   </td>
 
                   <td className="px-6 py-4">

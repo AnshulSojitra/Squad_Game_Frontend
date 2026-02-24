@@ -5,8 +5,6 @@ import { getCountries, getStatesByCountry, getCitiesByState } from "../../servic
 import { useSearchParams } from "react-router-dom";
 import Toast from "../../components/utils/Toast";
 
-
-
 export default function AddGround() {
 const [form, setForm] = useState({
   groundName: "",
@@ -63,10 +61,6 @@ const [form, setForm] = useState({
   const [advanceBookingDays, setAdvanceBookingDays] = useState("");
 
 
-
-
-
-
 const showToast = (type, message) => {
   setToast({ show: true, type, message });
 };
@@ -92,6 +86,7 @@ const handleAddAmenity = () => {
 // remove amenities
 const handleRemoveAmenity = (index) => {
   setAmenities(amenities.filter((_, i) => i !== index));
+  setErrors((prev) => ({ ...prev, amenities: "" }));
 };
 
 
@@ -139,6 +134,7 @@ const removeSlot = (indexToRemove) => {
   setSlots(prevSlots =>
     prevSlots.filter((_, index) => index !== indexToRemove)
   );
+  setErrors((prev) => ({ ...prev, slots: "" }));
 };
 
 
@@ -226,10 +222,11 @@ console.log("SLOTS STATE 👉", slots, Array.isArray(slots));
 }, [groundId]);
 
 
-  const handleChange = (e) => {
-  // setForm({ ...form, [e.target.name]: e.target.value });
-  setErrors({ ...errors, [e.target.name]: "" });
-};
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
 
 
 const handleCountryChange = async (e) => {
@@ -237,7 +234,7 @@ const handleCountryChange = async (e) => {
   setForm({ ...form, country: countryId, state: "", city: "" });
   setStates([]);
   setCities([]);
-  
+  setErrors((prev) => ({ ...prev, country: "", state: "", city: "" }));
 
   const res = await getStatesByCountry(countryId);
   setStates(res.data);
@@ -248,6 +245,7 @@ const handleStateChange = async (e) => {
   const stateId = e.target.value;
   setForm({ ...form, state: stateId, city: "" });
   setCities([]);
+  setErrors((prev) => ({ ...prev, state: "", city: "" }));
 
   const res = await getCitiesByState(stateId);
   setCities(res.data);
@@ -258,6 +256,7 @@ const handleStateChange = async (e) => {
 const handleImages = (e) => {
   const files = Array.from(e.target.files);
   setImages(files);
+  setErrors((prev) => ({ ...prev, images: "" }));
 };
 
 
@@ -317,7 +316,6 @@ const handleImages = (e) => {
         if (!["0", "5", "12", "18", "28"].includes(form.gstPercentage)) {
           newErrors.gstPercentage = "Invalid GST percentage";
         }
-
 
         setErrors(newErrors);
 
@@ -429,9 +427,7 @@ const handleSubmit = async (e) => {
               placeholder="Ground Name"
               className="input-style"
               value={form.groundName}
-               onChange={(e) =>
-                setForm({ ...form, groundName: e.target.value })
-              }
+               onChange={handleFormChange}
             />
             {errors.groundName && (
               <p className="text-red-500 text-xs mt-1 animate-pulse">{errors.groundName}</p>
@@ -446,9 +442,7 @@ const handleSubmit = async (e) => {
             placeholder="Contact Number"
             className="input-style"
             value={form.contact}
-            onChange={(e) =>
-              setForm({ ...form, contact: e.target.value })
-            }
+            onChange={handleFormChange}
           />
           {errors.contact && (
             <p className="text-red-500 text-xs mt-1">{errors.contact}</p>
@@ -466,9 +460,7 @@ const handleSubmit = async (e) => {
             placeholder="e.g. Cricket, Pickleball, Tennis"
             className="input-style"
             value={form.game}
-            onChange={(e) =>
-              setForm({ ...form, game: e.target.value })
-            }
+            onChange={handleFormChange}
           />
 
           {errors.game && (
@@ -489,9 +481,7 @@ const handleSubmit = async (e) => {
             placeholder="Area Name"
             className="input-style"
             value={form.area}
-            onChange={(e) =>
-              setForm({ ...form, area: e.target.value })
-            }
+            onChange={handleFormChange}
           />
 
           {/* Country / State / City */}
@@ -528,9 +518,7 @@ const handleSubmit = async (e) => {
           <select
             name="city"
             className="input-style"
-            onChange={(e) =>
-              setForm({ ...form, city: e.target.value })
-            }
+            onChange={handleFormChange}
             disabled={!cities.length}
             value={form.city}
           >
@@ -553,9 +541,7 @@ const handleSubmit = async (e) => {
             placeholder="https://maps.google.com/?q=..."
             className="input-style"
             value={form.locationUrl}
-            onChange={(e) =>
-              setForm({ ...form, locationUrl: e.target.value })
-            }
+            onChange={handleFormChange}
           />
 
           {/* <label className="block text-sm font-medium mb-2">
@@ -583,7 +569,10 @@ const handleSubmit = async (e) => {
                 <input
                   type="text"
                   value={amenityInput}
-                  onChange={(e) => setAmenityInput(e.target.value)}
+                  onChange={(e) => {
+                    setAmenityInput(e.target.value);
+                    setErrors((prev) => ({ ...prev, amenities: "" }));
+                  }}
                   placeholder="e.g. Parking, Washroom"
                   className="input-style flex-1"
                 />
@@ -632,7 +621,10 @@ const handleSubmit = async (e) => {
                   <input
                     type="time"
                     value={openingTime}
-                    onChange={(e) => setOpeningTime(e.target.value)}
+                    onChange={(e) => {
+                      setOpeningTime(e.target.value);
+                      setErrors((prev) => ({ ...prev, openingTime: "" }));
+                    }}
                     className="input-style"
                   />
                   {errors.openingTime && (
@@ -645,7 +637,10 @@ const handleSubmit = async (e) => {
                   <input
                     type="time"
                     value={closingTime}
-                    onChange={(e) => setClosingTime(e.target.value)}
+                    onChange={(e) => {
+                      setClosingTime(e.target.value);
+                      setErrors((prev) => ({ ...prev, closingTime: "" }));
+                    }}
                     className="input-style"
                   />
                   {errors.openingTime && (
@@ -670,7 +665,10 @@ const handleSubmit = async (e) => {
                             : slots[slots.length - 1].end
                         }
                         disabled={slots.length > 0}
-                        onChange={(e) => setSlotStart(e.target.value)}
+                        onChange={(e) => {
+                          setSlotStart(e.target.value);
+                          setErrors((prev) => ({ ...prev, slots: "" }));
+                        }}
                         className={`input-style ${
                           slots.length > 0 ? "bg-gray-100 cursor-not-allowed" : ""
                         }`}
@@ -683,7 +681,10 @@ const handleSubmit = async (e) => {
                     <input
                       type="time"
                       value={slotEnd}
-                      onChange={(e) => setSlotEnd(e.target.value)}
+                      onChange={(e) => {
+                        setSlotEnd(e.target.value);
+                        setErrors((prev) => ({ ...prev, slots: "" }));
+                      }}
                       className="input-style"
                     />
                   </div>
@@ -760,9 +761,7 @@ const handleSubmit = async (e) => {
             placeholder="Price per slot (₹)"
             className="input-style"
             value={form.pricePerHour}
-            onChange={(e) =>
-              setForm({ ...form, pricePerHour: e.target.value })
-            }
+            onChange={handleFormChange}
           />
           {errors.pricePerHour && (
             <p className="text-red-500 text-xs mt-1">{errors.pricePerHour}</p>
@@ -777,9 +776,7 @@ const handleSubmit = async (e) => {
               name="gstPercentage"
               className="input-style"
               value={form.gstPercentage}
-              onChange={(e) =>
-                setForm({ ...form, gstPercentage: e.target.value })
-              }
+              onChange={handleFormChange}
             >
               <option value="0">0%</option>
               <option value="5">5%</option>
@@ -791,8 +788,6 @@ const handleSubmit = async (e) => {
           {errors.gstPercentage && (
             <p className="text-red-500 text-xs mt-1">{errors.gstPercentage}</p>
           )}
-
-
 
           </div>
           {/* Images */}
@@ -808,10 +803,6 @@ const handleSubmit = async (e) => {
             <p className="text-red-500 text-xs mt-1">{errors.images}</p>
           )}
          
-
-
-
-
           {/* New Image Previews */}
           {images.length > 0 && (
               <div className="grid grid-cols-3 gap-3 mt-3">
@@ -826,7 +817,6 @@ const handleSubmit = async (e) => {
               </div>
             )}
             
-
             {loading && (
                 <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm">
                   <span className="animate-spin">⏳</span>

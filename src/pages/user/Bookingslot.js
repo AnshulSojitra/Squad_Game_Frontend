@@ -59,7 +59,7 @@ export default function Bookingslot() {
       (!city || g.city === city) &&
       (!state || g.state === state) &&
       (!country || g.country === country) &&
-      (!game || g.game === game)
+      (!game || String(g.game || "").toLowerCase() === String(game || "").toLowerCase())
      );
    });
 

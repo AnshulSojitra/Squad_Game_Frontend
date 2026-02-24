@@ -56,7 +56,7 @@ export const AppRoutes = () => {
       
       <Route element={<PublicLayout />}>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/Grounds" element={<Bookingslot />} />
+      <Route path="/grounds" element={<Bookingslot />} />
       <Route path="/user/grounds/:groundId" element={<GroundDetails />} />
       <Route path="/user/mybooking" element={<Mybooking />} />
       <Route path="/user/login" element={<UserLogin />} />
@@ -88,7 +88,7 @@ export const AppRoutes = () => {
         {/* <Route path="/user/book/:groundId" element={<Bookingslot />} />  */}
 
         {/* Protected User Area */}
-        <Route element={<UserProtectedRoute />}>
+        {/* <Route element={<UserProtectedRoute />}>
           <Route path="/user" element={<UserLayout />}>
             <Route path="home" element={<Home />} />
             <Route path="games" element={<Games />} />
@@ -98,9 +98,9 @@ export const AppRoutes = () => {
           </Route>
           <Route path="/user/profile" element={<UserProfile/>}/>
           <Route path="/user/change-password" element={<UserChangePassword/>}/>
-        </Route>
-        
-        <Route path="/Grounds" element={<Bookingslot />} />
+        </Route> */}
+
+        <Route path="/grounds" element={<Bookingslot />} />
         <Route path="/user/grounds/:groundId" element={<GroundDetails />} />
         
 {/* =================================================================== ADMIN PANEL ==================================================== */}      

@@ -1,5 +1,5 @@
 import SearchInput from "../utils/SearchInput";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function StickySearch({
@@ -24,6 +24,19 @@ export default function StickySearch({
     ? "w-full max-w-4xl mx-auto transform -translate-y-12 relative z-30"
     : "w-full max-w-4xl mx-auto relative z-10 mt-2";
   const { isDarkMode } = useTheme();
+
+  // Deduplicate games case-insensitively and expose keys as lowercased values
+  const dedupedGames = useMemo(() => {
+    const map = new Map();
+    (games || []).forEach((g) => {
+      if (!g) return;
+      const key = String(g).toLowerCase();
+      if (!map.has(key)) map.set(key, g);
+    });
+    return Array.from(map.entries()).map(([key, label]) => ({ key, label }));
+  }, [games]);
+
+  const selectedGameValue = game ? String(game).toLowerCase() : "";
 
   return (
     <div className={outerClass}>
@@ -63,13 +76,13 @@ export default function StickySearch({
           </select>
 
           <select
-            value={game}
+            value={selectedGameValue}
             onChange={(e) => setGame(e.target.value)}
             className={`${isDarkMode ? 'border border-white/10 bg-gray-800 text-white placeholder-gray-400' : 'border border-blue-200/60 bg-white/90 text-gray-900 placeholder-gray-500 focus:border-blue-400'} px-3 py-2 rounded-lg transition-all duration-300`}
           >
             <option value="">All games</option>
-            {games.map((g) => (
-              <option key={g} value={g}>{g}</option>
+            {dedupedGames.map((g) => (
+              <option key={g.key} value={g.key}>{g.label}</option>
             ))}
           </select>
 
@@ -107,13 +120,13 @@ export default function StickySearch({
             </select>
 
             <select
-              value={game}
+              value={selectedGameValue}
               onChange={(e) => setGame(e.target.value)}
               className="bg-transparent border border-white/10 text-white px-3 py-2 rounded-lg w-1/2"
             >
               <option value="">All games</option>
-              {games.map((g) => (
-                <option key={g} value={g}>{g}</option>
+              {dedupedGames.map((g) => (
+                <option key={g.key} value={g.key}>{g.label}</option>
               ))}
             </select>
           </div>

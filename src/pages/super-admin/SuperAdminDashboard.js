@@ -31,6 +31,8 @@ export default function SuperAdminDashboard() {
     revenueToday: 0,
     newUsersToday: 0,
     newGroundsToday: 0,
+    totalCommissionReceived: 0,
+    commissionToday: 0,
   });
 
   /* ================= FETCH DASHBOARD DATA ================= */
@@ -83,6 +85,8 @@ export default function SuperAdminDashboard() {
       revenueToday: Number(today.revenueToday || 0),
       newUsersToday: Number(today.newUsersToday || 0),
       newGroundsToday: Number(today.newGroundsToday || 0),
+      totalCommissionReceived: Number(platform.totalCommissionReceived || 0),
+      commissionToday: Number(today.commissionToday || 0),
     }),
     [
       platform.totalUsers,
@@ -96,6 +100,8 @@ export default function SuperAdminDashboard() {
       today.revenueToday,
       today.newUsersToday,
       today.newGroundsToday,
+      platform.totalCommissionReceived,
+      today.commissionToday,
     ]
   );
 
@@ -113,6 +119,8 @@ export default function SuperAdminDashboard() {
       revenueToday: 0,
       newUsersToday: 0,
       newGroundsToday: 0,
+      totalCommissionReceived: 0,
+      commissionToday: 0,
     };
     setAnimated(start);
 
@@ -136,6 +144,8 @@ export default function SuperAdminDashboard() {
         revenueToday: Math.round(targets.revenueToday * easeOutCubic),
         newUsersToday: Math.round(targets.newUsersToday * easeOutCubic),
         newGroundsToday: Math.round(targets.newGroundsToday * easeOutCubic),
+        totalCommissionReceived: targets.totalCommissionReceived * easeOutCubic,
+        commissionToday: targets.commissionToday * easeOutCubic,
       });
 
       if (t < 1) rafId = requestAnimationFrame(tick);
@@ -271,6 +281,31 @@ export default function SuperAdminDashboard() {
       color: "from-fuchsia-500 to-pink-600",
       ring: "ring-fuchsia-500/20",
       glow: "bg-fuchsia-500/10",
+      onClick: () => navigate("/super-admin/bookings"),
+    },
+  ];
+
+  const commissionCards = [
+    {
+      key: "totalCommissionReceived",
+      title: "Total Commission Received",
+      value: formatINR(animated.totalCommissionReceived),
+      sub: "All-time commission earnings",
+      icon: DollarSign,
+      color: "from-rose-500 to-red-600",
+      ring: "ring-rose-500/20",
+      glow: "bg-rose-500/10",
+      onClick: () => navigate("/super-admin/bookings"),
+    },
+    {
+      key: "commissionToday",
+      title: "Commission Today",
+      value: formatINR(animated.commissionToday),
+      sub: "Today's commission earnings",
+      icon: TrendingUp,
+      color: "from-amber-500 to-orange-600",
+      ring: "ring-amber-500/20",
+      glow: "bg-amber-500/10",
       onClick: () => navigate("/super-admin/bookings"),
     },
   ];
@@ -438,6 +473,23 @@ export default function SuperAdminDashboard() {
         {renderStatCards(bookingsRevenueCards)}
       </div>
 
+      {/* COMMISSION SECTION */}
+      <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/40 p-6 sm:p-8">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 -right-24 h-56 w-56 rounded-full bg-rose-500/10 blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-amber-500/10 blur-3xl" />
+        </div>
+
+        <div className="relative mb-6">
+          <h2 className="text-xl font-semibold text-white">Commission</h2>
+          <p className="mt-1 text-sm text-slate-400">
+            Platform commission tracking and daily earnings.
+          </p>
+        </div>
+
+        {renderStatCards(commissionCards)}
+      </div>
+
       {/* TOP PERFORMING GROUNDS */}
       <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/40 p-6 sm:p-8">
         <div className="pointer-events-none absolute inset-0">
@@ -498,57 +550,6 @@ export default function SuperAdminDashboard() {
             <p className="text-slate-400">No ground data available yet</p>
           </div>
         )}
-      </div>
-
-      {/* ALERTS & WARNINGS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Grounds with Zero Bookings */}
-        <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/40 p-6 sm:p-8">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-24 -left-24 h-56 w-56 rounded-full bg-amber-500/10 blur-3xl" />
-            <div className="absolute -bottom-24 -right-24 h-56 w-56 rounded-full bg-orange-500/10 blur-3xl" />
-          </div>
-
-          <div className="relative flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-orange-900/20">
-              <AlertTriangle size={24} className="text-white" />
-            </div>
-            <div>
-              <p className="text-slate-400 text-sm">Grounds with Zero Bookings</p>
-              <p className="text-3xl font-bold text-white">{alerts.groundsWithZeroBookings || 0}</p>
-            </div>
-          </div>
-
-          <div className="relative mt-4 rounded-xl bg-amber-500/10 px-4 py-3 text-sm text-amber-200 border border-amber-500/20">
-            {alerts.groundsWithZeroBookings > 0
-              ? `${alerts.groundsWithZeroBookings} ground${alerts.groundsWithZeroBookings !== 1 ? 's' : ''} have not received any bookings yet. Consider running promotions or reviewing their details.`
-              : "All grounds have received bookings! Great work!"}
-          </div>
-        </div>
-
-        {/* Inactive Admins */}
-        <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/40 p-6 sm:p-8">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-24 -right-24 h-56 w-56 rounded-full bg-red-500/10 blur-3xl" />
-            <div className="absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-rose-500/10 blur-3xl" />
-          </div>
-
-          <div className="relative flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-900/20">
-              <ShieldCheck size={24} className="text-white" />
-            </div>
-            <div>
-              <p className="text-slate-400 text-sm">Inactive Admins</p>
-              <p className="text-3xl font-bold text-white">{alerts.inactiveAdmins || 0}</p>
-            </div>
-          </div>
-
-          <div className="relative mt-4 rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-200 border border-red-500/20">
-            {alerts.inactiveAdmins > 0
-              ? `${alerts.inactiveAdmins} admin${alerts.inactiveAdmins !== 1 ? 's are' : ' is'} currently inactive. Check their status and re-engage if needed.`
-              : "All admins are active! Everything is running smoothly."}
-          </div>
-        </div>
       </div>
 
       {/* QUICK ACTIONS */}

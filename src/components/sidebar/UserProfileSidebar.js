@@ -102,7 +102,7 @@ export default function UserProfileSidebar() {
           Edit Profile
         </NavLink>
 
-        <NavLink
+        {/* <NavLink
           to="/profile/feedback"
           className={({ isActive }) =>
              `block px-4 py-3 rounded-lg transition-colors ${
@@ -113,7 +113,7 @@ export default function UserProfileSidebar() {
           }
         >
           Feedback
-        </NavLink>
+        </NavLink> */}
       </nav>
     </div>
   );

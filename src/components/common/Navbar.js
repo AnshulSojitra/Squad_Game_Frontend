@@ -97,7 +97,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              to="/Grounds"
+              to="/grounds"
               className={`text-sm font-medium transition-all duration-300 hover:scale-105 relative group ${
                 isDarkMode
                   ? 'text-gray-300 hover:text-white'
@@ -108,7 +108,21 @@ export default function Navbar() {
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
 
-            <Link
+            {!token ? (
+            // <Link
+            //   to="/user/login"
+            //   className={`text-sm font-medium transition-all duration-300 hover:scale-105 relative group ${
+            //     isDarkMode
+            //       ? 'text-gray-300 hover:text-white'
+            //       : 'text-gray-600 hover:text-gray-900'
+            //   }`}
+            // >
+            //   My Bookings
+            //   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>
+            // </Link> 
+            null
+            ) : (
+                    <Link
               to="/user/mybooking"
               className={`text-sm font-medium transition-all duration-300 hover:scale-105 relative group ${
                 isDarkMode
@@ -119,6 +133,8 @@ export default function Navbar() {
               My Bookings
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
+
+            )}
 
             {/* THEME TOGGLE */}
             <ThemeToggle />

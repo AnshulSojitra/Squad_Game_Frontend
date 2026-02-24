@@ -66,7 +66,7 @@ export default function LandingFeatures() {
                 </h3>
                 <ul className="space-y-3 text-gray-400 text-sm">
                   {item.points.map((p, idx) => (
-                    <li key={idx} className="flex gap-2 group-hover:text-gray-300 transition-colors duration-500">
+                    <li key={idx} className="flex gap-2 group-hover:text-gray-400 transition-colors duration-500">
                       <span className="text-indigo-400 shrink-0">✔</span> {p}
                     </li>
                   ))}

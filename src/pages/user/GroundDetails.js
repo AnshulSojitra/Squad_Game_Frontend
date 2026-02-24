@@ -285,7 +285,15 @@ const validSlots =
 
           {/* LEFT COLUMN */}
           <div className="lg:col-span-2 space-y-6 lg:space-y-8">
-             <BackButton to="/user/bookingslot" />
+             {/* <BackButton to="/user/bookingslot" /> */}
+              <button
+          onClick={() => navigate("/grounds")}
+          className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105"
+        >
+          <span className="flex items-center gap-2">
+            ← Back
+          </span>
+        </button>
             {/* IMAGE SLIDER */}
             <div
               className={`relative rounded-xl lg:rounded-2xl overflow-hidden h-[280px] sm:h-[350px] lg:h-[420px] transition-colors duration-300 ${

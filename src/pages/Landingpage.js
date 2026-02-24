@@ -31,6 +31,7 @@ export default function LandingPage() {
   const states = [...new Set(grounds.map(g => g.state).filter(Boolean))];
   const { isDarkMode } = useTheme();
 
+  const userToken = localStorage.getItem("userToken");
 
 
   /* ---------------- LENIS ULTRA-SMOOTH SCROLL ---------------- */
@@ -99,7 +100,7 @@ export default function LandingPage() {
     return (
       text.includes(search.toLowerCase()) &&
       (!city || g.city === city) &&
-      (!game || g.game === game) &&
+      (!game || String(g.game || "").toLowerCase() === String(game || "").toLowerCase()) &&
       (!state || g.state === state) 
     );
   });
@@ -178,17 +179,21 @@ export default function LandingPage() {
     >
       All Games
     </button>
-            {games.map((g, index) => (
-              <button
-                key={g}
-                onClick={() => setGame(g)}
-                className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 whitespace-nowrap ${
-                  game === g ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" : isDarkMode ? "bg-gray-800 text-gray-300 hover:bg-gray-600" : "bg-white text-gray-700 border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-300"
-                }`}
-              >
-                {g}
-              </button>
-            ))}
+                    {games.map((g, index) => {
+                      const gKey = String(g).toLowerCase();
+                      const selectedGame = game ? String(game).toLowerCase() : "";
+                      return (
+                        <button
+                          key={g}
+                          onClick={() => setGame(gKey)}
+                          className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 whitespace-nowrap ${
+                            selectedGame === gKey ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg" : isDarkMode ? "bg-gray-800 text-gray-300 hover:bg-gray-600" : "bg-white text-gray-700 border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-300"
+                          }`}
+                        >
+                          {g}
+                        </button>
+                      );
+                    })}
           </div>
 
           {/* Listings - Horizontal Slider */}
@@ -238,6 +243,7 @@ export default function LandingPage() {
         </ScrollReveal>
 
         {/* CTA SECTION */}
+        {!userToken && (
         <section className="px-6 py-20 mx-6 mt-16">
           <ScrollReveal animation="scale" delay={0}>
           <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-500 text-center rounded-3xl p-12 shadow-2xl relative overflow-hidden">
@@ -249,22 +255,23 @@ export default function LandingPage() {
 
             <div className="relative z-10">
               <h2 className="text-4xl sm:text-5xl font-bold mb-6 text-white animate-float-slow">
-                Ready to Play?
+                Wanna Add a Venue?
               </h2>
               <p className="text-xl mb-8 text-indigo-100 max-w-2xl mx-auto">
-                Join Game Squad and make booking effortless. Discover amazing venues and connect with fellow players.
+                Add a venue and make become a ground owner effortlessly. Discover amazing venues and earn the worth of your Ground.
               </p>
               <button
-                onClick={() => navigate("/user/login")}
+                onClick={() => navigate("/login")}
                 className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-500 ease-smooth transform hover:scale-105 hover:shadow-xl shadow-lg group animate-float"
               >
-                Get Started Today
+                Add Ground Today
                 <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300 inline-block">🚀</span>
               </button>
             </div>
           </div>
           </ScrollReveal>
         </section>
+        )}
       </main>
 
       <ScrollReveal animation="fade-up" delay={0}>

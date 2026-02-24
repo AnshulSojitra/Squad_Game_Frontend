@@ -13,10 +13,11 @@ export default function SuperAdminGrounds() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-  const ITEMS_PER_PAGE = 9;
+  const ITEMS_PER_PAGE = 12;
   const [page, setPage] = useState(1);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedGroundId, setSelectedGroundId] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("all");
 
   /* ================= FETCH GROUNDS ================= */
   useEffect(() => {
@@ -89,11 +90,19 @@ export default function SuperAdminGrounds() {
   };
 
   // Filter grounds based on search term
-  const filteredGrounds = grounds.filter(ground =>
+const filteredGrounds = grounds.filter((ground) => {
+  const matchesSearch =
     ground.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     ground.admin?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ground.game?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    ground.game?.toLowerCase().includes(searchTerm.toLowerCase());
+
+  const matchesStatus =
+    statusFilter === "all" ||
+    (statusFilter === "blocked" && ground.isBlocked) ||
+    (statusFilter === "active" && !ground.isBlocked);
+
+  return matchesSearch && matchesStatus;
+});
 
   const totalPages = Math.ceil(filteredGrounds.length / ITEMS_PER_PAGE);
   const paginatedGrounds = filteredGrounds.slice(
@@ -166,7 +175,7 @@ export default function SuperAdminGrounds() {
 
       {/* Grounds Grid */}
       <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-slate-700 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
           <h2 className="text-lg font-semibold text-white">All Grounds</h2>
 
           {/* Search */}
@@ -180,6 +189,20 @@ export default function SuperAdminGrounds() {
               className="pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
+
+          {/* Status Filter */}
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
+              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Grounds</option>
+              <option value="active">Active Only</option>
+              <option value="blocked">Blocked Only</option>
+            </select>
         </div>
 
         {paginatedGrounds.length === 0 ? (
@@ -299,15 +322,6 @@ export default function SuperAdminGrounds() {
                           {/* <Eye className="w-4 h-4" /> */}
                           View Booking
                         </button>
-                         {/* <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/super-admin/users/${user.id}/bookings`);
-                      }}
-                      className="px-3 py-1.5 text-xs font-medium text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-lg hover:bg-blue-500/20 transition-colors mt-2 ml-2"
-                    >
-                      View Bookings
-                    </button> */}
 
                         <button
                           onClick={(e) => {

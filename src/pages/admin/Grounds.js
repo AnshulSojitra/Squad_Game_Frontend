@@ -19,7 +19,7 @@ export default function Grounds() {
   const [search, setSearch] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedGroundId, setSelectedGroundId] = useState(null);
-  const PAGE_SIZE = 6; // show 6 grounds per page
+  const PAGE_SIZE = 12; // show 6 grounds per page
   const [currentPage, setCurrentPage] = useState(1);
   const [isBlocked, setIsBlocked] = useState(grounds.isBlocked);
  

@@ -12,7 +12,7 @@ export default function SuperAdminBookings() {
   const [loadingId, setLoadingId] = useState(null);
   const [confirmData, setConfirmData] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'confirmed', 'cancelled'
-  const ITEMS_PER_PAGE = 10;
+  const ITEMS_PER_PAGE = 15;
   const [page, setPage] = useState(1);
 
 

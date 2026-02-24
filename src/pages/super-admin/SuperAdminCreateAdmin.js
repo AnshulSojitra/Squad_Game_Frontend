@@ -8,6 +8,7 @@ export default function SuperAdminCreateAdmin() {
     email: "",
     password: "",
     phoneNumber: "",
+    planType: "subscription",
   });
 
   const [errors, setErrors] = useState({});
@@ -46,6 +47,10 @@ export default function SuperAdminCreateAdmin() {
       newErrors.password = "Password must be at least 6 characters";
     }
 
+    if (!form.planType) {
+      newErrors.planType = "Plan type is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -67,6 +72,7 @@ export default function SuperAdminCreateAdmin() {
         email: "",
         password: "",
         phoneNumber: "",
+        planType: "subscription",
       });
       setErrors({});
     } catch (err) {
@@ -238,6 +244,73 @@ export default function SuperAdminCreateAdmin() {
                 </div>
               )}
             </div>
+
+              {/*  planType */}
+              {/* <div className="flex gap-6">
+                <label className="block text-md font-medium text-gray-300 mb-2">
+                Plan Type *
+              </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="subscription"
+                    checked={form.planType === "subscription"}
+                    onChange={(e) =>
+                      setForm({ ...form, planType: e.target.value })
+                    }
+                    className="accent-blue-500"
+                  />
+                  <span className="text-gray-300">Subscription</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="commission"
+                    checked={form.planType === "commission"}
+                    onChange={(e) =>
+                      setForm({ ...form, planType: e.target.value })
+                    }
+                    className="accent-blue-500"
+                  />
+                  <span className="text-gray-300">Commission</span>
+                </label>
+                {errors.planType && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <AlertCircle className="w-4 h-4 text-red-400" />
+                    <p className="text-red-400 text-sm">{errors.planType}</p>
+                  </div>
+                )}
+              </div> */}
+
+              {/* Plan Type */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Plan Type *
+                  </label>
+
+                  <div className="relative">
+                    <select
+                      value={form.planType}
+                      onChange={(e) =>
+                        setForm({ ...form, planType: e.target.value })
+                      }
+                      className={`w-full py-3 px-4 bg-slate-700 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                        errors.planType ? "border-red-500" : "border-slate-600"
+                      }`}
+                    >
+                      <option value="subscription">Subscription</option>
+                      <option value="commission">Commission</option>
+                    </select>
+                  </div>
+
+                  {errors.planType && (
+                    <div className="flex items-center gap-2 mt-2">
+                      <AlertCircle className="w-4 h-4 text-red-400" />
+                      <p className="text-red-400 text-sm">{errors.planType}</p>
+                    </div>
+                  )}
+                </div>
 
             {/* Submit Button */}
             <div className="pt-4">

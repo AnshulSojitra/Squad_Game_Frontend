@@ -105,10 +105,10 @@ export default function AdminProfile() {
 
           {/* Action Buttons */}
           <div className="flex gap-4 pt-6 border-t border-gray-700">
-            <button className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
+            {/* <button className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
               Edit Profile
-            </button>
-            <button className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
+            </button> */}
+            <button className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:bg-gray-600 text-white py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105"
                onClick={() => navigate("/admin/change-password")}
                >
               Change Password
