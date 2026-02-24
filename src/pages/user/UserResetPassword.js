@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { userResetPassword } from "../../services/api";
+import Loader from "../../components/utils/Loader";
 import Toast from "../../components/utils/Toast";
 
 export default function UserResetPassword() {
@@ -88,7 +89,7 @@ const showToast = (type, message) => {
             disabled={loading}
             className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700"
           >
-            {loading ? "Resetting..." : "Reset Password"}
+            {loading ? <Loader variant="button" text="Resetting..." /> : "Reset Password"}
           </button>
         </form>
       </div>

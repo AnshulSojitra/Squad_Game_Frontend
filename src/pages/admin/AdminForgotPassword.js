@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../components/utils/Loader";
 import { adminForgotPassword } from "../../services/api";
 
 export default function AdminForgotPassword() {
@@ -74,10 +75,7 @@ export default function AdminForgotPassword() {
             }`}
           >
             {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="animate-spin">⏳</span>
-                Sending OTP...
-              </span>
+              <Loader variant="button" text="Sending OTP..." />
             ) : (
               "Send Reset Code"
             )}

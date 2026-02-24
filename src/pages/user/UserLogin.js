@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { sendOtp, verifyOtp, completeProfile } from "../../services/api";
+import Loader from "../../components/utils/Loader";
 import Toast from "../../components/utils/Toast";
 
 export default function UserLogin({ onClose }) {
@@ -164,12 +165,13 @@ const handleCompleteProfile = async () => {
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-white ${isSendingOtp || resendCooldown > 0 ? 'bg-indigo-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}
               >
                 {isSendingOtp ? (
-                  <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+                  <Loader variant="button" text="Sending..." />
                 ) : (
-                  <svg className="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zm0 7.5L4.5 8 12 4.5 19.5 8 12 9.5z"/></svg>
+                  <>
+                    <svg className="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zm0 7.5L4.5 8 12 4.5 19.5 8 12 9.5z"/></svg>
+                    {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Send OTP'}
+                  </>
                 )}
-
-                {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Send OTP'}
               </button>
 
               {/* quick override for dev/testing - hidden by default */}
@@ -195,8 +197,10 @@ const handleCompleteProfile = async () => {
               className={`w-full flex items-center justify-center gap-2 ${isVerifyingOtp ? 'bg-indigo-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'} text-white py-3 rounded-lg font-semibold`}
             >
               {isVerifyingOtp ? (
-                <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
-              ) : 'Verify & Continue'}
+                <Loader variant="button" text="Verifying..." />
+              ) : (
+                'Verify & Continue'
+              )}
             </button>
 
             <div className="mt-3 text-center text-sm text-gray-500">

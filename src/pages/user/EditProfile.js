@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getUserProfile, changeUserName } from "../../services/api";
+import Loader from "../../components/utils/Loader";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function EditProfile() {
@@ -182,7 +183,7 @@ export default function EditProfile() {
                 : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white'
             }`}
           >
-            {loading ? "Saving..." : "Save Changes"}
+            {loading ? <Loader variant="button" text="Saving..." /> : "Save Changes"}
           </button>
         </form>
       </div>

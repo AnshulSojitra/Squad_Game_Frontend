@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { addGround , updateGround , getGroundById } from "../../services/api"; // make sure this import exists
 import { getCountries, getStatesByCountry, getCitiesByState } from "../../services/api";
 import { useSearchParams } from "react-router-dom";
+import Loader from "../../components/utils/Loader";
 import Toast from "../../components/utils/Toast";
+import GameDropdown from "../../components/common/GameDropdown";
 
 export default function AddGround() {
 const [form, setForm] = useState({
@@ -454,13 +456,18 @@ const handleSubmit = async (e) => {
             Game Type
           </label>
 
-          <input
+          {/* <input
             type="text"
             name="game"
             placeholder="e.g. Cricket, Pickleball, Tennis"
             className="input-style"
             value={form.game}
             onChange={handleFormChange}
+          /> */}
+
+          <GameDropdown value={form.game} 
+          onChange={(value) => handleFormChange({ target: { name: "game", value } })} 
+          placeholder="e.g. Cricket, Pickleball, Tennis"
           />
 
           {errors.game && (
@@ -819,8 +826,7 @@ const handleSubmit = async (e) => {
             
             {loading && (
                 <div className="flex items-center gap-2 mt-2 text-gray-500 text-sm">
-                  <span className="animate-spin">⏳</span>
-                  Please wait, adding ground...
+                  <Loader variant="button" text="Please wait, adding ground..." />
                 </div>
              )}
 
@@ -834,10 +840,7 @@ const handleSubmit = async (e) => {
             }`}
           >
             {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="animate-spin">⏳</span>
-                Saving Ground...
-              </span>
+              <Loader variant="button" text="Saving Ground..." />
             ) : (
               groundId ? "Update Ground" : "Add Ground"
             )}

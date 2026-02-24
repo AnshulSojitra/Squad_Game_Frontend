@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../components/utils/Loader";
 import { userForgotPassword } from "../../services/api";
 
 export default function UserForgotPassword() {
@@ -56,7 +57,7 @@ export default function UserForgotPassword() {
             disabled={loading}
             className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700"
           >
-            {loading ? "Sending OTP..." : "Confirm Email"}
+            {loading ? <Loader variant="button" text="Sending OTP..." /> : "Confirm Email"}
           </button>
         </form>
       </div>

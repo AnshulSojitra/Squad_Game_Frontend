@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAdminGrounds, toggleGroundBlock, deleteGroundBySuperAdmin } from "../../services/api";
+import Loader from "../../components/utils/Loader";
 import ToggleSwitch from "../../components/utils/ToggleSwitch";
 import Pagination from "../../components/utils/Pagination";
 import ConfirmModal from "../../components/utils/ConfirmModal";
-import { ArrowLeft, User, MapPin, Phone, Mail, Building2, DollarSign, Calendar, Trash2, Eye, Search } from "lucide-react";
+import { ArrowLeft, User, MapPin, Phone, Mail, Building2, DollarSign, Trash2, Eye, Search } from "lucide-react";
 
 export default function SuperAdminAdminDetails() {
   const { adminId } = useParams();
@@ -23,21 +24,20 @@ export default function SuperAdminAdminDetails() {
 
   /* ---------------- FETCH ADMIN GROUNDS ---------------- */
   useEffect(() => {
+    const fetchAdminGrounds = async () => {
+      try {
+        setLoading(true);
+        const res = await getAdminGrounds(adminId);
+        setAdmin(res.data.admin);
+        setGrounds(res.data.grounds || []);
+      } catch (error) {
+        console.error("Failed to fetch admin grounds", error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchAdminGrounds();
-  }, []);
-
-  const fetchAdminGrounds = async () => {
-    try {
-      setLoading(true);
-      const res = await getAdminGrounds(adminId);
-      setAdmin(res.data.admin);
-      setGrounds(res.data.grounds || []);
-    } catch (error) {
-      console.error("Failed to fetch admin grounds", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [adminId]);
 
   //================= TOGGLE BLOCK GROUNDS ================= //
   const handleToggleGroundBlock = async (ground) => {
@@ -106,11 +106,7 @@ export default function SuperAdminAdminDetails() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400"></div>
-      </div>
-    );
+    return <Loader variant="simple" text="Loading admin details..." />;
   }
 
   return (

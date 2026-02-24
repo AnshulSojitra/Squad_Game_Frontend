@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { changeUserPassword } from "../../services/api";
+import Loader from "../../components/utils/Loader";
 import Toast from "../../components/utils/Toast";
 import BackButton from "../../components/utils/BackButton";
 import { useTheme } from "../../context/ThemeContext";
@@ -222,7 +223,7 @@ const showToast = (type, message) => {
                 }
               `}
             >
-              {loading ? "Updating..." : "Update Password"}
+              {loading ? <Loader variant="button" text="Updating..." /> : "Update Password"}
             </button>
           </form>
         </div>

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import Loader from "../../components/utils/Loader";
 import Toast from "../../components/utils/Toast";
 
 const RazorpayPayment = ({ slotIds, selectedDate, amount }) => {
@@ -114,15 +115,15 @@ const showToast = (type, message) => {
       className={`w-full mt-4 py-3 rounded-lg font-medium text-white
         ${loading ? "bg-gray-400" : "bg-black hover:bg-gray-800"}`}
     >
-      {loading ? "Processing..." : `Pay ₹${amount}`}
+      {loading ? <Loader variant="button" text="Processing..." /> : `Pay ₹${amount}`}
     </button>
     {/* {toast.show && <Toast type={toast.type} message={toast.message} />} */}
     <Toast
-              show={toast.show}
-              type={toast.type}
-              message={toast.message}
-              onClose={() => setToast({ ...toast, show: false })}
-            />
+      show={toast.show}
+      type={toast.type}
+      message={toast.message}
+      onClose={() => setToast({ ...toast, show: false })}
+    />
     </>
   );
 };

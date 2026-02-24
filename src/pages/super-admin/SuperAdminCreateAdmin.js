@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createAdmin } from "../../services/api";
+import Loader from "../../components/utils/Loader";
 import { UserPlus, Mail, Phone, Lock, Eye, EyeOff, CheckCircle, AlertCircle, User } from "lucide-react";
 
 export default function SuperAdminCreateAdmin() {
@@ -320,10 +321,7 @@ export default function SuperAdminCreateAdmin() {
                 className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Creating Admin...
-                  </>
+                  <Loader variant="button" text="Creating Admin..." />
                 ) : (
                   <>
                     <UserPlus className="w-5 h-5" />

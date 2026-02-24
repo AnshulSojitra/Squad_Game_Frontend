@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Input from "../../components/common/Input";
+import Loader from "../../components/utils/Loader";
 import { loginAdmin } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
@@ -211,10 +212,7 @@ export default function AdminLogin() {
               }`}
             >
               {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="animate-spin">⏳</span>
-                  Signing in...
-                </span>
+                <Loader variant="button" text="Signing in..." />
               ) : (
                 "Login"
               )}

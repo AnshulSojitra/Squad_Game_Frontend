@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getUserBookings, cancelUserBooking } from "../../services/api";
+import Loader from "../../components/utils/Loader";
 import { useTheme } from "../../context/ThemeContext";
 import Pagination from "../../components/utils/Pagination";
 import Toast from "../../components/utils/Toast";
@@ -391,13 +392,8 @@ const confirmCancelBooking = async () => {
       </div>
     </>
   );
-
   if (loading) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400"></div>
-      </div>
-    );
+    return <Loader variant="simple" text="Loading your bookings..." fullScreen={false} />;
   }
 
   return (

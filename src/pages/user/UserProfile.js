@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getUserProfile } from "../../services/api";
+import Loader from "../../components/utils/Loader";
 import { useTheme } from "../../context/ThemeContext";
 import BackButton from "../../components/utils/BackButton";
 
@@ -24,13 +25,9 @@ export default function UserProfile() {
 
     fetchUser();
   }, [token]);
-
+  
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full text-gray-400">
-        Loading profile...
-      </div>
-    );
+    return <Loader variant="page" text="Loading profile..." fullScreen={false} />;
   }
 
   if (!user) {

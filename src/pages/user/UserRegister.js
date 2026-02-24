@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Input from "../../components/common/Input";
+import Loader from "../../components/utils/Loader";
 import { userRegister } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
@@ -197,7 +198,11 @@ export default function UserRegister() {
                 }
               `}
             >
-              {loading ? "Creating account..." : "Create Account"}
+              {loading ? (
+                <Loader variant="button" text="Creating account..." />
+              ) : (
+                "Create Account"
+              )}
             </button>
           </form>
 

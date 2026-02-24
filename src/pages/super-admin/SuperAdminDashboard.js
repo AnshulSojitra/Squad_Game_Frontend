@@ -12,6 +12,7 @@ import {
   Star,
   Zap,
 } from "lucide-react";
+import Loader from "../../components/utils/Loader";
 import { getSuperAdminDashboard } from "../../services/api";
 
 export default function SuperAdminDashboard() {
@@ -351,24 +352,7 @@ export default function SuperAdminDashboard() {
   );
 
   if (loading) {
-    return (
-      <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/40 p-10">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-32 -right-32 h-72 w-72 rounded-full bg-indigo-500/15 blur-3xl" />
-          <div className="absolute -bottom-36 -left-40 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
-        </div>
-
-        <div className="relative flex items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-2 border-slate-700 border-t-indigo-400" />
-          <div>
-            <p className="text-white font-semibold">Loading dashboard</p>
-            <p className="text-sm text-slate-400">
-              Fetching latest platform stats…
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+    return <Loader variant="dashboard" text="Loading dashboard" />;
   }
 
   return (
