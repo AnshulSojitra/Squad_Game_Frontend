@@ -4,8 +4,14 @@ import gamesList from "../constants/gamesList";
 export default function GameDropdown({ value, onChange }) {
   const [search, setSearch] = useState("");
 
+  const getGameName = (game) => {
+    if (typeof game === "string") return game;
+    if (game && typeof game === "object") return String(game.name ?? "");
+    return "";
+  };
+
   const filteredGames = gamesList.filter((game) =>
-    game.toLowerCase().includes(search.toLowerCase())
+    getGameName(game).toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -25,11 +31,19 @@ export default function GameDropdown({ value, onChange }) {
       >
         <option value="">Select Game</option>
 
-        {filteredGames.map((game, index) => (
-          <option key={index} value={game}>
-            {game}
+        {filteredGames.map((game, index) => {
+          const gameName = getGameName(game);
+          const optionKey =
+            game && typeof game === "object" && game.id != null
+              ? game.id
+              : index;
+
+          return (
+          <option key={optionKey} value={gameName}>
+            {gameName}
           </option>
-        ))}
+          );
+        })}
       </select>
     </div>
   );
