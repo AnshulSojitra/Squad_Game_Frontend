@@ -47,12 +47,12 @@ export default function AdminSidebar({ collapsed, setCollapsed }) {
           collapsed={collapsed}
         />
 
-        {/* <SidebarItem
+         <SidebarItem
           to="/admin/games"
           label="Games"
           emoji="🎮"
           collapsed={collapsed}
-        /> */}
+        /> 
 
         <SidebarItem
           to="/admin/grounds"

@@ -1,17 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import AdminLogin from "../pages/admin/AdminLogin";
 import Dashboard from "../pages/admin/Dashboard";
-import { Games } from "../pages/admin/Games";
+
 import Grounds from "../pages/admin/Grounds";
 import Bookings from "../pages/admin/Bookings";
 import AdminLayout from "../components/layouts/AdminLayout";
 import LandingPage from "../pages/Landingpage";
 import UserLogin from "../pages/user/UserLogin";
 import UserRegister from "../pages/user/UserRegister";
-import Home from "../pages/user/Home";
 import Mybooking from "../pages/user/Mybooking";
 import Bookingslot from "../pages/user/Bookingslot";
-import UserLayout from "../components/layouts/UserLayout";
 import AdminProtectedRoute from "./AdminProtectedRoute";
 import ChangePassword from "../pages/admin/ChangePassword";
 import AddGround from "../pages/admin/AddGround";
@@ -21,12 +19,13 @@ import GroundDetails from "../pages/user/GroundDetails";
 import PublicLayout from "../components/layouts/PublicLayout";
 import Profile from "../pages/admin/Profile";
 import UserProfile from "../pages/user/UserProfile";
-import UserChangePassword from "../pages/user/UserChangePassword";
-import UserForgotPassword from "../pages/user/UserForgotPassword";
-import UserResetPassword from "../pages/user/UserResetPassword";
 import AdminForgotPassword from "../pages/admin/AdminForgotPassword";
 import AdminResetPassword from "../pages/admin/AdminResetPassword";
-
+import Games from "../pages/user/Games";
+import GameDetails from "../pages/user/GameDetails";
+import { AdminGames }  from "../pages/admin/AdminGames";
+import CreateGames from "../components/games/CreateGames";
+import MyCreatedGamesList from "../components/games/MyCreatedGamesList";
 
 /* Super Admin */
 import SuperAdminLogin from "../pages/super-admin/SuperAdminLogin";
@@ -46,6 +45,8 @@ import GroundDetailsAdmin from "../pages/admin/GroundDetailsAdmin";
 import UserProfileLayout from "../components/layouts/UserProfileLayout";
 import EditProfile from "../pages/user/EditProfile";
 import Feedback from "../pages/user/Feedback";
+import MyJoinedGamesList from "../components/games/MyJoinedGames";
+
 
 
 
@@ -58,18 +59,29 @@ export const AppRoutes = () => {
       <Route path="/" element={<LandingPage />} />
       <Route path="/grounds" element={<Bookingslot />} />
       <Route path="/user/grounds/:groundId" element={<GroundDetails />} />
-      <Route path="/user/mybooking" element={<Mybooking />} />
       <Route path="/user/login" element={<UserLogin />} />
       <Route path="/user/UserRegister" element={<UserRegister />} />
+      
+      {/* <Route path="/games" element={<Games />} /> */}
+      <Route path="/user/games" element={<Games />} />
+      <Route path="/games/:gameId" element={<GameDetails />} />
+      <Route path="/user/games/:gameId" element={<GameDetails />} />
+      <Route path="/user/games" element={<CreateGames />} />
+      <Route element={<UserProtectedRoute />}>
+      <Route path="/user/mybooking" element={<Mybooking />} />
+      </Route>
       </Route>
 
   
-
+<Route element={<UserProtectedRoute />}>
 <Route path="/profile" element={<UserProfileLayout />}>
   <Route path="profile" element={<UserProfile />} />
   <Route path="mybooking" element={<Mybooking />} />
   <Route path="edit" element={<EditProfile />} />
   <Route path="feedback" element={<Feedback />} />
+  <Route path="mygames" element={<MyCreatedGamesList />} />
+  <Route path="joinedgames" element={<MyJoinedGamesList />} />
+</Route>
 </Route>
 
 
@@ -77,11 +89,11 @@ export const AppRoutes = () => {
 
 
         {/* Public */}
-        <Route path="/" element={<LandingPage />} />
+        {/* <Route path="/" element={<LandingPage />} />
         <Route path="/user/login" element={<UserLogin />} />
         <Route path="/user/UserRegister" element={<UserRegister />} />
         <Route path="user/forgot-password" element={<UserForgotPassword/>}/>
-        <Route path="/user/reset-password/:token" element={<UserResetPassword/>}/>
+        <Route path="/user/reset-password/:token" element={<UserResetPassword/>}/> */}
 
         {/* Public Booking View */}
        
@@ -91,7 +103,7 @@ export const AppRoutes = () => {
         {/* <Route element={<UserProtectedRoute />}>
           <Route path="/user" element={<UserLayout />}>
             <Route path="home" element={<Home />} />
-            <Route path="games" element={<Games />} />
+            <Route path="games" element={<AdminGames />} />
             <Route path="bookingslot" element={<Bookingslot />} />
             <Route path="mybooking" element={<Mybooking />} />
             
@@ -116,7 +128,7 @@ export const AppRoutes = () => {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="bookings" element={<Bookings />} />
-          <Route path="games" element={<Games />} />
+          <Route path="games" element={<AdminGames />} />
           <Route path="grounds" element={<Grounds />} />
           <Route path="/admin/grounds/:id" element={<GroundDetailsAdmin />} />
           <Route path="change-password" element={<ChangePassword />} />
