@@ -102,6 +102,32 @@ export default function UserProfileSidebar() {
           Edit Profile
         </NavLink>
 
+        <NavLink
+          to="/profile/mygames"
+          className={({ isActive }) =>
+            `block px-4 py-3 rounded-lg transition-colors ${
+              isActive
+                ? `${isDarkMode ? 'bg-indigo-600 text-white shadow-md' : 'bg-indigo-600 text-white shadow-md'}`
+                : `${isDarkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-700 hover:bg-gray-200 hover:text-gray-900'}`
+            }`
+          }
+        >
+          My games
+        </NavLink>
+
+        <NavLink
+          to="/profile/joinedgames"
+          className={({ isActive }) =>
+            `block px-4 py-3 rounded-lg transition-colors ${
+              isActive
+                ? `${isDarkMode ? 'bg-indigo-600 text-white shadow-md' : 'bg-indigo-600 text-white shadow-md'}`
+                : `${isDarkMode ? 'text-gray-300 hover:bg-gray-700 hover:text-white' : 'text-gray-700 hover:bg-gray-200 hover:text-gray-900'}`
+            }`
+          }
+        >
+          My Joined Games
+        </NavLink>
+
         {/* <NavLink
           to="/profile/feedback"
           className={({ isActive }) =>

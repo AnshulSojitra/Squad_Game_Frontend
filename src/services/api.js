@@ -53,7 +53,7 @@ export const SupAdigetUserBookings = (userId) =>
 
 
 export const cancelBookingBySuperAdmin = (bookingId) => {
-  API.patch(`/super-admin/bookings/${bookingId}/cancel`);
+  return API.patch(`/super-admin/bookings/${bookingId}/cancel`);
 };
 
 // Get all bookings (Super Admin)
@@ -541,7 +541,7 @@ export const changeUserName = (name) => {
 //PAYMENT ORDER
 export const createPaymentOrder = (data) => {
   const token = localStorage.getItem("userToken");
-  api.post("/payments/razorpay/order", data, {
+  return api.post("/payments/razorpay/order", data, {
     headers: {
       Authorization: `Bearer ${token}`,
     }
@@ -551,12 +551,82 @@ export const createPaymentOrder = (data) => {
 //VERIFY PAYMENT
 export const verifyPayment = (data) => {
   const token = localStorage.getItem("userToken");
-  api.post("/payments/razorpay/verify", data, {
+  return api.post("/payments/razorpay/verify", data, {
     headers: {
       Authorization: `Bearer ${token}`,
     }
   });
 }
+
+
+// CREATE GAME 
+export const createGameApi = async (payload) => {
+   const token = localStorage.getItem("userToken");
+  
+   return api.post("/games",payload,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+};
+
+// GET ALL GAMES
+export const getOpenGames = async () => {
+  const token = localStorage.getItem("userToken");
+
+  return api.get("/games/open", {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
+};
+
+// GET MY CREATED GAMES
+export const getMyGames = async () => {
+  const token = localStorage.getItem("userToken");
+
+  return api.get("/games/my", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
+};
+
+// TO JOIN GAME 
+export const joinGameApi = async (gameId) => {
+  const token = localStorage.getItem("userToken");
+
+  return api.post(`/games/${gameId}/join`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "ngrok-skip-browser-warning": "true",
+      },
+    }
+  );
+};
+
+// GET MY JOINED GAMES
+export const getMyJoinedGames = async () => {
+  const token = localStorage.getItem("userToken");
+
+  return api.get("/games/joined", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
+};
+
+// GET ground reviews (public)
+// export const getAllGames = (groundId) => {
+//   return api.get(`/grounds/${groundId}/reviews`);
+// }
 
 
 

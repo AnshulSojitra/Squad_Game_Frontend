@@ -3,7 +3,7 @@ import { getGames, addGame, deleteGame } from "../../services/api";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import Toast from "../../components/utils/Toast";
 
-export const Games = () => {
+export const AdminGames = () => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newGame, setNewGame] = useState("");
