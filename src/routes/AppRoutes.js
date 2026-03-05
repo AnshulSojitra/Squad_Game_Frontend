@@ -41,11 +41,15 @@ import SuperAdminAdminDetails from "../pages/super-admin/SuperAdminAdminDetails"
 import SuperAdminGroundsBooking from "../pages/super-admin/SuperAdminGroundBooking";
 import SuperAdminCreateAdmin from "../pages/super-admin/SuperAdminCreateAdmin";
 import SuperAdminProfile from "../pages/super-admin/SuperAdminProfile";
+import SuperAdminGames from "../pages/super-admin/SuperAdminGames";
+import SuperAdminGameDetails from "../pages/super-admin/SuperAdminGameDetails";
 import GroundDetailsAdmin from "../pages/admin/GroundDetailsAdmin";
 import UserProfileLayout from "../components/layouts/UserProfileLayout";
 import EditProfile from "../pages/user/EditProfile";
 import Feedback from "../pages/user/Feedback";
 import MyJoinedGamesList from "../components/games/MyJoinedGames";
+import MyJoinedGameDetails from "../pages/user/MyJoinedGameDetails";
+import MyCreatedGameDetails from "../pages/user/MyCreatedGameDetails";
 
 
 
@@ -80,7 +84,9 @@ export const AppRoutes = () => {
   <Route path="edit" element={<EditProfile />} />
   <Route path="feedback" element={<Feedback />} />
   <Route path="mygames" element={<MyCreatedGamesList />} />
+  <Route path="mygames/:gameId" element={<MyCreatedGameDetails />} />
   <Route path="joinedgames" element={<MyJoinedGamesList />} />
+  <Route path="joinedgames/:gameId" element={<MyJoinedGameDetails />} />
 </Route>
 </Route>
 
@@ -156,6 +162,8 @@ export const AppRoutes = () => {
         <Route path="admins" element={<SuperAdminAdmins />} />
         <Route path="/super-admin/admins/create" element={<SuperAdminCreateAdmin />} />
         <Route path="grounds" element={<SuperAdminGrounds />} />
+        <Route path="games" element={<SuperAdminGames />} />
+        <Route path="games/:gameId" element={<SuperAdminGameDetails />} />
         <Route path="bookings" element={<SuperAdminBookings />} />
         <Route path="users/:userId/bookings" element={<SuperAdminUserBook/>}/>
         <Route path="admins/:adminId" element={<SuperAdminAdminDetails />}/>

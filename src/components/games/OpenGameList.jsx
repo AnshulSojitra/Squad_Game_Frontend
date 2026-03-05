@@ -1,5 +1,8 @@
 import { Calendar, Clock3, MapPin, Users, GamepadIcon } from "lucide-react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import ShowMore from "../utils/ShowMore";
+import { useTheme } from "../../context/ThemeContext";
 
 const formatDate = (date) => {
   if (!date) return "N/A";
@@ -19,17 +22,22 @@ const formatTime = (time) => {
   return `${hour % 12 || 12}:${m} ${hour >= 12 ? "PM" : "AM"}`;
 };
 
-export default function OpenGameList({ games = [], onCreateGame }) {
+export default function OpenGameList({ games = [], onCreateGame, joinedGameIds = [] }) {
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
+  const joinedSet = useMemo(
+    () => new Set((joinedGameIds || []).map((id) => String(id))),
+    [joinedGameIds]
+  );
 
   if (!games.length) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
+      <div className="flex flex-col items-center justify-center py-20"> 
         <div className="w-20 h-20 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full flex items-center justify-center mb-4">
           <GamepadIcon className="w-10 h-10 text-indigo-500" />
         </div>
-        <h2 className="text-2xl font-bold text-white mb-2">No games available</h2>
-        <p className="text-slate-400 mb-6">Create your first game to get started</p>
+        <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No games available</h2>
+        <p className={`mb-6 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Create your first game to get started</p>
         <button
           type="button"
           onClick={onCreateGame}
@@ -42,11 +50,19 @@ export default function OpenGameList({ games = [], onCreateGame }) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {games.map((game) => {
+    <ShowMore
+      items={games}
+      initialCount={12}
+      increment={12}
+      containerClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6"
+      renderItem={(game) => {
+        const gameId = game.id ?? game._id;
         const totalPlayers = Number(game.totalPlayers ?? 0);
         const joinedPlayers = Number(game.joinedPlayersCount ?? 0);
         const spotsLeft = Math.max(totalPlayers - joinedPlayers, 0);
+        const status = String(game.status || "open").toLowerCase();
+        const isFull = status === "full" || spotsLeft === 0;
+        const isAlreadyJoined = joinedSet.has(String(gameId));
         const ground = game.Ground || {};
         const slots = Array.isArray(game.GameSlots) ? game.GameSlots : [];
         const firstSlot = slots[0]?.Slot || null;
@@ -59,23 +75,33 @@ export default function OpenGameList({ games = [], onCreateGame }) {
             key={game.id ?? game._id ?? `${game.sport}-${game.date}`}
             role="button"
             tabIndex={0}
-            onClick={() => navigate(`/games/${game.id ?? game._id}`, { state: { game } })}
+            onClick={() => navigate(`/games/${gameId}`, { state: { game } })}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
-                navigate(`/games/${game.id ?? game._id}`, { state: { game } });
+                navigate(`/games/${gameId}`, { state: { game } });
               }
             }}
-            className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 hover:border-indigo-500 transition-all cursor-pointer"
+            className={`rounded-xl p-6 hover:border-indigo-500 transition-all cursor-pointer ${
+              isDarkMode
+                ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700'
+                : 'bg-gradient-to-br from-white to-slate-50 border border-slate-200'
+            }`}
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xl font-bold text-white">{game.sport || "Game"}</h3>
-              <span className="px-2 py-1 rounded-md text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                {game.status || "Open"}
+              <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game.sport || "Game"}</h3>
+              <span
+                className={`px-2 py-1 rounded-md text-xs font-semibold border ${
+                  isFull
+                    ? "bg-red-500/15 text-red-300 border-red-500/30"
+                    : "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                }`}
+              >
+                {isFull ? "full" : game.status || "open"}
               </span>
             </div>
 
-            <div className="space-y-2 text-sm text-slate-300">
+            <div className={`space-y-2 text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
               <p className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-indigo-400" />
                 {formatDate(game.date)}
@@ -94,22 +120,29 @@ export default function OpenGameList({ games = [], onCreateGame }) {
               </p>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-700 flex items-center justify-between">
-              <p className="text-slate-200 font-semibold">Rs {game.pricePerPlayer} / player</p>
+            <div className={`mt-4 pt-4 flex items-center justify-between ${
+              isDarkMode ? 'border-t border-slate-700' : 'border-t border-slate-200'
+            }`}>
+              <p className={`font-semibold ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>Rs {game.pricePerPlayer} / player</p>
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/games/${game.id ?? game._id}`, { state: { game } });
+                  navigate(`/games/${gameId}`, { state: { game } });
                 }}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-all text-sm"
+                disabled={isAlreadyJoined || isFull}
+                className={`px-4 py-2 rounded-lg font-semibold transition-all text-sm ${
+                  isAlreadyJoined || isFull
+                    ? isDarkMode ? "bg-slate-700 text-slate-300 cursor-not-allowed" : "bg-slate-200 text-slate-600 cursor-not-allowed"
+                    : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                }`}
               >
-                Join
+                {isAlreadyJoined ? "You have already joined" : isFull ? "Game Full" : "Join"}
               </button>
             </div>
           </div>
         );
-      })}
-    </div>
+      }}
+    />
   );
 }

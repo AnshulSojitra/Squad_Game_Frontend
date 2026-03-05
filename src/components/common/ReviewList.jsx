@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getGroundReviews } from "../../services/api";
 import ReviewCard from "./ReviewCard";
+import ShowMore from "../utils/ShowMore";
 
 export default function ReviewList({ groundId }) {
   const [reviewsData, setReviewsData] = useState(null);
@@ -54,11 +55,13 @@ export default function ReviewList({ groundId }) {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {(reviewsData.reviews || []).map((review) => (
-          <ReviewCard key={review.id} review={review} />
-        ))}
-      </div>
+      <ShowMore
+        items={reviewsData.reviews || []}
+        initialCount={4}
+        increment={4}
+        containerClassName="grid gap-4 sm:grid-cols-2"
+        renderItem={(review) => <ReviewCard key={review.id} review={review} />}
+      />
     </div>
   );
 }

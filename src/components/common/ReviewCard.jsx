@@ -27,7 +27,7 @@ export default function ReviewCard({ review }) {
       </div>
 
       {/* Comment */}
-      <p className="text-gray-700 text-sm">{comment}</p>
+      <textarea className="text-gray-700 text-sm w-full p-2 border rounded" readOnly>{comment}</textarea>
     </div>
   );
 }

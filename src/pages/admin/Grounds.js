@@ -93,26 +93,6 @@ const paginatedGrounds = filteredGrounds.slice(
     return <p className="text-gray-600">Loading grounds...</p>;
   }
   
-   
-  // block ground togglr button 
-  //   const handleToggle = async () => {
-  //   if (loading) return;
-
-  //   try {
-  //     setLoading(true);
-
-  //     const res = await toggleGroundBlockApi(grounds.id);
-
-  //     // backend is source of truth
-  //     setIsBlocked(res.data.isBlocked);
-  //   } catch (error) {
-  //     console.error("Toggle failed", error);
-  //     alert("Failed to update ground status");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleToggle = async (groundId) => {
   try {
     const res = await toggleGroundBlockApi(groundId);

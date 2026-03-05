@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getAdminDashboard } from "../../services/api";
 import AdminBookingsChart from "../../components/charts/AdminBookingsChart";
@@ -12,6 +12,7 @@ const Dashboard = () => {
 
   const [stats, setStats] = useState([]);
   const [animatedValues, setAnimatedValues] = useState([]);
+  const [upcomingBookings, setUpcomingBookings] = useState([]);
   const [expandedChart, setExpandedChart] = useState(null); // 'bookings' | 'revenue' | 'grounds' | null
 
   /* ================= FETCH DASHBOARD DATA ================= */
@@ -28,6 +29,18 @@ const Dashboard = () => {
             value: data.todayBookings || 0,
             icon: "📅",
             color: "from-orange-500 to-orange-600",
+          },
+          {
+            title: "Confirmed",
+            value: data.confirmedBookings || 0,
+            icon: "✅",
+            color: "from-green-400 to-green-500",
+          },
+          {
+            title: "Cancelled",
+            value: data.cancelledBookings || 0,
+            icon: "❌",
+            color: "from-red-400 to-red-500",
           },
           {
             title: "Active Grounds",
@@ -52,6 +65,7 @@ const Dashboard = () => {
 
         setStats(dashboardStats);
         setAnimatedValues(new Array(dashboardStats.length).fill(0));
+        setUpcomingBookings(data.upcomingBookings || []);
       } catch (error) {
         console.error("Failed to load dashboard", error);
       }
@@ -113,7 +127,7 @@ const Dashboard = () => {
       </div>
 
       {/* ================= TOP STATS ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
         {stats.map((item, index) => (
           <div
             key={index}
@@ -144,6 +158,7 @@ const Dashboard = () => {
       </div>
 
       {/* ================= CHARTS GRID (2 PER ROW) ================= */}
+
       {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-y-10"> */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-12">
         {/* BOOKINGS CHART */}
@@ -239,6 +254,34 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+      
+            {/* ================= UPCOMING BOOKINGS ================= */}
+      <div className="bg-slate-900/60 rounded-2xl shadow-lg p-6 mt-8">
+        <h2 className="text-xl font-semibold text-white mb-4">Upcoming Bookings</h2>
+        {upcomingBookings.length > 0 ? (
+          <div className="space-y-3 max-h-80 overflow-auto">
+            {upcomingBookings.map((b) => (
+              <div
+                key={b.bookingId}
+                className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg"
+              >
+                <div>
+                  <p className="text-white font-medium">
+                    Date : {b.date} <br />
+                    Timing : {b.startTime}-{b.endTime}
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    {b.groundName} • {b.userName}
+                  </p>
+                </div>
+                {/* <span className="text-xs text-gray-300">#{b.bookingId}</span> */}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-400">No upcoming bookings in the next 24 hours.</p>
+        )}
+      </div>
 
     </div>
   );

@@ -300,6 +300,11 @@ const handleImages = (e) => {
         ) {
           newErrors.locationUrl = "Please enter a valid Google Maps link";
         }
+        
+        if (advanceBookingDays === "" || Number(advanceBookingDays) < 0) {
+          newErrors.advanceBookingDays = "Advance booking days must be 0 or more";
+        }
+
 
         if (!openingTime) {
           newErrors.openingTime = "Opening time is required";
@@ -741,6 +746,8 @@ const handleSubmit = async (e) => {
                 </div>
               )}
 
+
+              {/* Advance Booking Days */}
               <label className="block text-sm font-medium mb-1">
                 Advance Booking Allowed (Days)
               </label>
@@ -758,6 +765,9 @@ const handleSubmit = async (e) => {
                 player can book up to {advanceBookingDays || 0} days in advance
               </p>
 
+              {errors.advanceBookingDays && (
+                <p className="text-red-500 text-xs mt-1">{errors.advanceBookingDays}</p>
+              )}
 
 
               {/* Price */}

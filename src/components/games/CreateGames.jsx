@@ -9,8 +9,10 @@ import Loader from "../utils/Loader";
 import Toast from "../utils/Toast";
 import gamesList from "../constants/gamesList";
 import GamePaymentDetailsModal from "../payment/GamePaymentDetailsModal";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function CreateGames({ open, onClose, onGameCreated }) {
+  const { isDarkMode } = useTheme();
   const [loading, setLoading] = useState(false);
   const [createStep, setCreateStep] = useState(1);
   const [availableGrounds, setAvailableGrounds] = useState([]);
@@ -372,28 +374,40 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
   return (
     <>
       <div className="fixed inset-0 bg-black/50 backdrop-blur flex items-center justify-center z-50 p-4">
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className={`border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto ${
+          isDarkMode
+            ? 'bg-slate-900 border-slate-800'
+            : 'bg-white border-slate-200'
+        }`}>
           {createStep === 1 && (
             <div className="p-8">
-              <h2 className="text-2xl font-bold text-white mb-2">Select Sport</h2>
-              <p className="text-slate-400 mb-6">Choose a sport for your game</p>
+              <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Select Sport</h2>
+              <p className={isDarkMode ? 'text-slate-400 mb-6' : 'text-slate-600 mb-6'}>Choose a sport for your game</p>
 
               <div className="grid grid-cols-2 gap-4">
                 {gamesList.map((game) => (
                   <button
                     key={game.id}
                     onClick={() => handleSportSelect(game.name)}
-                    className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 hover:border-indigo-500 rounded-xl text-center transition-all transform hover:scale-105"
+                    className={`p-6 bg-gradient-to-br border rounded-xl text-center transition-all transform hover:scale-105 ${
+                      isDarkMode
+                        ? 'from-slate-800 to-slate-900 border-slate-700 hover:border-indigo-500'
+                        : 'from-white to-slate-50 border-slate-200 hover:border-indigo-400'
+                    }`}
                   >
                     <span className="text-3xl mb-3 block">{game.icon}</span>
-                    <p className="text-white font-semibold">{game.name}</p>
+                    <p className={`font-semibold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game.name}</p>
                   </button>
                 ))}
               </div>
 
               <button
                 onClick={handleClose}
-                className="w-full mt-6 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-semibold transition-all"
+                className={`w-full mt-6 px-4 py-2 rounded-lg font-semibold transition-all ${
+                  isDarkMode
+                    ? 'bg-slate-800 hover:bg-slate-700 text-white'
+                    : 'bg-slate-200 hover:bg-slate-300 text-slate-900'
+                }`}
               >
                 Cancel
               </button>
@@ -402,8 +416,8 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
 
           {createStep === 2 && (
             <div className="p-8">
-              <h2 className="text-2xl font-bold text-white mb-2">Select Ground</h2>
-              <p className="text-slate-400 mb-6">
+              <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Select Ground</h2>
+              <p className={isDarkMode ? 'text-slate-400 mb-6' : 'text-slate-600 mb-6'}>
                 Choose a ground for <span className="text-indigo-400 font-semibold">{formData.sport}</span>
               </p>
 
@@ -411,7 +425,7 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
                 <Loader variant="simple" text="Loading grounds..." fullScreen={false} />
               ) : availableGrounds.length === 0 ? (
                 <div className="text-center py-10">
-                  <p className="text-slate-400">No grounds available for this sport</p>
+                  <p className={isDarkMode ? 'text-slate-400' : 'text-slate-600'}>No grounds available for this sport</p>
                 </div>
               ) : (
                 <div className="space-y-4 mb-6">
@@ -419,11 +433,15 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
                     <button
                       key={getGroundId(ground)}
                       onClick={() => handleGroundSelect(getGroundId(ground))}
-                      className="w-full p-4 text-left rounded-lg border transition-all bg-slate-800/50 border-slate-700 text-slate-300 hover:border-indigo-400"
+                      className={`w-full p-4 text-left rounded-lg border transition-all ${
+                        isDarkMode
+                          ? 'bg-slate-800/50 border-slate-700 text-slate-300 hover:border-indigo-400'
+                          : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-indigo-400'
+                      }`}
                     >
                       <p className="font-semibold">{ground.name}</p>
-                      <p className="text-sm text-slate-400">{ground.city}, {ground.state}</p>
-                      <p className="text-sm text-slate-500">Rs {ground.pricePerSlot}/slot</p>
+                      <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>{ground.city}, {ground.state}</p>
+                      <p className={`text-sm ${isDarkMode ? 'text-slate-500' : 'text-slate-500'}`}>Rs {ground.pricePerSlot}/slot</p>
                     </button>
                   ))}
                 </div>
@@ -432,13 +450,21 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
               <div className="flex gap-3">
                 <button
                   onClick={() => setCreateStep(1)}
-                  className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-semibold transition-all"
+                  className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all ${
+                    isDarkMode
+                      ? 'bg-slate-800 hover:bg-slate-700 text-white'
+                      : 'bg-slate-200 hover:bg-slate-300 text-slate-900'
+                  }`}
                 >
                   Back
                 </button>
                 <button
                   onClick={handleClose}
-                  className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-semibold transition-all"
+                  className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all ${
+                    isDarkMode
+                      ? 'bg-slate-800 hover:bg-slate-700 text-white'
+                      : 'bg-slate-200 hover:bg-slate-300 text-slate-900'
+                  }`}
                 >
                   Cancel
                 </button>
@@ -448,14 +474,14 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
 
           {createStep === 3 && selectedGround && (
             <div className="p-8">
-              <h2 className="text-2xl font-bold text-white mb-2">Game Details</h2>
-              <p className="text-slate-400 mb-6">
+              <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Game Details</h2>
+              <p className={isDarkMode ? 'text-slate-400 mb-6' : 'text-slate-600 mb-6'}>
                 Ground: <span className="text-indigo-400 font-semibold">{selectedGround.name}</span>
               </p>
 
               <form onSubmit={handleCreateGame} className="space-y-6">
                 <div>
-                  <label className="block text-white font-semibold mb-2">Date</label>
+                  <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Date</label>
                   <input
                     type="date"
                     name="date"
@@ -464,10 +490,14 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
                     min={minDate}
                     max={maxDate}
                     disabled={groundDetailsLoading}
-                    className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                    className={`w-full px-4 py-2 rounded-lg focus:outline-none focus:border-indigo-500 ${
+                      isDarkMode
+                        ? 'bg-slate-800 border border-slate-700 text-white'
+                        : 'bg-white border border-slate-300 text-slate-900'
+                    }` }
                     required
                   />
-                  <p className="text-slate-400 text-xs mt-2">
+                  <p className={`text-xs mt-2 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                     {groundDetailsLoading
                       ? "Loading booking range..."
                       : `Select date from ${minDate} to ${maxDate}`}
@@ -476,13 +506,13 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
 
                 {formData.date && (
                   <div>
-                    <label className="block text-white font-semibold mb-2">Select Slots</label>
-                    <p className="text-slate-400 text-sm mb-3">Select time slots for your game</p>
+                    <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Select Slots</label>
+                    <p className={`text-sm mb-3 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Select time slots for your game</p>
 
                     {slotsLoading ? (
                       <Loader variant="simple" text="Loading slots..." fullScreen={false} />
                     ) : availableSlots.length === 0 ? (
-                      <p className="text-slate-400 text-sm">No slots available for selected date</p>
+                      <p className={`text-sm ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>No slots available for selected date</p>
                     ) : (
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                         {availableSlots.map((slot) => {
@@ -498,10 +528,10 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
                               onClick={() => handleSlotToggle(slotId)}
                               className={`p-3 rounded-lg border transition-all font-semibold ${
                                 isBooked
-                                  ? "bg-slate-900 border-rose-900 text-rose-300 cursor-not-allowed"
-                                  : isSelected
-                                    ? "bg-indigo-600 border-indigo-500 text-white"
-                                    : "bg-slate-800 border-slate-700 text-slate-300 hover:border-indigo-400"
+                                ? isDarkMode ? "bg-slate-900 border-rose-900 text-rose-300 cursor-not-allowed" : "bg-slate-100 border-rose-200 text-rose-700 cursor-not-allowed"
+                                : isSelected
+                                  ? "bg-indigo-600 border-indigo-500 text-white"
+                                  : isDarkMode ? "bg-slate-800 border-slate-700 text-slate-300 hover:border-indigo-400" : "bg-white border-slate-300 text-slate-700 hover:border-indigo-400"
                               }`}
                             >
                               <span className="block">
@@ -521,41 +551,51 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
                 )}
 
                 <div>
-                  <label className="block text-white font-semibold mb-2">Total Teams</label>
+                  <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Total Teams</label>
                   <input
                     type="number"
                     name="totalTeams"
                     min="2"
                     value={formData.totalTeams}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                    className={`w-full px-4 py-2 rounded-lg focus:outline-none focus:border-indigo-500 ${
+                      isDarkMode
+                        ? 'bg-slate-800 border border-slate-700 text-white'
+                        : 'bg-white border border-slate-300 text-slate-900'
+                    }`}
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-white font-semibold mb-2">Players Per Team</label>
+                  <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Players Per Team</label>
                   <input
                     type="number"
                     name="playersPerTeam"
                     min="1"
                     value={formData.playersPerTeam}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                    className={`w-full px-4 py-2 rounded-lg focus:outline-none focus:border-indigo-500 ${
+                      isDarkMode
+                        ? 'bg-slate-800 border border-slate-700 text-white'
+                        : 'bg-white border border-slate-300 text-slate-900'
+                    }`}
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-white font-semibold mb-2">Price Per Player (Rs)</label>
+                  <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Price Per Player (Rs)</label>
                   <input
                     type="number"
                     name="pricePerPlayer"
-                    min="0"
-                    step="10"
                     value={formData.pricePerPlayer}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                    className={`w-full px-4 py-2 rounded-lg focus:outline-none focus:border-indigo-500 ${
+                      isDarkMode
+                        ? 'bg-slate-800 border border-slate-700 text-white'
+                        : 'bg-white border border-slate-300 text-slate-900'
+                    }`}
                     required
                   />
                 </div>
@@ -572,14 +612,22 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
                   <button
                     type="button"
                     onClick={() => setCreateStep(2)}
-                    className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-semibold transition-all"
+                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all ${
+                      isDarkMode
+                        ? 'bg-slate-800 hover:bg-slate-700 text-white'
+                        : 'bg-slate-200 hover:bg-slate-300 text-slate-900'
+                    }`}
                   >
                     Back
                   </button>
                   <button
                     type="button"
                     onClick={handleClose}
-                    className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-semibold transition-all"
+                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all ${
+                      isDarkMode
+                        ? 'bg-slate-800 hover:bg-slate-700 text-white'
+                        : 'bg-slate-200 hover:bg-slate-300 text-slate-900'
+                    }`}
                   >
                     Cancel
                   </button>

@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getUserBookings, cancelUserBooking } from "../../services/api";
 import Loader from "../../components/utils/Loader";
 import { useTheme } from "../../context/ThemeContext";
 import Pagination from "../../components/utils/Pagination";
 import Toast from "../../components/utils/Toast";
 import ConfirmModal from "../../components/utils/ConfirmModal";
+import SearchInput from "../../components/utils/SearchInput";
 
 
 export default function MyBookings() {
@@ -14,6 +15,8 @@ export default function MyBookings() {
   const { isDarkMode } = useTheme();
   const ITEMS_PER_PAGE = 10;
   const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'cancelled'
+  const [bookingsFilter, setBookingsFilter] = useState("all"); // all | active | completed
+  const [searchQuery, setSearchQuery] = useState("");
   const [activePage, setActivePage] = useState(1);
   const [cancelledPage, setCancelledPage] = useState(1);
 
@@ -47,37 +50,6 @@ const showToast = (type, message) => {
     }
   };
 
-  // const formatTime = (time) => {
-  //   const [hour, minute] = time.split(":");
-  //   const h = Number(hour);
-  //   const suffix = h >= 12 ? "PM" : "AM";
-  //   const formattedHour = h % 12 || 12;
-  //   return `${formattedHour}:${minute} ${suffix}`;
-  // };
-
-
-  // const handleCancel = async (bookingId) => {
-  //   if (!window.confirm("Are you sure you want to cancel this booking?")) return;
-
-  //   try {
-  //     setCancelLoading(bookingId);
-  //     await cancelUserBooking(bookingId);
-
-  //     // Update UI instantly
-  //     setBookings((prev) =>
-  //       prev.map((b) =>
-  //         b.bookingId === bookingId
-  //           ? { ...b, status: "cancelled" }
-  //           : b
-  //       )
-  //     );
-  //   } catch (err) {
-  //     showToast("error","Failed to cancel booking");
-  //   } finally {
-  //     setCancelLoading(null);
-  //   }
-  // };
-
   const openCancelModal = (bookingId) => {
   setSelectedBookingId(bookingId);
   setShowConfirm(true);
@@ -108,20 +80,67 @@ const confirmCancelBooking = async () => {
 };
 
 
-  // Filter bookings
-  const activeBookings = bookings.filter(b => b.status === "confirmed" || b.status === "completed");
-  const cancelledBookings = bookings.filter(b => b.status === "cancelled");
+  const normalize = (value) => String(value ?? "").toLowerCase();
+  const bookingMatchesSearch = (booking, query) => {
+    const q = normalize(query).trim();
+    if (!q) return true;
+
+    const text = normalize(
+      [
+        booking?.ground?.name,
+        booking?.ground?.area,
+        booking?.ground?.city,
+        booking?.ground?.state,
+        booking?.ground?.country,
+        booking?.date,
+        booking?.status,
+        booking?.slot?.startTime,
+        booking?.slot?.endTime,
+      ].join(" ")
+    );
+
+    return text.includes(q);
+  };
+
+  const activeBookings = useMemo(
+    () => bookings.filter((b) => b.status === "confirmed" || b.status === "completed"),
+    [bookings]
+  );
+  const cancelledBookings = useMemo(
+    () => bookings.filter((b) => b.status === "cancelled"),
+    [bookings]
+  );
+
+  const filteredActiveBookings = useMemo(() => {
+    const byStatus = activeBookings.filter((b) => {
+      if (bookingsFilter === "active") return b.status === "confirmed" || b.status === "active";
+      if (bookingsFilter === "completed") return b.status === "completed";
+      return true;
+    });
+
+    return byStatus.filter((b) => bookingMatchesSearch(b, searchQuery));
+  }, [activeBookings, bookingsFilter, searchQuery]);
+
+  const filteredCancelledBookings = useMemo(
+    () => cancelledBookings.filter((b) => bookingMatchesSearch(b, searchQuery)),
+    [cancelledBookings, searchQuery]
+  );
+
+  useEffect(() => {
+    setActivePage(1);
+    setCancelledPage(1);
+  }, [searchQuery, bookingsFilter, activeTab]);
 
   // Pagination for active bookings
-  const totalActivePages = Math.ceil(activeBookings.length / ITEMS_PER_PAGE);
-  const paginatedActiveBookings = activeBookings.slice(
+  const totalActivePages = Math.ceil(filteredActiveBookings.length / ITEMS_PER_PAGE);
+  const paginatedActiveBookings = filteredActiveBookings.slice(
     (activePage - 1) * ITEMS_PER_PAGE,
     activePage * ITEMS_PER_PAGE
   );
 
   // Pagination for cancelled bookings
-  const totalCancelledPages = Math.ceil(cancelledBookings.length / ITEMS_PER_PAGE);
-  const paginatedCancelledBookings = cancelledBookings.slice(
+  const totalCancelledPages = Math.ceil(filteredCancelledBookings.length / ITEMS_PER_PAGE);
+  const paginatedCancelledBookings = filteredCancelledBookings.slice(
     (cancelledPage - 1) * ITEMS_PER_PAGE,
     cancelledPage * ITEMS_PER_PAGE
   );
@@ -438,10 +457,68 @@ const confirmCancelBooking = async () => {
             <span className="whitespace-nowrap">Cancelled ({cancelledBookings.length})</span>
           </button>
         </div>
+
+        <div className="mb-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search by ground, location, date, status..."
+            delay={250}
+            className={`w-full sm:w-96 ${
+              isDarkMode
+                ? "text-white border-gray-700"
+                : "text-gray-900 bg-white border-gray-300"
+            }`}
+          />
+
+          {activeTab === "bookings" && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setBookingsFilter("all")}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  bookingsFilter === "all"
+                    ? "bg-indigo-600 text-white"
+                    : isDarkMode
+                      ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                All
+              </button>
+              <button
+                type="button"
+                onClick={() => setBookingsFilter("active")}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  bookingsFilter === "active"
+                    ? "bg-green-600 text-white"
+                    : isDarkMode
+                      ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Active
+              </button>
+              <button
+                type="button"
+                onClick={() => setBookingsFilter("completed")}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  bookingsFilter === "completed"
+                    ? "bg-blue-600 text-white"
+                    : isDarkMode
+                      ? "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Completed
+              </button>
+            </div>
+          )}
+        </div>
         {/* Tab Content */}
         {activeTab === 'bookings' && (
           <div>
-            {activeBookings.length === 0 ? (
+            {filteredActiveBookings.length === 0 ? (
               <div className={`text-center py-12 sm:py-16 rounded-lg border transition-colors ${
                 isDarkMode
                   ? 'bg-gray-800 border-gray-700'
@@ -473,7 +550,7 @@ const confirmCancelBooking = async () => {
         {/* Tab Content - Cancelled Bookings */}
         {activeTab === 'cancelled' && (
           <div>
-            {cancelledBookings.length === 0 ? (
+            {filteredCancelledBookings.length === 0 ? (
               <div className={`text-center py-12 sm:py-16 rounded-lg border transition-colors ${
                 isDarkMode
                   ? 'bg-red-900/20 border-red-700'

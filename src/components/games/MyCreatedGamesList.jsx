@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Calendar, Clock3, MapPin, Users, Trophy, GamepadIcon } from "lucide-react";
-import { getMyGames } from "../../services/api";
+import { deleteMyGameApi, getMyGames } from "../../services/api";
+import ConfirmModal from "../utils/ConfirmModal";
+import Toast from "../utils/Toast";
+import ShowMore from "../utils/ShowMore";
+import { useTheme } from "../../context/ThemeContext";
 const formatDate = (date) => {
   if (!date) return "N/A";
   const d = new Date(date);
@@ -24,10 +29,59 @@ export default function MyCreatedGamesList({
   onLogin,
   isLoggedIn,
 }) {
+  const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [deletingGameId, setDeletingGameId] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [selectedGame, setSelectedGame] = useState(null);
+  const [toast, setToast] = useState({ show: false, type: "info", message: "" });
   const token = localStorage.getItem("userToken");
   const loggedIn = typeof isLoggedIn === "boolean" ? isLoggedIn : Boolean(token);
+  const getGameId = (game) => game?.id ?? game?._id ?? null;
+
+  const showToast = (type, message) => {
+    setToast({ show: true, type, message });
+  };
+
+  const openDeleteConfirm = (game) => {
+    const gameId = getGameId(game);
+    if (!gameId) {
+      showToast("error", "Invalid game");
+      return;
+    }
+
+    const joinedPlayers = Number(game?.joinedPlayersCount ?? 0);
+    if (joinedPlayers > 1) {
+      showToast("error", "Cannot delete game when more than 1 player has joined");
+      return;
+    }
+
+    setSelectedGame(game);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    const gameId = getGameId(selectedGame);
+    if (!gameId) return;
+
+    try {
+      setDeletingGameId(String(gameId));
+      const response = await deleteMyGameApi(gameId);
+      setGames((prev) => prev.filter((g) => String(getGameId(g)) !== String(gameId)));
+      showToast("success", response?.data?.message || "Game deleted successfully");
+    } catch (error) {
+      showToast(
+        "error",
+        error?.response?.data?.message || "Failed to delete game"
+      );
+    } finally {
+      setDeletingGameId(null);
+      setShowDeleteConfirm(false);
+      setSelectedGame(null);
+    }
+  };
 
   useEffect(() => {
     const fetchMyGames = async () => {
@@ -59,15 +113,29 @@ export default function MyCreatedGamesList({
         {Array.from({ length: 3 }).map((_, idx) => (
           <div
             key={idx}
-            className="rounded-xl border border-slate-700 bg-slate-900/60 p-6 animate-pulse"
+            className={`rounded-xl border p-6 animate-pulse ${
+              isDarkMode
+                ? 'border-slate-700 bg-slate-900/60'
+                : 'border-slate-200 bg-slate-100/60'
+            }`}
           >
-            <div className="h-6 w-36 bg-slate-700 rounded mb-4" />
+            <div className={`h-6 w-36 rounded mb-4 ${
+              isDarkMode ? 'bg-slate-700' : 'bg-slate-300'
+            }`} />
             <div className="space-y-3">
-              <div className="h-4 w-40 bg-slate-700 rounded" />
-              <div className="h-4 w-44 bg-slate-700 rounded" />
-              <div className="h-4 w-52 bg-slate-700 rounded" />
+              <div className={`h-4 w-40 rounded ${
+                isDarkMode ? 'bg-slate-700' : 'bg-slate-300'
+              }`} />
+              <div className={`h-4 w-44 rounded ${
+                isDarkMode ? 'bg-slate-700' : 'bg-slate-300'
+              }`} />
+              <div className={`h-4 w-52 rounded ${
+                isDarkMode ? 'bg-slate-700' : 'bg-slate-300'
+              }`} />
             </div>
-            <div className="h-8 w-24 bg-slate-700 rounded mt-5" />
+            <div className={`h-8 w-24 rounded mt-5 ${
+              isDarkMode ? 'bg-slate-700' : 'bg-slate-300'
+            }`} />
           </div>
         ))}
       </div>
@@ -76,12 +144,16 @@ export default function MyCreatedGamesList({
 
   if (!games.length) {
     return (
-      <div className="flex flex-col items-center justify-center py-14 rounded-xl border border-slate-800 bg-slate-900/40">
+      <div className={`flex flex-col items-center justify-center py-14 rounded-xl border ${
+        isDarkMode
+          ? 'border-slate-800 bg-slate-900/40'
+          : 'border-slate-200 bg-slate-50/40'
+      }`}>
         <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-3">
           <GamepadIcon className="w-8 h-8 text-indigo-400" />
         </div>
-        <h3 className="text-xl font-semibold text-white mb-2">No Created Games</h3>
-        <p className="text-slate-400 text-center max-w-md">
+        <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No Created Games</h3>
+        <p className={`text-center max-w-md ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
           {loggedIn
             ? "You have not created any games yet."
             : "Login to view games created by you."}
@@ -100,8 +172,13 @@ export default function MyCreatedGamesList({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {games.map((game) => {
+    <>
+      <ShowMore
+        items={games}
+        initialCount={6}
+        increment={6}
+        containerClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        renderItem={(game) => {
         const totalPlayers = Number(game.totalPlayers ?? 0);
         const joinedPlayers = Number(game.joinedPlayersCount ?? 0);
         const totalTeams = Number(game.totalTeams ?? 0);
@@ -110,22 +187,35 @@ export default function MyCreatedGamesList({
         const slots = Array.isArray(game.GameSlots) ? game.GameSlots : [];
         const firstSlot = slots[0]?.Slot || null;
         const slotLabel = firstSlot
-          ? `${formatTime(firstSlot.startTime)} - ${formatTime(firstSlot.endTime)}`
+          ? `${formatTime(firstSlot.startTime)}`
           : "Slots not available";
 
-        return (
+          return (
           <div
             key={game.id ?? game._id ?? `${game.sport}-${game.date}`}
-            className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6"
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate(`/profile/mygames/${game.id ?? game._id}`)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                navigate(`/profile/mygames/${game.id ?? game._id}`);
+              }
+            }}
+            className={`bg-gradient-to-br rounded-xl p-6 cursor-pointer hover:border-indigo-500 transition-all ${
+              isDarkMode
+                ? 'from-slate-800 to-slate-900 border border-slate-700'
+                : 'from-white to-slate-50 border border-slate-200'
+            }`}
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xl font-bold text-white">{game.sport || "Game"}</h3>
+              <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game.sport || "Game"}</h3>
               <span className="px-2 py-1 rounded-md text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
                 {game.status || "Open"}
               </span>
             </div>
 
-            <div className="space-y-2 text-sm text-slate-300">
+            <div className={`space-y-2 text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
               <p className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-indigo-400" />
                 {formatDate(game.date)}
@@ -148,12 +238,53 @@ export default function MyCreatedGamesList({
               </p>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-700">
-              <p className="text-slate-200 font-semibold">Rs {game.pricePerPlayer} / player</p>
+            <div className={`mt-4 pt-4 ${
+              isDarkMode ? 'border-t border-slate-700' : 'border-t border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between gap-3">
+                <p className={`font-semibold ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>Rs {game.pricePerPlayer} / player</p>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openDeleteConfirm(game);
+                  }}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  disabled={
+                    Number(game?.joinedPlayersCount ?? 0) > 1 ||
+                    deletingGameId === String(getGameId(game))
+                  }
+                  className="px-4 py-2 rounded-lg text-sm font-semibold bg-rose-600 hover:bg-rose-700 disabled:opacity-60 disabled:cursor-not-allowed text-white transition-all"
+                >
+                  {deletingGameId === String(getGameId(game)) ? "Deleting..." : "Delete Game"}
+                </button>
+              </div>
+              {Number(game?.joinedPlayersCount ?? 0) > 1 && (
+                <p className={`text-xs mt-2 ${isDarkMode ? 'text-rose-300' : 'text-rose-600'}`}>
+                  Delete is disabled because more than 1 player has joined this game.
+                </p>
+              )}
             </div>
           </div>
-        );
-      })}
-    </div>
+          );
+        }}
+      />
+      <ConfirmModal
+        isOpen={showDeleteConfirm}
+        title="Delete Game"
+        message="Are you sure you want to delete this game?"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => {
+          setShowDeleteConfirm(false);
+          setSelectedGame(null);
+        }}
+      />
+      <Toast
+        show={toast.show}
+        type={toast.type}
+        message={toast.message}
+        onClose={() => setToast((prev) => ({ ...prev, show: false }))}
+      />
+    </>
   );
 }

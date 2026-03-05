@@ -61,6 +61,21 @@ export const getAllBookingsBySuperAdmin = () => {
   return API.get("/super-admin/bookings");
 };
 
+// Get all games (Super Admin)
+export const getAllGamesBySuperAdmin = () => {
+  return API.get("/super-admin/games");
+};
+
+// Delete game (Super Admin)
+export const deleteGameBySuperAdmin = (gameId) => {
+  return API.delete(`/super-admin/games/${gameId}`);
+};
+
+// Remove participant from game (Super Admin)
+export const removeParticipantFromGameBySuperAdmin = (gameId, userId) => {
+  return API.delete(`/super-admin/games/${gameId}/participants/${userId}`);
+};
+
 
 // Admin Registration
 export const createAdmin = (data) => {
@@ -621,6 +636,34 @@ export const getMyJoinedGames = async () => {
       "ngrok-skip-browser-warning": "true",
     },
   });
+};
+
+// DELETE MY CREATED GAME
+export const deleteMyGameApi = async (gameId) => {
+  const token = localStorage.getItem("userToken");
+
+  return api.delete(`/games/${gameId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
+};
+
+// LEAVE GAME
+export const leaveGameApi = async (gameId) => {
+  const token = localStorage.getItem("userToken");
+
+  return api.post(
+    `/games/${gameId}/leave`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "ngrok-skip-browser-warning": "true",
+      },
+    }
+  );
 };
 
 // GET ground reviews (public)
