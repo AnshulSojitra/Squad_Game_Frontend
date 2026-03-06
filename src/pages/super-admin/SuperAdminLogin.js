@@ -68,24 +68,46 @@ export default function SuperAdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-xl p-8">
+  <div className="h-screen flex flex-col bg-gradient-to-br from-gray-900 via-black to-gray-900">
+
+    {/* ================= HEADER ================= */}
+    <header className="bg-gray-900 flex items-center justify-between px-6 py-4 border-b border-gray-800">
+      <h1
+        className="text-xl font-bold text-indigo-500 cursor-pointer"
+        onClick={() => navigate("/")}
+      >
+        BoxArena
+      </h1>
+
+      <button
+        onClick={() => navigate("/")}
+        className="text-sm text-gray-400 hover:text-white transition"
+      >
+        ← Back to Home
+      </button>
+    </header>
+
+    {/* ================= MAIN ================= */}
+    <main className="flex-1 flex items-center justify-center px-2">
+
+      <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-xl p-6">
         {/* HEADER */}
         <h1 className="text-3xl font-bold text-white text-center mb-2">
           Super Admin Login
         </h1>
+
         <p className="text-gray-400 text-center mb-8">
           Secure access for system administrators
         </p>
 
         {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* EMAIL */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Email
-            </label>
-            <input
+           {/* EMAIL */}
+           <div>
+             <label className="block text-sm font-medium text-gray-300 mb-1">
+               Email
+             </label>
+             <input
               type="email"
               name="email"
               value={form.email}
@@ -167,7 +189,17 @@ export default function SuperAdminLogin() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+     
       </div>
-    </div>
+
+    </main>
+
+    {/* ================= FOOTER ================= */}
+    <footer className="bg-gray-900 text-center text-xs text-gray-500 py-4 border-t border-gray-800">
+      © {new Date().getFullYear()} GameGround. All rights reserved.
+    </footer>
+
+  </div>
+
   );
 }

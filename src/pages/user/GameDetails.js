@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Calendar, Clock3, MapPin, Users, ArrowLeft } from "lucide-react";
+import { Calendar, Clock3, MapPin, Users, ArrowLeft ,GamepadIcon} from "lucide-react";
 import { getMyJoinedGames, getOpenGames, getUserProfile, joinGameApi } from "../../services/api";
 import Loader from "../../components/utils/Loader";
 import Toast from "../../components/utils/Toast";
@@ -254,7 +254,9 @@ export default function GameDetails() {
             : 'from-white to-slate-50 border-slate-200'
         }`}>
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game.sport}</h1>
+            <div>
+              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game.name}</h1>
+            </div>
             <span className="px-3 py-1 rounded-md text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
               {game.status || "Open"}
             </span>
@@ -264,6 +266,10 @@ export default function GameDetails() {
             isDarkMode ? 'text-slate-200' : 'text-slate-700'
           }`}>
             <div className="space-y-3">
+               <p className="flex items-center gap-2">
+                <GamepadIcon className="w-4 h-4 text-indigo-400" />
+                Sport: {game.sport}
+              </p>
               <p className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-indigo-400" />
                 Date: {formatDate(game.date)}

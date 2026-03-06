@@ -30,28 +30,28 @@ export default function LandingFeatures() {
                 title: "Players",
                 points: [
                   "Book game slots instantly",
-                  "Discover nearby grounds",
-                  "Manage & reschedule bookings",
+                  "Play in nearby grounds",
+                  "Create bookings",
                 ],
                 icon: "🏃‍♂️",
               },
               {
                 title: "Ground Owners",
                 points: [
+                  "You can become a grounds owner",
                   "Manage grounds easily",
-                  "Control pricing & slots",
                   "Track bookings in real-time",
                 ],
                 icon: "🏟️",
               },
               {
-                title: "Admins",
+                title: "Games",
                 points: [
-                  "Approve grounds & games",
-                  "Monitor platform activity",
-                  "Manage users & bookings",
+                  "Add Games",
+                  "Create game slots",
+                  "Create Teams",
                 ],
-                icon: "🛠️",
+                icon: "🎮",
               },
             ].map((item, i) => (
               <ScrollReveal key={i} animation="fade-up" delay={i * 100}>
@@ -105,13 +105,13 @@ export default function LandingFeatures() {
               },
               {
                 title: "Team Management",
-                desc: "Create teams, add players & manage squads.",
+                desc: "Create teams, join teams & manage squads.",
                 icon: "👥",
               },
               {
-                title: "Score Tracking",
-                desc: "Track match scores and performance history.",
-                icon: "🏆",
+                title: "Join Games",
+                desc: "Join existing games and meet new players.",
+                icon: "🤝",
               },
               {
                 title: "Verified Grounds",
@@ -119,9 +119,9 @@ export default function LandingFeatures() {
                 icon: "✅",
               },
               {
-                title: "Flexible Slots",
-                desc: "Morning to night slots that fit your schedule.",
-                icon: "⏰",
+                title: "Multiple Grounds",
+                desc: "Play at various locations with different facilities.",
+                icon: "📍",
               },
               {
                 title: "Easy Payments",

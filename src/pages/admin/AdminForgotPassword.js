@@ -84,7 +84,7 @@ export default function AdminForgotPassword() {
 
         <div className="mt-6 text-center">
           <button
-            onClick={() => navigate("/admin/login")}
+            onClick={() => navigate("/login")}
             className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
           >
             ← Back to Login

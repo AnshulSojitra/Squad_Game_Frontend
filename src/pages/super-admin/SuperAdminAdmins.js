@@ -4,12 +4,14 @@ import { getAllAdmins, toggleAdminBlock , deleteAdminBySuperAdmin} from "../../s
 import Pagination from "../../components/utils/Pagination";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import { ShieldCheck, Activity, Search } from "lucide-react";
+import Loader from "../../components/utils/Loader";
 
 
 
 
 export default function SuperAdminAdmins() {
   const [admins, setAdmins] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 10;
   const [page, setPage] = useState(1);
@@ -62,10 +64,13 @@ const paginatedAdmins = filteredAdmins.slice(
 
   const fetchAdmins = async () => {
     try {
+      setLoading(true);
       const res = await getAllAdmins();
       setAdmins(res.data.admins);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,6 +121,10 @@ const paginatedAdmins = filteredAdmins.slice(
       setConfirmOpen(false);
       setSelectedAdminId(null);
     };
+
+  if (loading) {
+    return <Loader variant="simple" text="Loading ground owners..." />;
+  }
 
 
   /* ---------------- UI ---------------- */

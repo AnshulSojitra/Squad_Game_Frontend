@@ -1,4 +1,4 @@
-import { Calendar, Clock3, MapPin, Users, GamepadIcon } from "lucide-react";
+import { Calendar, Clock3, MapPin, Users, GamepadIcon} from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import ShowMore from "../utils/ShowMore";
@@ -57,6 +57,7 @@ export default function OpenGameList({ games = [], onCreateGame, joinedGameIds =
       containerClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6"
       renderItem={(game) => {
         const gameId = game.id ?? game._id;
+        const gameDisplayName = game?.name || game?.sport || "Game";
         const totalPlayers = Number(game.totalPlayers ?? 0);
         const joinedPlayers = Number(game.joinedPlayersCount ?? 0);
         const spotsLeft = Math.max(totalPlayers - joinedPlayers, 0);
@@ -89,7 +90,7 @@ export default function OpenGameList({ games = [], onCreateGame, joinedGameIds =
             }`}
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game.sport || "Game"}</h3>
+              <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{gameDisplayName}</h3>
               <span
                 className={`px-2 py-1 rounded-md text-xs font-semibold border ${
                   isFull
@@ -102,6 +103,10 @@ export default function OpenGameList({ games = [], onCreateGame, joinedGameIds =
             </div>
 
             <div className={`space-y-2 text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+              <p className="flex items-center gap-2">
+                <GamepadIcon className="w-4 h-4 text-indigo-400" />
+                  Sport: {game.sport}
+              </p>
               <p className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-indigo-400" />
                 {formatDate(game.date)}

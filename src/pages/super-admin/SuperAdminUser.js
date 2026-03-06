@@ -9,10 +9,12 @@ import Pagination from "../../components/utils/Pagination";
 import ToggleSwitch from "../../components/utils/ToggleSwitch";
 import { Users, UserCheck, UserX, Search } from "lucide-react";
 import ConfirmModal from "../../components/utils/ConfirmModal";
+import Loader from "../../components/utils/Loader";
 
 
 export default function SuperAdminUsers() {
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [loadingId, setLoadingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -25,10 +27,13 @@ const [selectedUserId, setSelectedUserId] = useState(null);
   /* ---------------- Fetch Users ---------------- */
   const fetchUsers = async () => {
     try {
+      setLoading(true);
       const res = await getAllUsers();
       setUsers(res.data.users);
     } catch (error) {
       console.error("Failed to fetch users", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,6 +104,10 @@ const confirmDelete = async () => {
     active: users.filter(u => !u.isBlocked).length,
     blocked: users.filter(u => u.isBlocked).length
   };
+
+  if (loading) {
+    return <Loader variant="simple" text="Loading users..." />;
+  }
 
   return (
     <>
@@ -172,7 +181,7 @@ const confirmDelete = async () => {
           <table className="w-full">
             <thead className="bg-slate-700/50 text-center">
               <tr>
-                <th className="px-6 py-4 text-xs font-semibold text-gray-300 uppercase tracking-wider">#</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-300 uppercase tracking-wider">No</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-300 uppercase tracking-wider">User Details</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-300 uppercase tracking-wider">Role</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-300 uppercase tracking-wider">Status</th>

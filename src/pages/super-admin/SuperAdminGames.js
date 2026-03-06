@@ -233,8 +233,9 @@ export default function SuperAdminGames() {
                         {(page - 1) * ITEMS_PER_PAGE + index + 1}
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-semibold text-white">{game.sport || "Game"}</p>
-                        <p className="text-sm text-gray-400">
+                        <p className="font-semibold text-white">{game.name || "Game"}</p>
+                        {game.name && <p className="text-xs text-gray-300 font-medium">{game.sport}</p>}
+                        <p className="text-sm text-gray-400 mt-1">
                           {formatDate(game.date)} | {timeRange}
                         </p>
                         <p className="text-xs text-gray-500 mt-1">Rs {game.pricePerPlayer} / player</p>

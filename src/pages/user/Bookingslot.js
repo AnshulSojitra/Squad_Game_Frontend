@@ -71,7 +71,7 @@ export default function Bookingslot() {
               isDarkMode ? "text-white" : "text-gray-900"
             }`}
           >
-            Select a Ground
+            Explore Grounds
           </h1>
 
           <p

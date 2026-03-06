@@ -23,7 +23,7 @@ import AdminForgotPassword from "../pages/admin/AdminForgotPassword";
 import AdminResetPassword from "../pages/admin/AdminResetPassword";
 import Games from "../pages/user/Games";
 import GameDetails from "../pages/user/GameDetails";
-import { AdminGames }  from "../pages/admin/AdminGames";
+// import { AdminGames }  from "../pages/admin/AdminGames";
 import CreateGames from "../components/games/CreateGames";
 import MyCreatedGamesList from "../components/games/MyCreatedGamesList";
 
@@ -94,30 +94,6 @@ export const AppRoutes = () => {
 {/* =================================================================== USER PANEL ==================================================== */}
 
 
-        {/* Public */}
-        {/* <Route path="/" element={<LandingPage />} />
-        <Route path="/user/login" element={<UserLogin />} />
-        <Route path="/user/UserRegister" element={<UserRegister />} />
-        <Route path="user/forgot-password" element={<UserForgotPassword/>}/>
-        <Route path="/user/reset-password/:token" element={<UserResetPassword/>}/> */}
-
-        {/* Public Booking View */}
-       
-        {/* <Route path="/user/book/:groundId" element={<Bookingslot />} />  */}
-
-        {/* Protected User Area */}
-        {/* <Route element={<UserProtectedRoute />}>
-          <Route path="/user" element={<UserLayout />}>
-            <Route path="home" element={<Home />} />
-            <Route path="games" element={<AdminGames />} />
-            <Route path="bookingslot" element={<Bookingslot />} />
-            <Route path="mybooking" element={<Mybooking />} />
-            
-          </Route>
-          <Route path="/user/profile" element={<UserProfile/>}/>
-          <Route path="/user/change-password" element={<UserChangePassword/>}/>
-        </Route> */}
-
         <Route path="/grounds" element={<Bookingslot />} />
         <Route path="/user/grounds/:groundId" element={<GroundDetails />} />
         
@@ -134,7 +110,7 @@ export const AppRoutes = () => {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="bookings" element={<Bookings />} />
-          <Route path="games" element={<AdminGames />} />
+          {/* <Route path="games" element={<AdminGames />} /> */}
           <Route path="grounds" element={<Grounds />} />
           <Route path="/admin/grounds/:id" element={<GroundDetailsAdmin />} />
           <Route path="change-password" element={<ChangePassword />} />

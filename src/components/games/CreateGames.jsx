@@ -26,6 +26,7 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
   const [toast, setToast] = useState({ show: false, type: "", message: "" });
 
   const [formData, setFormData] = useState({
+    name: "",
     sport: "",
     groundId: "",
     slotIds: [],
@@ -98,6 +99,7 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
 
   const resetState = () => {
     setFormData({
+      name: "",
       sport: "",
       groundId: "",
       slotIds: [],
@@ -224,11 +226,11 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
   const handleCreateGame = async (e) => {
     e.preventDefault();
 
-    if (!formData.sport || !formData.groundId || !formData.slotIds.length) {
+    if (!formData.name || !formData.sport || !formData.groundId || !formData.slotIds.length) {
       setToast({
         show: true,
         type: "error",
-        message: "Please select sport, ground, and at least one slot",
+        message: "Please enter game name, select sport, ground, and at least one slot",
       });
       return;
     }
@@ -241,6 +243,7 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
     try {
       setLoading(true);
       const payload = {
+        name: String(formData.name).trim(),
         sport: formData.sport,
         groundId: Number(formData.groundId),
         slotIds: formData.slotIds.map(Number),
@@ -268,6 +271,7 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
           response?.data?.razorpay_key_id ||
           null,
         groundName: selectedGround?.name || "Selected Ground",
+        gameName: formData.name,
         sport: formData.sport,
         date: formData.date,
         totalTeams: formData.totalTeams,
@@ -480,6 +484,23 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
               </p>
 
               <form onSubmit={handleCreateGame} className="space-y-6">
+                <div>
+                  <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Game Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Enter game name"
+                    className={`w-full px-4 py-2 rounded-lg focus:outline-none focus:border-indigo-500 ${
+                      isDarkMode
+                        ? 'bg-slate-800 border border-slate-700 text-white'
+                        : 'bg-white border border-slate-300 text-slate-900'
+                    }`}
+                    required
+                  />
+                </div>
+
                 <div>
                   <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Date</label>
                   <input

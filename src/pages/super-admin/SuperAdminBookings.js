@@ -6,9 +6,11 @@ import {
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import Pagination from "../../components/utils/Pagination";
 import { Calendar, Users, MapPin, DollarSign, Filter } from "lucide-react";
+import Loader from "../../components/utils/Loader";
 
 export default function SuperAdminBookings() {
   const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [loadingId, setLoadingId] = useState(null);
   const [confirmData, setConfirmData] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'confirmed', 'cancelled'
@@ -38,12 +40,15 @@ const formatTime12 = (timeStr) => {
 
   const fetchBookings = async () => {
     try {
+      setLoading(true);
       const res = await getAllBookingsBySuperAdmin();
       if (res && res.data) {
         setBookings(res.data);
       }
     } catch (err) {
       console.error("Failed to fetch bookings", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,6 +100,10 @@ const formatTime12 = (timeStr) => {
       .filter(b => b.status === 'confirmed')
       .reduce((sum, b) => sum + (b.price || 0), 0)
   };
+
+  if (loading) {
+    return <Loader variant="simple" text="Loading bookings..." />;
+  }
 
   return (
     <div className="space-y-6">

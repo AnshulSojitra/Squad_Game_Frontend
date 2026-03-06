@@ -116,7 +116,7 @@ export default function Navbar() {
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              Games
+              Tournaments
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
 

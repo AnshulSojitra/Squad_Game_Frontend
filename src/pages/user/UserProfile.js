@@ -47,7 +47,7 @@ export default function UserProfile() {
       }`}>
         {/* FLOATING BACK BUTTON */}
         <div className="absolute top-4 sm:top-6 left-4 sm:left-6 z-50">
-          <BackButton />
+         
         </div>
         <div className={`max-w-3xl mx-auto rounded-xl lg:rounded-2xl shadow-xl overflow-hidden transition-colors duration-300 ${
           isDarkMode

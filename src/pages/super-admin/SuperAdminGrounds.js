@@ -24,6 +24,7 @@ export default function SuperAdminGrounds() {
   useEffect(() => {
     const fetchGrounds = async () => {
       try {
+        setLoading(true);
         const res = await getAllGroundsSupAdi();
 
         // ✅ SAFELY extract array

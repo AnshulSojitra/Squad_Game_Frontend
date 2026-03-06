@@ -28,6 +28,7 @@ export default function Games() {
   const getCity = (item) => getGround(item)?.City?.name ?? getGround(item)?.city ?? "";
   const getState = (item) => getGround(item)?.State?.name ?? getGround(item)?.state ?? "";
   const getSport = (item) => item?.sport ?? "";
+  const getGameName = (item) => item?.name ?? "";
 
   const cities = useMemo(
     () => [...new Set(games.map((item) => getCity(item)).filter(Boolean))],
@@ -49,14 +50,16 @@ export default function Games() {
     return games.filter((item) => {
       const ground = getGround(item);
       const text = normalize(
-        `${item?.sport} ${ground?.name} ${getCity(item)} ${getState(item)} ${ground?.area}`
+        `${getGameName(item)} ${item?.sport} ${ground?.name} ${getCity(item)} ${getState(item)} ${ground?.area}`
       );
 
       return (
         text.includes(query) &&
         (!city || getCity(item) === city) &&
         (!state || getState(item) === state) &&
-        (!selectedGame || normalize(getSport(item)) === selectedGame)
+        (!selectedGame ||
+          normalize(getSport(item)) === selectedGame ||
+          normalize(getGameName(item)) === selectedGame)
       );
     });
   }, [games, search, city, state, game]);
@@ -130,6 +133,7 @@ export default function Games() {
   }
 
   return (
+    <>
     <div className={`min-h-screen p-6 pt-20 ${
       isDarkMode
         ? 'bg-gradient-to-br from-slate-950 to-slate-900'
@@ -142,7 +146,7 @@ export default function Games() {
               isDarkMode ? 'text-white' : 'text-slate-900'
             }`}>
               <GamepadIcon className="w-10 h-10 text-indigo-500" />
-              Games
+              Explore Tournaments
             </h1>
             <p className={isDarkMode ? 'text-slate-400' : 'text-slate-600'}>Create and manage your sports games</p>
           </div>
@@ -153,7 +157,7 @@ export default function Games() {
             className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg font-semibold transition-all transform hover:scale-105"
           >
             <Plus className="w-5 h-5" />
-            Add Game
+            Host Tournament
           </button>
         </div>
 
@@ -202,8 +206,7 @@ export default function Games() {
         )}
       </div>
 
-      <Footer />
-
+      
       <CreateGames
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
@@ -217,5 +220,8 @@ export default function Games() {
         onClose={() => setToast((prev) => ({ ...prev, show: false }))}
       />
     </div>
+    <Footer />
+
+    </>
   );
 }

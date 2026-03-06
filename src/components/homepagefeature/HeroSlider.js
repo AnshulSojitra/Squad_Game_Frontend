@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
+import { getLandingStats } from "../../services/api";
 
 const slides = [
   {
-    image: "/images/hero1.jpg",
+    image: "/images/hero1.jpeg",
     title: "Book Your Game.",
     highlight: "Build Your Team.",
     subtitle:
@@ -18,7 +19,7 @@ const slides = [
       "Find verified grounds and flexible slots near you in seconds.",
   },
   {
-    image: "/images/hero3.jpg",
+    image: "/images/hero3.jpeg",
     title: "Multiple Games.",
     highlight: "Multiple Grounds.",
     subtitle:
@@ -28,6 +29,10 @@ const slides = [
 
 export default function HeroSlider() {
   const [index, setIndex] = useState(0);
+  const [landingStats, setLandingStats] = useState({
+    openGames: 100,
+    activeGrounds: 50,
+  });
   const { isDarkMode } = useTheme();
 
   /* ================= AUTO SLIDE ================= */
@@ -37,6 +42,29 @@ export default function HeroSlider() {
     }, 5000);
 
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const fetchLandingStats = async () => {
+      try {
+        const res = await getLandingStats();
+        const data = res?.data || {};
+        setLandingStats((prev) => ({
+          openGames:
+            Number.isFinite(Number(data?.openGames))
+              ? Number(data.openGames)
+              : prev.openGames,
+          activeGrounds:
+            Number.isFinite(Number(data?.activeGrounds))
+              ? Number(data.activeGrounds)
+              : prev.activeGrounds,
+        }));
+      } catch (error) {
+        console.error("Failed to fetch landing stats", error);
+      }
+    };
+
+    fetchLandingStats();
   }, []);
 
   const prevSlide = () => {
@@ -81,9 +109,10 @@ export default function HeroSlider() {
           </span>
         </h1>
 
-        <p key={`sub-${index}`} className={`mt-6 max-w-2xl text-lg md:text-xl ${isDarkMode ? 'text-gray-200/95' : 'text-gray-700'} animate-slide-up-reveal-smooth`} style={{ animationDelay: "0.12s", animationFillMode: "both" }}>
+        <p key={`sub-${index}`} className={`mt-6 max-w-2xl text-lg md:text-xl text-gray-200/95 animate-slide-up-reveal-smooth`} style={{ animationDelay: "0.12s", animationFillMode: "both" }}>
           {slides[index].subtitle}
         </p>
+{/* ${isDarkMode ? 'text-gray-700' : ''} */}
 
         {/* <div className="mt-8 flex gap-4">
           <button
@@ -104,8 +133,8 @@ export default function HeroSlider() {
         {/* STATS */}
         <div className="mt-16 grid grid-cols-3 gap-12 md:gap-16 text-white">
           {[
-            { value: "100+", label: "Games Booked" },
-            { value: "50+", label: "Active Grounds" },
+            { value: `${landingStats.openGames}+`, label: "Tournaments" },
+            { value: `${landingStats.activeGrounds}+`, label: "Total Grounds" },
             { value: "24/7", label: "Instant Booking" },
           ].map((stat, i) => (
             <div key={i} className="animate-float" style={{ animationDelay: `${i * 0.15}s` }}>

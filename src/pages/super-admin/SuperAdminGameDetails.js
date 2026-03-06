@@ -7,6 +7,7 @@ import {
   MapPin,
   UserMinus,
   Users,
+  GamepadIcon,
 } from "lucide-react";
 import Loader from "../../components/utils/Loader";
 import ConfirmModal from "../../components/utils/ConfirmModal";
@@ -181,9 +182,8 @@ export default function SuperAdminGameDetails() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-white">
-              {game.sport || "Game"} Details
+              {game.name || "Game"} Details
             </h1>
-            <p className="text-sm text-gray-400 mt-1">Game ID: {game.id}</p>
           </div>
           <span
             className={`inline-flex w-fit px-3 py-1 rounded-full text-xs font-semibold ${
@@ -196,7 +196,14 @@ export default function SuperAdminGameDetails() {
           </span>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+           <div className="rounded-lg border border-slate-700 bg-slate-900/30 p-4">
+            <p className="text-xs text-gray-400">Sport</p>
+            <p className="text-white mt-1 inline-flex items-center gap-2">
+              <GamepadIcon className="w-4 h-4 text-blue-400" />
+              {game.sport || "Unknown sport"}
+            </p>
+          </div>
           <div className="rounded-lg border border-slate-700 bg-slate-900/30 p-4">
             <p className="text-xs text-gray-400">Date</p>
             <p className="text-white mt-1 inline-flex items-center gap-2">

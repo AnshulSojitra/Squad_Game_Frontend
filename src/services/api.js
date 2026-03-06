@@ -429,6 +429,15 @@ export const getPublicGround = () => {
   });
 };
 
+// LANDING PAGE STATS (public)
+export const getLandingStats = () => {
+  return api.get("/landing-stats", {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
+};
+
 // confirm booking
 export const confirmBooking = (payload) => {
   console.log(localStorage.getItem("userToken"));
