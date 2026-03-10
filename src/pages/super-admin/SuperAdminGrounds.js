@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllGroundsSupAdi, toggleGroundBlock, deleteGroundBySuperAdmin } from "../../services/api";
+import { toggleGroundBlock, deleteGroundBySuperAdmin } from "../../services/api";
 import Loader from "../../components/utils/Loader";
 import Pagination from "../../components/utils/Pagination";
 import ToggleSwitch from "../../components/utils/ToggleSwitch";
 import ConfirmModal from "../../components/utils/ConfirmModal";
-import { MapPin, DollarSign, Clock, Users, Search, Trash2, Eye } from "lucide-react";
+import { MapPin, Clock, Users, Search, Trash2 } from "lucide-react";
+import { useAppData } from "../../context/AppDataContext";
 
 const IMAGE_BASE = process.env.REACT_APP_IMAGE_URL;
 
 export default function SuperAdminGrounds() {
-  const [grounds, setGrounds] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    superAdminGrounds: grounds,
+    superAdminGroundsLoading: loading,
+    refreshSuperAdminGrounds,
+    setCollectionData,
+  } = useAppData();
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 12;
@@ -20,51 +25,25 @@ export default function SuperAdminGrounds() {
   const [selectedGroundId, setSelectedGroundId] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
 
-  /* ================= FETCH GROUNDS ================= */
   useEffect(() => {
-    const fetchGrounds = async () => {
-      try {
-        setLoading(true);
-        const res = await getAllGroundsSupAdi();
+    refreshSuperAdminGrounds().catch(() => {});
+  }, [refreshSuperAdminGrounds]);
 
-        // ✅ SAFELY extract array
-        const groundsArray =
-          res.data?.grounds ||
-          res.data?.data ||
-          res.data ||
-          [];
-
-        setGrounds(Array.isArray(groundsArray) ? groundsArray : []);
-      } catch (err) {
-        console.error("Failed to load grounds", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGrounds();
-  }, []);
-
-  //================= TOGGLE BLOCK GROUNDS ================= //
   const handleToggleGroundBlock = async (ground) => {
     try {
       await toggleGroundBlock(ground.id);
-
-      // Optimistic UI update
-      setGrounds((prev) =>
-        prev.map((g) =>
-          g.id === ground.id
-            ? { ...g, isBlocked: !g.isBlocked }
-            : g
+      setCollectionData("superAdminGrounds", (prev) =>
+        prev.map((item) =>
+          item.id === ground.id ? { ...item, isBlocked: !item.isBlocked } : item
         )
       );
     } catch (error) {
       console.error(error);
       alert("Failed to update ground status");
+      refreshSuperAdminGrounds({ silent: true }).catch(() => {});
     }
   };
 
-  //================= DELETE GROUNDS ================== //
   const openDeleteConfirm = (groundId) => {
     setSelectedGroundId(groundId);
     setConfirmOpen(true);
@@ -75,11 +54,11 @@ export default function SuperAdminGrounds() {
 
     try {
       await deleteGroundBySuperAdmin(selectedGroundId);
-      setGrounds((prev) => prev.filter((g) => g.id !== selectedGroundId));
-    } catch (error) {
-      alert(
-        error.response?.data?.message || "Failed to delete ground"
+      setCollectionData("superAdminGrounds", (prev) =>
+        prev.filter((ground) => ground.id !== selectedGroundId)
       );
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to delete ground");
     } finally {
       setConfirmOpen(false);
       setSelectedGroundId(null);
@@ -91,20 +70,19 @@ export default function SuperAdminGrounds() {
     setSelectedGroundId(null);
   };
 
-  // Filter grounds based on search term
-const filteredGrounds = grounds.filter((ground) => {
-  const matchesSearch =
-    ground.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ground.admin?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ground.game?.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredGrounds = grounds.filter((ground) => {
+    const matchesSearch =
+      ground.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ground.admin?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ground.game?.toLowerCase().includes(searchTerm.toLowerCase());
 
-  const matchesStatus =
-    statusFilter === "all" ||
-    (statusFilter === "blocked" && ground.isBlocked) ||
-    (statusFilter === "active" && !ground.isBlocked);
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "blocked" && ground.isBlocked) ||
+      (statusFilter === "active" && !ground.isBlocked);
 
-  return matchesSearch && matchesStatus;
-});
+    return matchesSearch && matchesStatus;
+  });
 
   const totalPages = Math.ceil(filteredGrounds.length / ITEMS_PER_PAGE);
   const paginatedGrounds = filteredGrounds.slice(
@@ -114,8 +92,8 @@ const filteredGrounds = grounds.filter((ground) => {
 
   const stats = {
     total: grounds.length,
-    active: grounds.filter(g => !g.isBlocked).length,
-    blocked: grounds.filter(g => g.isBlocked).length
+    active: grounds.filter((ground) => !ground.isBlocked).length,
+    blocked: grounds.filter((ground) => ground.isBlocked).length,
   };
 
   if (loading) {
@@ -124,7 +102,6 @@ const filteredGrounds = grounds.filter((ground) => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Ground Management</h1>
@@ -132,7 +109,6 @@ const filteredGrounds = grounds.filter((ground) => {
         </div>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6">
           <div className="flex items-center gap-4">
@@ -171,12 +147,10 @@ const filteredGrounds = grounds.filter((ground) => {
         </div>
       </div>
 
-      {/* Grounds Grid */}
       <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-700 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
           <h2 className="text-lg font-semibold text-white">All Grounds</h2>
 
-          {/* Search */}
           <div className="relative">
             <Search className="w-4 h-8 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -188,19 +162,18 @@ const filteredGrounds = grounds.filter((ground) => {
             />
           </div>
 
-          {/* Status Filter */}
-            <select
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
-                setPage(1);
-              }}
-              className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Grounds</option>
-              <option value="active">Active Only</option>
-              <option value="blocked">Blocked Only</option>
-            </select>
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(1);
+            }}
+            className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">All Grounds</option>
+            <option value="active">Active Only</option>
+            <option value="blocked">Blocked Only</option>
+          </select>
         </div>
 
         {paginatedGrounds.length === 0 ? (
@@ -211,7 +184,9 @@ const filteredGrounds = grounds.filter((ground) => {
                 {searchTerm ? "No grounds found matching your search" : "No grounds found"}
               </p>
               <p className="text-sm text-gray-500">
-                {searchTerm ? "Try adjusting your search terms" : "Grounds will appear here once added by admins"}
+                {searchTerm
+                  ? "Try adjusting your search terms"
+                  : "Grounds will appear here once added by admins"}
               </p>
             </div>
           </div>
@@ -223,7 +198,6 @@ const filteredGrounds = grounds.filter((ground) => {
                   key={ground.id}
                   className="bg-slate-700/50 rounded-xl border border-slate-600 overflow-hidden hover:border-slate-500 transition-all duration-200 group"
                 >
-                  {/* Image */}
                   <div className="relative h-48 bg-slate-600 overflow-hidden">
                     <img
                       src={
@@ -247,7 +221,6 @@ const filteredGrounds = grounds.filter((ground) => {
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="p-4 space-y-3">
                     <div>
                       <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">
@@ -268,27 +241,26 @@ const filteredGrounds = grounds.filter((ground) => {
 
                     <div className="flex items-center gap-1 text-sm text-gray-400">
                       <Clock className="w-3 h-3" />
-                      {ground.openingTime} – {ground.closingTime}
+                      {ground.openingTime} - {ground.closingTime}
                     </div>
 
                     <div className="flex items-center justify-between">
                       <span className="px-2 py-1 text-xs font-medium bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-full">
                         {ground.game}
                       </span>
-                      <span className="px-2 py-1 text-xs font-medium bg-green-500/20 text-green-300 border border-green-500/30 rounded-full flex items-center gap-1">
-                        ₹{ground.pricePerSlot}/slot
+                      <span className="px-2 py-1 text-xs font-medium bg-green-500/20 text-green-300 border border-green-500/30 rounded-full">
+                        Rs {ground.pricePerSlot}/slot
                       </span>
                     </div>
 
-                    {/* Amenities */}
                     {ground.amenities?.length > 0 && (
                       <div className="flex flex-wrap gap-1">
-                        {ground.amenities.slice(0, 3).map((a) => (
+                        {ground.amenities.slice(0, 3).map((amenity, index) => (
                           <span
-                            key={a.id}
+                            key={amenity.id ?? index}
                             className="px-2 py-1 text-xs bg-slate-600 text-gray-300 rounded-full"
                           >
-                            {a.name}
+                            {typeof amenity === "string" ? amenity : amenity.name}
                           </span>
                         ))}
                         {ground.amenities.length > 3 && (
@@ -299,14 +271,11 @@ const filteredGrounds = grounds.filter((ground) => {
                       </div>
                     )}
 
-                    {/* Actions */}
                     <div className="flex items-center justify-between pt-2 border-t border-slate-600">
-                      <div className="flex items-center gap-2">
-                        <ToggleSwitch
-                          enabled={ground.isBlocked}
-                          onToggle={() => handleToggleGroundBlock(ground)}
-                        />
-                      </div>
+                      <ToggleSwitch
+                        enabled={ground.isBlocked}
+                        onToggle={() => handleToggleGroundBlock(ground)}
+                      />
 
                       <div className="flex gap-2">
                         <button
@@ -315,9 +284,7 @@ const filteredGrounds = grounds.filter((ground) => {
                             navigate(`/super-admin/grounds/${ground.id}/bookings`);
                           }}
                           className="px-3 py-1.5 text-xs font-medium text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-lg hover:bg-blue-500/20 transition-colors mt-2 ml-2"
-                          title="View Bookings"
                         >
-                          {/* <Eye className="w-4 h-4" /> */}
                           View Booking
                         </button>
 
@@ -342,11 +309,7 @@ const filteredGrounds = grounds.filter((ground) => {
 
         {paginatedGrounds.length > 0 && (
           <div className="px-6 py-4 border-t border-slate-700 bg-slate-800/30">
-            <Pagination
-              currentPage={page}
-              totalPages={totalPages}
-              onPageChange={setPage}
-            />
+            <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
           </div>
         )}
       </div>

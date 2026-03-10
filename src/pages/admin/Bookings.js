@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
-import { getAdminBookings } from "../../services/api";
 import Pagination from "../../components/utils/Pagination";
 import SearchInput from "../../components/utils/SearchInput";
+import { useAppData } from "../../context/AppDataContext";
 
 export default function AdminBookings() {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    adminBookings: bookings,
+    adminBookingsLoading: loading,
+    adminBookingsError: error,
+    refreshAdminBookings,
+  } = useAppData();
 
   const ITEMS_PER_PAGE = 10;
   const [page, setPage] = useState(1);
@@ -14,24 +17,9 @@ export default function AdminBookings() {
   const [statusFilter, setStatusFilter] = useState("all");
 const [groundFilter, setGroundFilter] = useState("all");
 
-
   useEffect(() => {
-    fetchBookings();
-  }, []);
-
-  const fetchBookings = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await getAdminBookings();
-      setBookings(res.data || []);
-    } catch (err) {
-      console.error("Failed to fetch bookings", err);
-      setError("Unable to load bookings. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    refreshAdminBookings().catch(() => {});
+  }, [refreshAdminBookings]);
 
 
 const uniqueGrounds = Array.from(
@@ -164,7 +152,7 @@ const filteredBookings = bookings.filter((booking) => {
           <p className="text-red-300 text-lg font-semibold mb-2">Error Loading Bookings</p>
           <p className="text-red-400 mb-4">{error}</p>
           <button
-            onClick={fetchBookings}
+            onClick={() => refreshAdminBookings().catch(() => {})}
             className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-xl transition-colors duration-200"
           >
             Try Again

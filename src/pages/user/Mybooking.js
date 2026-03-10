@@ -1,16 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
-import { getUserBookings, cancelUserBooking } from "../../services/api";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { cancelUserBooking } from "../../services/api";
 import Loader from "../../components/utils/Loader";
 import { useTheme } from "../../context/ThemeContext";
 import Pagination from "../../components/utils/Pagination";
 import Toast from "../../components/utils/Toast";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import SearchInput from "../../components/utils/SearchInput";
+import { useAppData } from "../../context/AppDataContext";
 
 
 export default function MyBookings() {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    userBookings: bookings,
+    userBookingsLoading: loading,
+    refreshUserBookings,
+    setCollectionData,
+  } = useAppData();
   const [cancelLoading, setCancelLoading] = useState(null);
   const { isDarkMode } = useTheme();
   const ITEMS_PER_PAGE = 10;
@@ -36,19 +41,8 @@ const showToast = (type, message) => {
 
 // <------------fetching Bookings----------------->
   useEffect(() => {
-    fetchBookings();
-  }, []);
-
-  const fetchBookings = async () => {
-    try {
-      const res = await getUserBookings();
-      setBookings(res.data.data); // backend response structure
-    } catch (err) {
-      console.error("Failed to fetch bookings", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    refreshUserBookings().catch(() => {});
+  }, [refreshUserBookings]);
 
   const openCancelModal = (bookingId) => {
   setSelectedBookingId(bookingId);
@@ -61,7 +55,7 @@ const confirmCancelBooking = async () => {
     setCancelLoading(selectedBookingId);
     await cancelUserBooking(selectedBookingId);
 
-    setBookings((prev) =>
+    setCollectionData("userBookings", (prev) =>
       prev.map((b) =>
         b.bookingId === selectedBookingId
           ? { ...b, status: "cancelled" }
@@ -72,6 +66,7 @@ const confirmCancelBooking = async () => {
     showToast("success", "Booking cancelled successfully");
   } catch (err) {
     showToast("error", "Failed to cancel booking");
+    refreshUserBookings({ silent: true }).catch(() => {});
   } finally {
     setCancelLoading(null);
     setShowConfirm(false);
@@ -80,8 +75,8 @@ const confirmCancelBooking = async () => {
 };
 
 
-  const normalize = (value) => String(value ?? "").toLowerCase();
-  const bookingMatchesSearch = (booking, query) => {
+  const normalize = useCallback((value) => String(value ?? "").toLowerCase(), []);
+  const bookingMatchesSearch = useCallback((booking, query) => {
     const q = normalize(query).trim();
     if (!q) return true;
 
@@ -100,7 +95,7 @@ const confirmCancelBooking = async () => {
     );
 
     return text.includes(q);
-  };
+  }, [normalize]);
 
   const activeBookings = useMemo(
     () => bookings.filter((b) => b.status === "confirmed" || b.status === "completed"),

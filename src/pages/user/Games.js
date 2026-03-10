@@ -113,11 +113,11 @@ export default function Games() {
         setJoinedGameIds([]);
       }
     } catch (error) {
-      console.error("Failed to fetch games", error);
+      console.error("Failed to fetch tournaments", error);
       setToast({
         show: true,
         type: "error",
-        message: "Failed to load games",
+        message: "Failed to load tournaments",
       });
     } finally {
       setLoading(false);
@@ -129,7 +129,7 @@ export default function Games() {
   }, []);
 
   if (loading && games.length === 0) {
-    return <Loader variant="page" text="Loading games..." />;
+    return <Loader variant="page" text="Loading tournaments..." />;
   }
 
   return (
@@ -148,7 +148,7 @@ export default function Games() {
               <GamepadIcon className="w-10 h-10 text-indigo-500" />
               Explore Tournaments
             </h1>
-            <p className={isDarkMode ? 'text-slate-400' : 'text-slate-600'}>Create and manage your sports games</p>
+            <p className={isDarkMode ? 'text-slate-400' : 'text-slate-600'}>Create and manage your sports tournaments</p>
           </div>
 
           <button
@@ -185,9 +185,9 @@ export default function Games() {
               ? 'text-slate-300 border-slate-800 bg-slate-900/40'
               : 'text-slate-600 border-slate-200 bg-slate-50/40'
           }`}>
-            <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No matching games found</h3>
+            <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No matching tournaments found</h3>
             <p className={`mb-4 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-              Try changing search text or filters to find your game.
+              Try changing search text or filters to find your tournament.
             </p>
             <button
               type="button"

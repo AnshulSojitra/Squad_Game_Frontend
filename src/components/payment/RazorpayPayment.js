@@ -101,7 +101,7 @@ const showToast = (type, message) => {
       rzp.open();
     } catch (err) {
       console.error("Payment error:", err);
-      showToast("success","Unable to initiate payment. Please try again.");
+      showToast("error","Unable to initiate payment. Please try again.");
     } finally {
       setLoading(false);
     }

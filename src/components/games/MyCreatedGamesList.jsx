@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar, Clock3, MapPin, Users, Trophy, GamepadIcon } from "lucide-react";
-import { deleteMyGameApi, getMyGames } from "../../services/api";
+import { deleteMyGameApi } from "../../services/api";
 import ConfirmModal from "../utils/ConfirmModal";
 import Toast from "../utils/Toast";
 import ShowMore from "../utils/ShowMore";
 import { useTheme } from "../../context/ThemeContext";
+import { useAppData } from "../../context/AppDataContext";
 const formatDate = (date) => {
   if (!date) return "N/A";
   const d = new Date(date);
@@ -31,8 +32,12 @@ export default function MyCreatedGamesList({
 }) {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
-  const [games, setGames] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const {
+    userCreatedGames: games,
+    userCreatedGamesLoading: loading,
+    refreshUserCreatedGames,
+    setCollectionData,
+  } = useAppData();
   const [deletingGameId, setDeletingGameId] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedGame, setSelectedGame] = useState(null);
@@ -48,13 +53,13 @@ export default function MyCreatedGamesList({
   const openDeleteConfirm = (game) => {
     const gameId = getGameId(game);
     if (!gameId) {
-      showToast("error", "Invalid game");
+      showToast("error", "Invalid tournament");
       return;
     }
 
     const joinedPlayers = Number(game?.joinedPlayersCount ?? 0);
     if (joinedPlayers > 1) {
-      showToast("error", "Cannot delete game when more than 1 player has joined");
+      showToast("error", "Cannot delete tournament when more than 1 player has joined");
       return;
     }
 
@@ -69,13 +74,16 @@ export default function MyCreatedGamesList({
     try {
       setDeletingGameId(String(gameId));
       const response = await deleteMyGameApi(gameId);
-      setGames((prev) => prev.filter((g) => String(getGameId(g)) !== String(gameId)));
-      showToast("success", response?.data?.message || "Game deleted successfully");
+      setCollectionData("userCreatedGames", (prev) =>
+        prev.filter((game) => String(getGameId(game)) !== String(gameId))
+      );
+      showToast("success", response?.data?.message || "Tournament deleted successfully");
     } catch (error) {
       showToast(
         "error",
-        error?.response?.data?.message || "Failed to delete game"
+        error?.response?.data?.message || "Failed to delete tournament"
       );
+      refreshUserCreatedGames({ silent: true }).catch(() => {});
     } finally {
       setDeletingGameId(null);
       setShowDeleteConfirm(false);
@@ -84,28 +92,13 @@ export default function MyCreatedGamesList({
   };
 
   useEffect(() => {
-    const fetchMyGames = async () => {
-      if (!loggedIn) {
-        setGames([]);
-        return;
-      }
+    if (!loggedIn) {
+      setCollectionData("userCreatedGames", []);
+      return;
+    }
 
-      try {
-        setLoading(true);
-        const response = await getMyGames();
-        const data = response?.data;
-        const gamesArray = Array.isArray(data) ? data : Array.isArray(data?.games) ? data.games : [];
-        setGames(gamesArray);
-      } catch (error) {
-        console.error("Failed to fetch my games", error);
-        setGames([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMyGames();
-  }, [loggedIn, refreshKey]);
+    refreshUserCreatedGames().catch(() => {});
+  }, [loggedIn, refreshKey, refreshUserCreatedGames, setCollectionData]);
 
   if (loading) {
     return (
@@ -152,11 +145,11 @@ export default function MyCreatedGamesList({
         <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-3">
           <GamepadIcon className="w-8 h-8 text-indigo-400" />
         </div>
-        <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No Created Games</h3>
+        <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No Created Tournaments</h3>
         <p className={`text-center max-w-md ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
           {loggedIn
-            ? "You have not created any games yet."
-            : "Login to view games created by you."}
+            ? "You have not created any tournaments yet."
+            : "Login to view tournaments created by you."}
         </p>
         {!loggedIn && (
           <button
@@ -210,7 +203,7 @@ export default function MyCreatedGamesList({
           >
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game.name || "Game"}</h3>
+                <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game.name || "Unnamed Tournament"}</h3>
               </div>
               <span className="px-2 py-1 rounded-md text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
                 {game.status || "Open"}
@@ -262,12 +255,12 @@ export default function MyCreatedGamesList({
                   }
                   className="px-4 py-2 rounded-lg text-sm font-semibold bg-rose-600 hover:bg-rose-700 disabled:opacity-60 disabled:cursor-not-allowed text-white transition-all"
                 >
-                  {deletingGameId === String(getGameId(game)) ? "Deleting..." : "Delete Game"}
+                  {deletingGameId === String(getGameId(game)) ? "Deleting..." : "Delete Tournament"}
                 </button>
               </div>
               {Number(game?.joinedPlayersCount ?? 0) > 1 && (
                 <p className={`text-xs mt-2 ${isDarkMode ? 'text-rose-300' : 'text-rose-600'}`}>
-                  Delete is disabled because more than 1 player has joined this game.
+                  Delete is disabled because more than 1 player has joined this tournament.
                 </p>
               )}
             </div>
@@ -277,8 +270,8 @@ export default function MyCreatedGamesList({
       />
       <ConfirmModal
         isOpen={showDeleteConfirm}
-        title="Delete Game"
-        message="Are you sure you want to delete this game?"
+        title="Delete Tournament"
+        message="Are you sure you want to delete this tournament?"
         onConfirm={handleConfirmDelete}
         onCancel={() => {
           setShowDeleteConfirm(false);

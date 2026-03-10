@@ -8,7 +8,6 @@ import {
 import { getPublicGroundById, getGroundReviews, submitGroundReview} from "../../services/api";
 import { useTheme } from "../../context/ThemeContext";
 import Toast from "../../components/utils/Toast";
-import BackButton from "../../components/utils/BackButton";
 import RateVenueModal from "../../components/common/RateVenueModal";
 import Footer from "../../components/common/Footer";
 import ReviewList from "../../components/common/ReviewList";
@@ -439,7 +438,7 @@ const validSlots =
             </div>
 
             {/* ABOUT */}
-            <div className={`rounded-xl lg:rounded-2xl p-4 sm:p-6 shadow transition-colors duration-300 ${
+            {/* <div className={`rounded-xl lg:rounded-2xl p-4 sm:p-6 shadow transition-colors duration-300 ${
               isDarkMode
                 ? 'bg-gray-800/50 text-white'
                 : 'bg-gray-50 text-gray-900 border border-gray-200'
@@ -450,7 +449,7 @@ const validSlots =
               }`}>
                 {ground.description || "No description available"}
               </p>
-            </div>
+            </div> */}
           </div>
 
           {/* RIGHT COLUMN */}

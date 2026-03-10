@@ -4,10 +4,12 @@ import { completeProfile, sendOtp, verifyOtp } from "../../services/api";
 import Loader from "../../components/utils/Loader";
 import Toast from "../../components/utils/Toast";
 import { useTheme } from "../../context/ThemeContext";
+import { useAppData } from "../../context/AppDataContext";
 
 export default function UserLogin({ onClose }) {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
+  const { setUserSession, setProfileData } = useAppData();
   const [step, setStep] = useState("LOGIN");
   const [login, setLogin] = useState("");
   const [otp, setOtp] = useState("");
@@ -61,9 +63,7 @@ export default function UserLogin({ onClose }) {
     try {
       setIsVerifyingOtp(true);
       const res = await verifyOtp({ login, otp });
-
-      localStorage.setItem("userToken", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      setUserSession({ token: res.data.token, profile: res.data.user });
 
       if (!res.data.isNewUser) {
         onClose?.();
@@ -97,10 +97,9 @@ export default function UserLogin({ onClose }) {
     try {
       const res = await completeProfile(payload);
       const existingUser = JSON.parse(localStorage.getItem("user")) || {};
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ ...existingUser, ...res.data.user })
-      );
+      const nextUser = { ...existingUser, ...res.data.user };
+      localStorage.setItem("user", JSON.stringify(nextUser));
+      setProfileData("userProfile", nextUser);
 
       onClose?.();
       navigate("/");

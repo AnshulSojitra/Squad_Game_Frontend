@@ -36,14 +36,14 @@ export default function OpenGameList({ games = [], onCreateGame, joinedGameIds =
         <div className="w-20 h-20 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full flex items-center justify-center mb-4">
           <GamepadIcon className="w-10 h-10 text-indigo-500" />
         </div>
-        <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No games available</h2>
-        <p className={`mb-6 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Create your first game to get started</p>
+        <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No tournaments available</h2>
+        <p className={`mb-6 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Host your first Tournament to get started</p>
         <button
           type="button"
           onClick={onCreateGame}
           className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-all"
         >
-          Create First Game
+          Create First Tournament
         </button>
       </div>
     );
@@ -105,7 +105,7 @@ export default function OpenGameList({ games = [], onCreateGame, joinedGameIds =
             <div className={`space-y-2 text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
               <p className="flex items-center gap-2">
                 <GamepadIcon className="w-4 h-4 text-indigo-400" />
-                  Sport: {game.sport}
+                 {game.sport}
               </p>
               <p className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-indigo-400" />
@@ -142,7 +142,7 @@ export default function OpenGameList({ games = [], onCreateGame, joinedGameIds =
                     : "bg-indigo-600 hover:bg-indigo-700 text-white"
                 }`}
               >
-                {isAlreadyJoined ? "You have already joined" : isFull ? "Game Full" : "Join"}
+                {isAlreadyJoined ? "You have already joined" : isFull ? "Tournament Full" : "Join"}
               </button>
             </div>
           </div>

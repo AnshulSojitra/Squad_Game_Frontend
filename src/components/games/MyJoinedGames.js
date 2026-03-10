@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar, Clock3, MapPin, Users, Trophy, GamepadIcon, User, Phone } from "lucide-react";
-import { getMyJoinedGames, getUserProfile, leaveGameApi } from "../../services/api";
+import { leaveGameApi } from "../../services/api";
 import ConfirmModal from "../utils/ConfirmModal";
 import Toast from "../utils/Toast";
 import ShowMore from "../utils/ShowMore";
 import { useTheme } from "../../context/ThemeContext";
+import { useAppData } from "../../context/AppDataContext";
 const formatDate = (date) => {
   if (!date) return "N/A";
   const d = new Date(date);
@@ -31,8 +32,13 @@ export default function MyJoinedGamesList({
 }) {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
-  const [games, setGames] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const {
+    userJoinedGames: games,
+    userJoinedGamesLoading: loading,
+    userProfile,
+    refreshUserJoinedGames,
+    setCollectionData,
+  } = useAppData();
   const [leavingGameId, setLeavingGameId] = useState(null);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
   const [selectedGameId, setSelectedGameId] = useState(null);
@@ -48,49 +54,13 @@ export default function MyJoinedGamesList({
     null;
 
   useEffect(() => {
-    const fetchMyGames = async () => {
-      if (!loggedIn) {
-        setGames([]);
-        return;
-      }
+    if (!loggedIn) {
+      setCollectionData("userJoinedGames", []);
+      return;
+    }
 
-      try {
-        setLoading(true);
-        const [joinedGamesResponse, profileResponse] = await Promise.all([
-          getMyJoinedGames(),
-          getUserProfile(),
-        ]);
-
-        const currentUserId = resolveUserId(profileResponse?.data);
-        let fallbackUser = null;
-        try {
-          fallbackUser = JSON.parse(localStorage.getItem("user") || "null");
-        } catch (parseError) {
-          fallbackUser = null;
-        }
-        const effectiveUserId = currentUserId ?? resolveUserId(fallbackUser);
-
-        const response = joinedGamesResponse;
-        const data = response?.data;
-        const gamesArray = Array.isArray(data) ? data : Array.isArray(data?.games) ? data.games : [];
-        const filteredGames = gamesArray.filter((game) => {
-          if (effectiveUserId == null) return true;
-          const ownerId = getGameOwnerId(game);
-          if (ownerId == null) return true;
-          return String(ownerId) !== String(effectiveUserId);
-        });
-
-        setGames(filteredGames);
-      } catch (error) {
-        console.error("Failed to fetch my joined games", error);
-        setGames([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMyGames();
-  }, [loggedIn, refreshKey]);
+    refreshUserJoinedGames().catch(() => {});
+  }, [loggedIn, refreshKey, refreshUserJoinedGames, setCollectionData]);
 
   const getGameId = (game) => game?.id ?? game?._id ?? null;
 
@@ -108,7 +78,7 @@ export default function MyJoinedGamesList({
   const openGameDetails = (game) => {
     const gameId = getGameId(game);
     if (!gameId) {
-      showToast("error", "Game details are not available");
+      showToast("error", "Tournament details are not available");
       return;
     }
     navigate(`/profile/joinedgames/${gameId}`);
@@ -120,19 +90,35 @@ export default function MyJoinedGamesList({
     try {
       setLeavingGameId(String(selectedGameId));
       const response = await leaveGameApi(selectedGameId);
-      setGames((prev) =>
+      setCollectionData("userJoinedGames", (prev) =>
         prev.filter((item) => String(getGameId(item)) !== String(selectedGameId))
       );
-      showToast("success", response?.data?.message || "Left game successfully");
+      showToast("success", response?.data?.message || "Left tournament successfully");
     } catch (error) {
-      console.error("Failed to leave game", error);
-      showToast("error", error?.response?.data?.message || "Failed to leave game. Please try again.");
+      console.error("Failed to leave tournament", error);
+      showToast("error", error?.response?.data?.message || "Failed to leave tournament. Please try again.");
+      refreshUserJoinedGames({ silent: true }).catch(() => {});
     } finally {
       setLeavingGameId(null);
       setShowLeaveConfirm(false);
       setSelectedGameId(null);
     }
   };
+
+  let fallbackUser = null;
+  try {
+    fallbackUser = JSON.parse(localStorage.getItem("user") || "null");
+  } catch (parseError) {
+    fallbackUser = null;
+  }
+
+  const effectiveUserId = resolveUserId(userProfile) ?? resolveUserId(fallbackUser);
+  const visibleGames = games.filter((game) => {
+    if (effectiveUserId == null) return true;
+    const ownerId = getGameOwnerId(game);
+    if (ownerId == null) return true;
+    return String(ownerId) !== String(effectiveUserId);
+  });
 
   let content = null;
 
@@ -171,7 +157,7 @@ export default function MyJoinedGamesList({
     );
   }
 
-  if (!loading && !games.length) {
+  if (!loading && !visibleGames.length) {
     content = (
       <div className={`flex flex-col items-center justify-center py-14 rounded-xl border ${
         isDarkMode
@@ -184,8 +170,8 @@ export default function MyJoinedGamesList({
         <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No Joined Games</h3>
         <p className={`text-center max-w-md ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
           {loggedIn
-            ? "You have not joined any games created by other users yet."
-            : "Login to view games you joined."}
+            ? "You have not joined any tournaments created by other users yet."
+            : "Login to view tournaments you joined."}
         </p>
         {!loggedIn && (
           <button
@@ -200,10 +186,10 @@ export default function MyJoinedGamesList({
     );
   }
 
-  if (!loading && games.length) {
+  if (!loading && visibleGames.length) {
     content = (
       <ShowMore
-        items={games}
+        items={visibleGames}
         initialCount={6}
         increment={6}
         containerClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -239,7 +225,7 @@ export default function MyJoinedGamesList({
             >
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game.name || "Game"}</h3>
+                  <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game.name || "Tournament"}</h3>
                 </div>
                 <span className="px-2 py-1 rounded-md text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
                   {game.status || "Open"}
@@ -294,7 +280,7 @@ export default function MyJoinedGamesList({
                   disabled={leavingGameId === String(getGameId(game))}
                   className="px-4 py-2 rounded-lg text-sm font-semibold bg-rose-600 hover:bg-rose-700 disabled:opacity-60 disabled:cursor-not-allowed text-white transition-all"
                 >
-                  {leavingGameId === String(getGameId(game)) ? "Leaving..." : "Leave Game"}
+                  {leavingGameId === String(getGameId(game)) ? "Leaving..." : "Leave Tournament"}
                 </button>
               </div>
             </div>
@@ -309,8 +295,8 @@ export default function MyJoinedGamesList({
       {content}
       <ConfirmModal
         isOpen={showLeaveConfirm}
-        title="Leave Game"
-        message="Are you sure you want to leave this game?"
+        title="Leave Tournament"
+        message="Are you sure you want to leave this tournament?"
         onConfirm={handleConfirmLeave}
         onCancel={() => {
           setShowLeaveConfirm(false);

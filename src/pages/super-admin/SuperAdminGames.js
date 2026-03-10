@@ -55,7 +55,7 @@ export default function SuperAdminGames() {
           : [];
       setGames(gamesArray);
     } catch (error) {
-      console.error("Failed to fetch super admin games", error);
+      console.error("Failed to fetch super admin tournaments", error);
       setGames([]);
     } finally {
       setLoading(false);
@@ -118,8 +118,8 @@ export default function SuperAdminGames() {
       await deleteGameBySuperAdmin(deleteTarget.gameId);
       setGames((prev) => prev.filter((g) => g.id !== deleteTarget.gameId));
     } catch (error) {
-      console.error("Failed to delete game", error);
-      alert(error?.response?.data?.message || "Failed to delete game");
+      console.error("Failed to delete tournament", error);
+      alert(error?.response?.data?.message || "Failed to delete tournament");
     } finally {
       setLoadingGameId(null);
       setDeleteTarget(null);
@@ -127,14 +127,14 @@ export default function SuperAdminGames() {
   };
 
   if (loading) {
-    return <Loader variant="simple" text="Loading games..." />;
+    return <Loader variant="simple" text="Loading tournaments..." />;
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">Games Management</h1>
-        <p className="text-gray-400">Monitor and manage all games created on the platform</p>
+        <h1 className="text-3xl font-bold text-white mb-2">Tournaments Management</h1>
+        <p className="text-gray-400">Monitor and manage all tournaments created on the platform</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -144,7 +144,7 @@ export default function SuperAdminGames() {
               <Gamepad2 className="w-6 h-6 text-blue-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-400">Total Games</p>
+              <p className="text-sm text-gray-400">Total Tournaments</p>
               <p className="text-2xl font-bold text-white">{stats.total}</p>
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function SuperAdminGames() {
               <Calendar className="w-6 h-6 text-green-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-400">Open Games</p>
+              <p className="text-sm text-gray-400">Open Tournaments</p>
               <p className="text-2xl font-bold text-white">{stats.open}</p>
             </div>
           </div>
@@ -168,7 +168,7 @@ export default function SuperAdminGames() {
               <Users className="w-6 h-6 text-red-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-400">Full Games</p>
+              <p className="text-sm text-gray-400">Full Tournaments</p>
               <p className="text-2xl font-bold text-white">{stats.full}</p>
             </div>
           </div>
@@ -189,7 +189,7 @@ export default function SuperAdminGames() {
 
       <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-700 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-          <h2 className="text-lg font-semibold text-white">All Games</h2>
+          <h2 className="text-lg font-semibold text-white">All Tournaments</h2>
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -207,7 +207,7 @@ export default function SuperAdminGames() {
             <thead className="bg-slate-700/50">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">No</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Game</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Tournament</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Creator</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Ground</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Players</th>
@@ -233,7 +233,7 @@ export default function SuperAdminGames() {
                         {(page - 1) * ITEMS_PER_PAGE + index + 1}
                       </td>
                       <td className="px-6 py-4">
-                        <p className="font-semibold text-white">{game.name || "Game"}</p>
+                        <p className="font-semibold text-white">{game.name || "Tournament"}</p>
                         {game.name && <p className="text-xs text-gray-300 font-medium">{game.sport}</p>}
                         <p className="text-sm text-gray-400 mt-1">
                           {formatDate(game.date)} | {timeRange}
@@ -297,7 +297,7 @@ export default function SuperAdminGames() {
                             disabled={loadingGameId === game.id}
                             className="px-3 py-1.5 text-xs font-medium text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 disabled:opacity-60"
                           >
-                            {loadingGameId === game.id ? "Deleting..." : "Delete Game"}
+                            {loadingGameId === game.id ? "Deleting..." : "Delete Tournament"}
                           </button>
                         </div>
                       </td>
@@ -308,7 +308,7 @@ export default function SuperAdminGames() {
               {paginatedGames.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
-                    {searchTerm ? "No games found matching your search." : "No games found."}
+                    {searchTerm ? "No tournaments found matching your search." : "No tournaments found."}
                   </td>
                 </tr>
               )}
@@ -325,8 +325,8 @@ export default function SuperAdminGames() {
 
       <ConfirmModal
         isOpen={Boolean(deleteTarget)}
-        title="Delete Game"
-        message={`Are you sure you want to delete ${deleteTarget?.sport || "this game"}?`}
+        title="Delete Tournament"
+        message={`Are you sure you want to delete ${deleteTarget?.sport || "this tournament"}?`}
         onConfirm={handleConfirmDeleteGame}
         onCancel={() => setDeleteTarget(null)}
       />

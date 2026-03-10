@@ -5,7 +5,7 @@ const menuItems = [
   { to: "/super-admin/users", label: "Users", icon: "👥" },
   { to: "/super-admin/admins", label: "Ground Owner", icon: "🛡️" },
   { to: "/super-admin/grounds", label: "Grounds", icon: "🏟️" },
-  { to: "/super-admin/games", label: "Games", icon: "🎮" },
+  { to: "/super-admin/games", label: "Tournaments", icon: "🎮" },
   { to: "/super-admin/bookings", label: "Bookings", icon: "📅" },
 ];
 

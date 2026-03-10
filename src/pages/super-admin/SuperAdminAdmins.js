@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllAdmins, toggleAdminBlock , deleteAdminBySuperAdmin} from "../../services/api";
+import { toggleAdminBlock , deleteAdminBySuperAdmin} from "../../services/api";
 import Pagination from "../../components/utils/Pagination";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import { ShieldCheck, Activity, Search } from "lucide-react";
 import Loader from "../../components/utils/Loader";
+import { useAppData } from "../../context/AppDataContext";
 
 
 
 
 export default function SuperAdminAdmins() {
-  const [admins, setAdmins] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    superAdminAdmins: admins,
+    superAdminAdminsLoading: loading,
+    refreshSuperAdminAdmins,
+    setCollectionData,
+  } = useAppData();
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 10;
   const [page, setPage] = useState(1);
@@ -57,30 +62,16 @@ const paginatedAdmins = filteredAdmins.slice(
     );
   }
 
-  /* ---------------- Fetch Admins ---------------- */
   useEffect(() => {
-    fetchAdmins();
-  }, []);
-
-  const fetchAdmins = async () => {
-    try {
-      setLoading(true);
-      const res = await getAllAdmins();
-      setAdmins(res.data.admins);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    refreshSuperAdminAdmins().catch(() => {});
+  }, [refreshSuperAdminAdmins]);
 
   /* ---------------- Toggle Block / Unblock ---------------- */
   const handleToggleBlock = async (admin) => {
     try {
       await toggleAdminBlock(admin.id);
 
-      // Optimistic UI update
-      setAdmins((prev) =>
+      setCollectionData("superAdminAdmins", (prev) =>
         prev.map((a) =>
           a.id === admin.id
             ? { ...a, isBlocked: !a.isBlocked }
@@ -90,6 +81,7 @@ const paginatedAdmins = filteredAdmins.slice(
     } catch (error) {
       console.error(error);
       alert("Something went wrong");
+      refreshSuperAdminAdmins({ silent: true }).catch(() => {});
     }
   };
 
@@ -107,7 +99,9 @@ const paginatedAdmins = filteredAdmins.slice(
       try {
         setLoadingId(selectedAdminId);
         await deleteAdminBySuperAdmin(selectedAdminId);
-        await fetchAdmins(); // refresh list
+        setCollectionData("superAdminAdmins", (prev) =>
+          prev.filter((admin) => admin.id !== selectedAdminId)
+        );
       } catch (err) {
         alert(err.response?.data?.message || "Failed to delete admin");
       } finally {

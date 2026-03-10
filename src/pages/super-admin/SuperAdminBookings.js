@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import {
-  getAllBookingsBySuperAdmin,
   cancelBookingBySuperAdmin,
 } from "../../services/api";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import Pagination from "../../components/utils/Pagination";
 import { Calendar, Users, MapPin, DollarSign, Filter } from "lucide-react";
 import Loader from "../../components/utils/Loader";
+import { useAppData } from "../../context/AppDataContext";
 
 export default function SuperAdminBookings() {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    superAdminBookings: bookings,
+    superAdminBookingsLoading: loading,
+    refreshSuperAdminBookings,
+    setCollectionData,
+  } = useAppData();
   const [loadingId, setLoadingId] = useState(null);
   const [confirmData, setConfirmData] = useState(null);
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'confirmed', 'cancelled'
@@ -37,24 +41,9 @@ const formatTime12 = (timeStr) => {
   return `${hour12}:${m} ${suffix}`;
 };
 
-
-  const fetchBookings = async () => {
-    try {
-      setLoading(true);
-      const res = await getAllBookingsBySuperAdmin();
-      if (res && res.data) {
-        setBookings(res.data);
-      }
-    } catch (err) {
-      console.error("Failed to fetch bookings", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchBookings();
-  }, []);
+    refreshSuperAdminBookings().catch(() => {});
+  }, [refreshSuperAdminBookings]);
 
   const handleCancel = async () => {
     if (!confirmData) return;
@@ -62,18 +51,16 @@ const formatTime12 = (timeStr) => {
     try {
       setLoadingId(confirmData.bookingId);
       await cancelBookingBySuperAdmin(confirmData.bookingId);
-      //await fetchBookings();
-         setBookings(prev =>
-      prev.map(b =>
-        b.bookingId === confirmData.bookingId
-          ? { ...b, status: "cancelled" }
-          : b
-      )
-    );
-
-
+      setCollectionData("superAdminBookings", (prev) =>
+        prev.map((booking) =>
+          booking.bookingId === confirmData.bookingId
+            ? { ...booking, status: "cancelled" }
+            : booking
+        )
+      );
     } catch (error) {
       console.error("Cancel booking failed", error);
+      refreshSuperAdminBookings({ silent: true }).catch(() => {});
     } finally {
       setLoadingId(null);
       setConfirmData(null);

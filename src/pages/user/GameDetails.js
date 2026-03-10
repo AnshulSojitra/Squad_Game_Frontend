@@ -52,18 +52,18 @@ export default function GameDetails() {
         setToast({
           show: true,
           type: "error",
-          message: "Game not found",
+          message: "Tournament not found",
         });
         return;
       }
 
       setGame(found);
     } catch (error) {
-      console.error("Failed to load game details", error);
+      console.error("Failed to load tournament details", error);
       setToast({
         show: true,
         type: "error",
-        message: "Failed to load game details",
+        message: "Failed to load tournament details",
       });
     } finally {
       setLoading(false);
@@ -109,7 +109,7 @@ export default function GameDetails() {
           .map((id) => String(id));
         setJoinedGameIds(ids);
       } catch (error) {
-        console.error("Failed to fetch joined games", error);
+        console.error("Failed to fetch joined tournaments", error);
       }
     };
 
@@ -138,7 +138,7 @@ export default function GameDetails() {
       setToast({
         show: true,
         type: "error",
-        message: "Please login to join this game",
+        message: "Please login to join this tournament",
       });
       navigate("/user/login");
       return;
@@ -148,7 +148,7 @@ export default function GameDetails() {
       setToast({
         show: true,
         type: "error",
-        message: "You cannot join your own game",
+        message: "You cannot join your own tournament",
       });
       return;
     }
@@ -166,7 +166,7 @@ export default function GameDetails() {
       setToast({
         show: true,
         type: "error",
-        message: "This game is already full",
+        message: "This tournament is already full",
       });
       return;
     }
@@ -182,7 +182,7 @@ export default function GameDetails() {
       setJoinedGameIds((prev) => (prev.includes(currentGameId) ? prev : [...prev, currentGameId]));
       await fetchGameById();
     } catch (error) {
-      const message = error?.response?.data?.message || "Failed to join game";
+      const message = error?.response?.data?.message || "Failed to join tournament";
       setToast({
         show: true,
         type: "error",
@@ -194,7 +194,7 @@ export default function GameDetails() {
   };
 
   if (loading) {
-    return <Loader variant="page" text="Loading game details..." />;
+    return <Loader variant="page" text="Loading tournament details..." />;
   }
 
   if (!game) {
@@ -215,7 +215,7 @@ export default function GameDetails() {
             }`}
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Games
+            Back to Tournaments
           </button>
         </div>
         <Toast
@@ -294,10 +294,10 @@ export default function GameDetails() {
                   : isOwner
                     ? "Owner cannot join"
                     : isGameFull
-                      ? "Game Full"
+                      ? "Tournament Full"
                       : joining
                         ? "Joining..."
-                        : "Join Game"}
+                        : "Join Tournament"}
               </button>
             </div>
 
@@ -335,7 +335,7 @@ export default function GameDetails() {
             ? 'bg-slate-900 border-slate-700'
             : 'bg-white border-slate-200'
         }`}>
-          <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Game Slots</h2>
+          <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Tournament Slots</h2>
           {slots.length === 0 ? (
             <p className={isDarkMode ? 'text-slate-400' : 'text-slate-600'}>No slot details available.</p>
           ) : (

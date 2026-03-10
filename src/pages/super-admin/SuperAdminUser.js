@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  getAllUsers,
   toggleUserBlock,
   deleteUser
 } from "../../services/api";
@@ -10,11 +9,16 @@ import ToggleSwitch from "../../components/utils/ToggleSwitch";
 import { Users, UserCheck, UserX, Search } from "lucide-react";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import Loader from "../../components/utils/Loader";
+import { useAppData } from "../../context/AppDataContext";
 
 
 export default function SuperAdminUsers() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    superAdminUsers: users,
+    superAdminUsersLoading: loading,
+    refreshSuperAdminUsers,
+    setCollectionData,
+  } = useAppData();
   const [loadingId, setLoadingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -24,30 +28,22 @@ export default function SuperAdminUsers() {
 const [selectedUserId, setSelectedUserId] = useState(null);
 
 
-  /* ---------------- Fetch Users ---------------- */
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const res = await getAllUsers();
-      setUsers(res.data.users);
-    } catch (error) {
-      console.error("Failed to fetch users", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    refreshSuperAdminUsers().catch(() => {});
+  }, [refreshSuperAdminUsers]);
 
   const handleToggleBlock = async (user) => {
     try {
       setLoadingId(user.id);
       await toggleUserBlock(user.id);
-      await fetchUsers();
+      setCollectionData("superAdminUsers", (prev) =>
+        prev.map((item) =>
+          item.id === user.id ? { ...item, isBlocked: !item.isBlocked } : item
+        )
+      );
     } catch (error) {
       console.error("Block/unblock failed", error);
+      refreshSuperAdminUsers({ silent: true }).catch(() => {});
     } finally {
       setLoadingId(null);
     }
@@ -69,7 +65,9 @@ const confirmDelete = async () => {
     await deleteUser(selectedUserId);
 
     // ✅ Remove user instantly from UI
-    setUsers(prev => prev.filter(u => u.id !== selectedUserId));
+    setCollectionData("superAdminUsers", (prev) =>
+      prev.filter((user) => user.id !== selectedUserId)
+    );
 
   } catch (error) {
     console.error("Failed to delete user", error);

@@ -112,7 +112,7 @@ export default function UserProfileSidebar() {
             }`
           }
         >
-          My games
+         Hosted Tournaments
         </NavLink>
 
         <NavLink
@@ -125,7 +125,7 @@ export default function UserProfileSidebar() {
             }`
           }
         >
-          My Joined Games
+          Joined Tournaments
         </NavLink>
 
         {/* <NavLink

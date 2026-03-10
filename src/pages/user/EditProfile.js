@@ -91,11 +91,11 @@ export default function EditProfile() {
 
   return (
     <div className={`max-w-2xl mx-auto transition-colors duration-300 ${
-      isDarkMode ? 'bg-gray-900 min-h-screen' : 'bg-white min-h-screen'
+      isDarkMode ? 'bg-gray-800 min-h-screen' : 'bg-white min-h-screen'
     }`}>
       <div className={`rounded-2xl mt-4 p-6 sm:p-8 transition-colors duration-300 ${
         isDarkMode
-          ? 'bg-slate-800/60 border border-slate-700'
+          ? 'bg-slate-900/60 border border-slate-700'
           : 'bg-gray-50 border border-gray-200'
       }`}>
         <h1 className={`text-2xl font-bold mb-6 transition-colors duration-300 ${

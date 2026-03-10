@@ -1,11 +1,12 @@
 import { useState } from "react";
-import Input from "../../components/common/Input";
 import Loader from "../../components/utils/Loader";
 import { loginAdmin } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import { useAppData } from "../../context/AppDataContext";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+  const { setAdminSession } = useAppData();
 
   const [form, setForm] = useState({
     email: "",
@@ -67,8 +68,7 @@ export default function AdminLogin() {
 
     try {
       const res = await loginAdmin(form);
-
-      localStorage.setItem("adminToken", res.data.token);
+      setAdminSession({ token: res.data.token });
       navigate("/admin/dashboard");
     } catch (err) {
       setGeneralError(
