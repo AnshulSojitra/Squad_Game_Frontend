@@ -3,6 +3,7 @@ import Loader from "../../components/utils/Loader";
 import { useBoxArena } from "../../context/BoxArenaContext";
 import { loginAdmin } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import { useAppData } from "../../context/AppDataContext";
 
 export default function AdminLogin() {
   const navigate = useNavigate();

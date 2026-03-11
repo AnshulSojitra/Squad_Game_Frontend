@@ -72,7 +72,7 @@ const PaymentButton = ({ slotIds, date }) => {
       razorpay.open();
     } catch (error) {
       console.error("Payment error:", error);
-      showToast("warning",
+      showToast("error",
         error.response?.data?.message ||
           "Unable to initiate payment. Please try again."
       );

@@ -161,6 +161,7 @@ export default function Games() {
               : 'text-slate-600 border-slate-200 bg-slate-50/40'
           }`}>
             <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No matching tournaments found</h3>
+            <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No matching tournaments found</h3>
             <p className={`mb-4 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
               Try changing search text or filters to find your sport.
             </p>

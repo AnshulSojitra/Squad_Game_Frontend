@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toggleGroundBlock, deleteGroundBySuperAdmin } from "../../services/api";
+import { toggleGroundBlock, deleteGroundBySuperAdmin } from "../../services/api";
 import Loader from "../../components/utils/Loader";
 import Pagination from "../../components/utils/Pagination";
 import ToggleSwitch from "../../components/utils/ToggleSwitch";
@@ -44,6 +45,7 @@ export default function SuperAdminGrounds() {
     } catch (error) {
       console.error(error);
       alert("Failed to update ground status");
+      refreshSuperAdminGrounds({ silent: true }).catch(() => {});
     }
   };
 
@@ -61,6 +63,7 @@ export default function SuperAdminGrounds() {
       setSuperAdminGrounds((prev) => prev.filter((g) => g.id !== selectedGroundId));
     } catch (error) {
       alert(error.response?.data?.message || "Failed to delete ground");
+      alert(error.response?.data?.message || "Failed to delete ground");
     } finally {
       setConfirmOpen(false);
       setSelectedGroundId(null);
@@ -77,7 +80,13 @@ export default function SuperAdminGrounds() {
       statusFilter === "all" ||
       (statusFilter === "blocked" && ground.isBlocked) ||
       (statusFilter === "active" && !ground.isBlocked);
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "blocked" && ground.isBlocked) ||
+      (statusFilter === "active" && !ground.isBlocked);
 
+    return matchesSearch && matchesStatus;
+  });
     return matchesSearch && matchesStatus;
   });
 
@@ -225,6 +234,7 @@ export default function SuperAdminGrounds() {
                     <div className="flex items-center gap-1 text-sm text-gray-400">
                       <Clock className="w-3 h-3" />
                       {ground.openingTime} - {ground.closingTime}
+                      {ground.openingTime} - {ground.closingTime}
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -238,12 +248,10 @@ export default function SuperAdminGrounds() {
 
 
                     <div className="flex items-center justify-between pt-2 border-t border-slate-600">
-                      <div className="flex items-center gap-2">
-                        <ToggleSwitch
-                          enabled={ground.isBlocked}
-                          onToggle={() => handleToggleGroundBlock(ground)}
-                        />
-                      </div>
+                      <ToggleSwitch
+                        enabled={ground.isBlocked}
+                        onToggle={() => handleToggleGroundBlock(ground)}
+                      />
 
                       <div className="flex gap-2">
                         <button

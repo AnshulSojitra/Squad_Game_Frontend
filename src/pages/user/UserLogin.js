@@ -5,6 +5,7 @@ import Loader from "../../components/utils/Loader";
 import Toast from "../../components/utils/Toast";
 import { useBoxArena } from "../../context/BoxArenaContext";
 import { useTheme } from "../../context/ThemeContext";
+import { useAppData } from "../../context/AppDataContext";
 
 export default function UserLogin({ onClose }) {
   const navigate = useNavigate();

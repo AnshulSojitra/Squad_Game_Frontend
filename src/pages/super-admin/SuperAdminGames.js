@@ -94,6 +94,8 @@ export default function SuperAdminGames() {
     } catch (error) {
       console.error("Failed to delete tournament", error);
       alert(error?.response?.data?.message || "Failed to delete tournament");
+      console.error("Failed to delete tournament", error);
+      alert(error?.response?.data?.message || "Failed to delete tournament");
     } finally {
       setLoadingGameId(null);
       setDeleteTarget(null);
@@ -107,6 +109,8 @@ export default function SuperAdminGames() {
   return (
     <div className="space-y-6">
       <div>
+        <h1 className="text-3xl font-bold text-white mb-2">Tournaments Management</h1>
+        <p className="text-gray-400">Monitor and manage all tournaments created on the platform</p>
         <h1 className="text-3xl font-bold text-white mb-2">Tournaments Management</h1>
         <p className="text-gray-400">Monitor and manage all tournaments created on the platform</p>
       </div>
@@ -138,6 +142,7 @@ export default function SuperAdminGames() {
             <thead className="bg-slate-700/50">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">No</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Tournament</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Tournament</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Creator</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Ground</th>
@@ -184,6 +189,8 @@ export default function SuperAdminGames() {
 
       <ConfirmModal
         isOpen={Boolean(deleteTarget)}
+        title="Delete Tournament"
+        message={`Are you sure you want to delete ${deleteTarget?.sport || "this tournament"}?`}
         title="Delete Tournament"
         message={`Are you sure you want to delete ${deleteTarget?.sport || "this tournament"}?`}
         onConfirm={handleConfirmDeleteGame}

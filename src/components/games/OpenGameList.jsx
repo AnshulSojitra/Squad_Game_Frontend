@@ -105,7 +105,7 @@ export default function OpenGameList({ games = [], onCreateGame, joinedGameIds =
             <div className={`space-y-2 text-sm ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
               <p className="flex items-center gap-2">
                 <GamepadIcon className="w-4 h-4 text-indigo-400" />
-                  Sport: {game.sport}
+                 {game.sport}
               </p>
               <p className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-indigo-400" />

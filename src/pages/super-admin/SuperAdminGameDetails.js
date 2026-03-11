@@ -57,7 +57,7 @@ export default function SuperAdminGameDetails() {
       const found = games.find((g) => String(g?.id) === String(gameId)) || null;
       setGame(found);
     } catch (error) {
-      console.error("Failed to fetch game details", error);
+      console.error("Failed to fetch tournament details", error);
       setGame(null);
     } finally {
       setLoading(false);
@@ -142,8 +142,10 @@ export default function SuperAdminGameDetails() {
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Tournaments
+          Back to Tournaments
         </button>
         <div className="rounded-xl border border-slate-700 bg-slate-800/40 p-8 text-center">
+          <p className="text-white font-medium">Tournament not found.</p>
           <p className="text-white font-medium">Tournament not found.</p>
           <p className="text-sm text-gray-400 mt-2">
             It may have been deleted or the URL is incorrect.
@@ -176,12 +178,14 @@ export default function SuperAdminGameDetails() {
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Tournaments
+        Back to Tournaments
       </button>
 
       <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-white">
+              {game.name || "Tournament"} Details
               {game.name || "Tournament"} Details
             </h1>
           </div>
@@ -260,6 +264,7 @@ export default function SuperAdminGameDetails() {
         {participants.length === 0 ? (
           <div className="mt-4 rounded-lg border border-slate-700 bg-slate-900/30 p-4">
             <p className="text-sm text-gray-400">No participants found for this tournament.</p>
+            <p className="text-sm text-gray-400">No participants found for this tournament.</p>
           </div>
         ) : (
           <div className="mt-5 space-y-5">
@@ -325,6 +330,7 @@ export default function SuperAdminGameDetails() {
       <ConfirmModal
         isOpen={Boolean(removeTarget)}
         title="Remove Participant"
+        message={`Remove ${removeTarget?.participantName || "this participant"} from this tournament?`}
         message={`Remove ${removeTarget?.participantName || "this participant"} from this tournament?`}
         onConfirm={handleConfirmRemoveParticipant}
         onCancel={() => setRemoveTarget(null)}

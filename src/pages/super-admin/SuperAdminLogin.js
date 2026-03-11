@@ -3,6 +3,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useBoxArena } from "../../context/BoxArenaContext";
 import { superAdminLogin } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import { useAppData } from "../../context/AppDataContext";
 
 export default function SuperAdminLogin() {
   const [form, setForm] = useState({

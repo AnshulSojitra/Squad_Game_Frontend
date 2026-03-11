@@ -83,6 +83,7 @@ export default function Grounds() {
             onChange={(e) => {
               setSearch(e.target.value);
               setCurrentPage(1);
+              setCurrentPage(1);
             }}
             className="w-full sm:w-80 px-4 py-3 border border-gray-600 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-800 text-white placeholder-gray-400 transition-all duration-300"
           />
@@ -195,13 +196,13 @@ export default function Grounds() {
                     onToggle={() => handleToggle(ground.id)}
                   />
                 </div>
-              </div>
-            ))
-          )}
+                </div>
+          ))
         </div>
-
+          
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
-      </div>
+      </div>  
+
 
       <ConfirmModal
         isOpen={showConfirm}

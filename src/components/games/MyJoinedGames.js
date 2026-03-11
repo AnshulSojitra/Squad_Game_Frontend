@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar, Clock3, MapPin, Users, Trophy, GamepadIcon, User, Phone } from "lucide-react";
 import { leaveGameApi } from "../../services/api";
+import { leaveGameApi } from "../../services/api";
 import ConfirmModal from "../utils/ConfirmModal";
 import Toast from "../utils/Toast";
 import ShowMore from "../utils/ShowMore";
@@ -87,6 +88,7 @@ export default function MyJoinedGamesList({
     const gameId = getGameId(game);
     if (!gameId) {
       showToast("error", "Tournament details are not available");
+      showToast("error", "Tournament details are not available");
       return;
     }
     navigate(`/profile/joinedgames/${gameId}`);
@@ -111,6 +113,21 @@ export default function MyJoinedGamesList({
       setSelectedGameId(null);
     }
   };
+
+  let fallbackUser = null;
+  try {
+    fallbackUser = JSON.parse(localStorage.getItem("user") || "null");
+  } catch (parseError) {
+    fallbackUser = null;
+  }
+
+  const effectiveUserId = resolveUserId(userProfile) ?? resolveUserId(fallbackUser);
+  const visibleGames = games.filter((game) => {
+    if (effectiveUserId == null) return true;
+    const ownerId = getGameOwnerId(game);
+    if (ownerId == null) return true;
+    return String(ownerId) !== String(effectiveUserId);
+  });
 
   let content = null;
 
@@ -154,6 +171,8 @@ export default function MyJoinedGamesList({
           {loggedIn
             ? "You have not joined any tournaments created by other users yet."
             : "Login to view tournaments you joined."}
+            ? "You have not joined any tournaments created by other users yet."
+            : "Login to view tournaments you joined."}
         </p>
         {!loggedIn && (
           <button
@@ -171,7 +190,7 @@ export default function MyJoinedGamesList({
   if (!loading.myJoinedGames && games.length) {
     content = (
       <ShowMore
-        items={games}
+        items={visibleGames}
         initialCount={6}
         increment={6}
         containerClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -263,6 +282,7 @@ export default function MyJoinedGamesList({
                   className="px-4 py-2 rounded-lg text-sm font-semibold bg-rose-600 hover:bg-rose-700 disabled:opacity-60 disabled:cursor-not-allowed text-white transition-all"
                 >
                   {leavingGameId === String(getGameId(game)) ? "Leaving..." : "Leave Tournament"}
+                  {leavingGameId === String(getGameId(game)) ? "Leaving..." : "Leave Tournament"}
                 </button>
               </div>
             </div>
@@ -277,6 +297,8 @@ export default function MyJoinedGamesList({
       {content}
       <ConfirmModal
         isOpen={showLeaveConfirm}
+        title="Leave Tournament"
+        message="Are you sure you want to leave this tournament?"
         title="Leave Tournament"
         message="Are you sure you want to leave this tournament?"
         onConfirm={handleConfirmLeave}

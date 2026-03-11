@@ -39,6 +39,7 @@ const [selectedUserId, setSelectedUserId] = useState(null);
       );
     } catch (error) {
       console.error("Block/unblock failed", error);
+      refreshSuperAdminUsers({ silent: true }).catch(() => {});
     } finally {
       setLoadingId(null);
     }

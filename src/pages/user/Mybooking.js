@@ -7,6 +7,7 @@ import Pagination from "../../components/utils/Pagination";
 import Toast from "../../components/utils/Toast";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import SearchInput from "../../components/utils/SearchInput";
+import { useAppData } from "../../context/AppDataContext";
 
 
 export default function MyBookings() {
@@ -61,6 +62,7 @@ const confirmCancelBooking = async () => {
     showToast("success", "Booking cancelled successfully");
   } catch (err) {
     showToast("error", "Failed to cancel booking");
+    refreshUserBookings({ silent: true }).catch(() => {});
   } finally {
     setCancelLoading(null);
     setShowConfirm(false);
@@ -69,8 +71,8 @@ const confirmCancelBooking = async () => {
 };
 
 
-  const normalize = (value) => String(value ?? "").toLowerCase();
-  const bookingMatchesSearch = (booking, query) => {
+  const normalize = useCallback((value) => String(value ?? "").toLowerCase(), []);
+  const bookingMatchesSearch = useCallback((booking, query) => {
     const q = normalize(query).trim();
     if (!q) return true;
 
@@ -89,7 +91,7 @@ const confirmCancelBooking = async () => {
     );
 
     return text.includes(q);
-  };
+  }, [normalize]);
 
   const activeBookings = useMemo(
     () => bookings.filter((b) => b.status === "confirmed" || b.status === "completed"),

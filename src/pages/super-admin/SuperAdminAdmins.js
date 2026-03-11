@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toggleAdminBlock , deleteAdminBySuperAdmin} from "../../services/api";
+import { toggleAdminBlock , deleteAdminBySuperAdmin} from "../../services/api";
 import Pagination from "../../components/utils/Pagination";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import { ShieldCheck, Activity, Search } from "lucide-react";
@@ -57,7 +58,6 @@ const paginatedAdmins = filteredAdmins.slice(
     );
   }
 
-  /* ---------------- Fetch Admins ---------------- */
   useEffect(() => {
     refreshSuperAdminAdmins();
   }, []);
@@ -77,6 +77,7 @@ const paginatedAdmins = filteredAdmins.slice(
     } catch (error) {
       console.error(error);
       alert("Something went wrong");
+      refreshSuperAdminAdmins({ silent: true }).catch(() => {});
     }
   };
 

@@ -48,6 +48,7 @@ export default function SuperAdminBookings() {
       );
     } catch (error) {
       console.error("Cancel booking failed", error);
+      refreshSuperAdminBookings({ silent: true }).catch(() => {});
     } finally {
       setLoadingId(null);
       setConfirmData(null);

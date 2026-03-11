@@ -60,9 +60,11 @@ export default function GameDetails() {
       setGame(found);
     } catch (error) {
       console.error("Failed to load tournament details", error);
+      console.error("Failed to load tournament details", error);
       setToast({
         show: true,
         type: "error",
+        message: "Failed to load tournament details",
         message: "Failed to load tournament details",
       });
     } finally {
@@ -110,6 +112,7 @@ export default function GameDetails() {
         setJoinedGameIds(ids);
       } catch (error) {
         console.error("Failed to fetch joined tournaments", error);
+        console.error("Failed to fetch joined tournaments", error);
       }
     };
 
@@ -139,6 +142,7 @@ export default function GameDetails() {
         show: true,
         type: "error",
         message: "Please login to join this tournament",
+        message: "Please login to join this tournament",
       });
       navigate("/user/login");
       return;
@@ -148,6 +152,7 @@ export default function GameDetails() {
       setToast({
         show: true,
         type: "error",
+        message: "You cannot join your own tournament",
         message: "You cannot join your own tournament",
       });
       return;
@@ -167,6 +172,7 @@ export default function GameDetails() {
         show: true,
         type: "error",
         message: "This tournament is already full",
+        message: "This tournament is already full",
       });
       return;
     }
@@ -183,6 +189,7 @@ export default function GameDetails() {
       await fetchGameById();
     } catch (error) {
       const message = error?.response?.data?.message || "Failed to join tournament";
+      const message = error?.response?.data?.message || "Failed to join tournament";
       setToast({
         show: true,
         type: "error",
@@ -194,6 +201,7 @@ export default function GameDetails() {
   };
 
   if (loading) {
+    return <Loader variant="page" text="Loading tournament details..." />;
     return <Loader variant="page" text="Loading tournament details..." />;
   }
 
@@ -215,6 +223,7 @@ export default function GameDetails() {
             }`}
           >
             <ArrowLeft className="w-4 h-4" />
+            Back to Tournaments
             Back to Tournaments
           </button>
         </div>
@@ -297,8 +306,10 @@ export default function GameDetails() {
                     ? "Owner cannot join"
                     : isGameFull
                       ? "Tournament Full"
+                      ? "Tournament Full"
                       : joining
                         ? "Joining..."
+                        : "Join Tournament"}
                         : "Join Tournament"}
               </button>
             </div>
