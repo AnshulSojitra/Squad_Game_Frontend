@@ -352,17 +352,17 @@ export default function Navbar() {
                 <nav className="space-y-2">
                   <Link to="/" className={mobileItemClasses("/")} onClick={() => setIsMobileMenuOpen(false)}>
                     <span>Home</span>
-                    <span className="text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform">Go</span>
+                    {/* <span className="text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform">Go</span> */}
                   </Link>
 
                   <Link to="/grounds" className={mobileItemClasses("/grounds")} onClick={() => setIsMobileMenuOpen(false)}>
                     <span>Grounds</span>
-                    <span className="text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform">Go</span>
+                    {/* <span className="text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform">Go</span> */}
                   </Link>
 
                   <Link to="/user/games" className={mobileItemClasses("/user/games")} onClick={() => setIsMobileMenuOpen(false)}>
                     <span>Tournaments</span>
-                    <span className="text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform">Go</span>
+                    {/* <span className="text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform">Go</span> */}
                   </Link>
 
                   {auth.isUserAuthenticated && (
@@ -372,7 +372,7 @@ export default function Navbar() {
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <span>My Bookings</span>
-                      <span className="text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform">Go</span>
+                      {/* <span className="text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform">Go</span> */}
                     </Link>
                   )}
 
@@ -395,7 +395,7 @@ export default function Navbar() {
                           className={mobileItemClasses("/profile/profile")}
                         >
                           <span>View Profile</span>
-                          <span className="text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform">Go</span>
+                          {/* <span className="text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform">Go</span> */}
                         </button>
 
                         <button
@@ -410,7 +410,7 @@ export default function Navbar() {
                           }`}
                         >
                           <span>Logout</span>
-                          <span className="text-xs">Now</span>
+                          {/* <span className="text-xs">Now</span> */}
                         </button>
                       </>
                     )}
