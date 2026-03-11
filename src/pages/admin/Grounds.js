@@ -198,6 +198,7 @@ export default function Grounds() {
                 </div>
                 </div>
           ))
+        )}
         </div>
           
         <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />

@@ -111,8 +111,6 @@ export default function SuperAdminGames() {
       <div>
         <h1 className="text-3xl font-bold text-white mb-2">Tournaments Management</h1>
         <p className="text-gray-400">Monitor and manage all tournaments created on the platform</p>
-        <h1 className="text-3xl font-bold text-white mb-2">Tournaments Management</h1>
-        <p className="text-gray-400">Monitor and manage all tournaments created on the platform</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

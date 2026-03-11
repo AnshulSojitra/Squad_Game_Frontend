@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toggleAdminBlock , deleteAdminBySuperAdmin} from "../../services/api";
-import { toggleAdminBlock , deleteAdminBySuperAdmin} from "../../services/api";
 import Pagination from "../../components/utils/Pagination";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import { ShieldCheck, Activity, Search } from "lucide-react";
