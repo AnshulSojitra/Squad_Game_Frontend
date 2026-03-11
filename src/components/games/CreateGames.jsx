@@ -230,8 +230,7 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
       setToast({
         show: true,
         type: "error",
-        message: "Please enter tournament name, select sport, ground, and at least one slot",
-        message: "Please enter tournament name, select sport, ground, and at least one slot",
+        message: "Please enter tournament name, select sport, ground, and at least one slot"
       });
       return;
     }
@@ -283,8 +282,6 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
     } catch (error) {
       console.error("Error creating tournament", error);
       setToast({ show: true, type: "error", message: "Failed to create tournament" });
-      console.error("Error creating tournament", error);
-      setToast({ show: true, type: "error", message: "Failed to create tournament" });
     } finally {
       setLoading(false);
     }
@@ -329,7 +326,6 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
               razorpay_signature: paymentResponse.razorpay_signature,
             });
 
-            setToast({ show: true, type: "success", message: "Payment successful. Tournament created!" });
             setToast({ show: true, type: "success", message: "Payment successful. Tournament created!" });
             onGameCreated?.();
             handleClose();
@@ -490,13 +486,11 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
               <form onSubmit={handleCreateGame} className="space-y-6">
                 <div>
                   <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Tournament Name</label>
-                  <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Tournament Name</label>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="Enter tournament name"
                     placeholder="Enter tournament name"
                     className={`w-full px-4 py-2 rounded-lg focus:outline-none focus:border-indigo-500 ${
                       isDarkMode
@@ -534,7 +528,6 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
                 {formData.date && (
                   <div>
                     <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Select Slots</label>
-                    <p className={`text-sm mb-3 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Select time slots for your tournament</p>
                     <p className={`text-sm mb-3 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Select time slots for your tournament</p>
 
                     {slotsLoading ? (
@@ -633,7 +626,6 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
                   disabled={loading}
                   className="w-full px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 text-white rounded-lg font-semibold transition-all"
                 >
-                  {loading ? <Loader variant="button" text="Creating tournament..." /> : "Create Tournament"}
                   {loading ? <Loader variant="button" text="Creating tournament..." /> : "Create Tournament"}
                 </button>
 

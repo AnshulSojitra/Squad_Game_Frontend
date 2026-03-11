@@ -55,13 +55,11 @@ export default function MyCreatedGamesList({
     const gameId = getGameId(game);
     if (!gameId) {
       showToast("error", "Invalid tournament");
-      showToast("error", "Invalid tournament");
       return;
     }
 
     const joinedPlayers = Number(game?.joinedPlayersCount ?? 0);
     if (joinedPlayers > 1) {
-      showToast("error", "Cannot delete tournament when more than 1 player has joined");
       showToast("error", "Cannot delete tournament when more than 1 player has joined");
       return;
     }
@@ -157,7 +155,6 @@ export default function MyCreatedGamesList({
         <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-3">
           <GamepadIcon className="w-8 h-8 text-indigo-400" />
         </div>
-        <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No Created Tournaments</h3>
         <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No Created Tournaments</h3>
         <p className={`text-center max-w-md ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
           {loggedIn
@@ -269,12 +266,10 @@ export default function MyCreatedGamesList({
                   className="px-4 py-2 rounded-lg text-sm font-semibold bg-rose-600 hover:bg-rose-700 disabled:opacity-60 disabled:cursor-not-allowed text-white transition-all"
                 >
                   {deletingGameId === String(getGameId(game)) ? "Deleting..." : "Delete Tournament"}
-                  {deletingGameId === String(getGameId(game)) ? "Deleting..." : "Delete Tournament"}
                 </button>
               </div>
               {Number(game?.joinedPlayersCount ?? 0) > 1 && (
                 <p className={`text-xs mt-2 ${isDarkMode ? 'text-rose-300' : 'text-rose-600'}`}>
-                  Delete is disabled because more than 1 player has joined this tournament.
                   Delete is disabled because more than 1 player has joined this tournament.
                 </p>
               )}

@@ -87,7 +87,6 @@ export default function MyJoinedGamesList({
     const gameId = getGameId(game);
     if (!gameId) {
       showToast("error", "Tournament details are not available");
-      showToast("error", "Tournament details are not available");
       return;
     }
     navigate(`/profile/joinedgames/${gameId}`);
@@ -278,7 +277,6 @@ export default function MyJoinedGamesList({
                   disabled={leavingGameId === String(getGameId(game))}
                   className="px-4 py-2 rounded-lg text-sm font-semibold bg-rose-600 hover:bg-rose-700 disabled:opacity-60 disabled:cursor-not-allowed text-white transition-all"
                 >
-                  {leavingGameId === String(getGameId(game)) ? "Leaving..." : "Leave Tournament"}
                   {leavingGameId === String(getGameId(game)) ? "Leaving..." : "Leave Tournament"}
                 </button>
               </div>

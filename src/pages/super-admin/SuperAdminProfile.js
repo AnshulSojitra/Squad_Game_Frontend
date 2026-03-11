@@ -117,7 +117,7 @@ export default function SuperAdminProfile() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-4 bg-slate-700/30 rounded-lg">
+                {/* <div className="flex items-center gap-4 p-4 bg-slate-700/30 rounded-lg">
                   <div className="p-3 bg-orange-500/20 rounded-lg">
                     <Hash className="w-5 h-5 text-orange-400" />
                   </div>
@@ -125,13 +125,13 @@ export default function SuperAdminProfile() {
                     <p className="text-sm text-gray-400">User ID</p>
                     <p className="text-lg font-semibold text-white">#{profile.id}</p>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
 
           {/* Account Stats */}
-          <div className="mt-8 pt-8 border-t border-slate-700">
+          {/* <div className="mt-8 pt-8 border-t border-slate-700">
             <h2 className="text-xl font-semibold text-white mb-6">Account Overview</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
               <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6">
@@ -170,7 +170,7 @@ export default function SuperAdminProfile() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -86,7 +86,6 @@ export default function MyJoinedGameDetails() {
 
   if (loading) {
     return <Loader variant="page" text="Loading joined tournament details..." />;
-    return <Loader variant="page" text="Loading joined tournament details..." />;
   }
 
   if (!game) {
@@ -103,7 +102,6 @@ export default function MyJoinedGameDetails() {
             }`}
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Joined Tournaments
             Back to Joined Tournaments
           </button>
         </div>
@@ -130,7 +128,6 @@ export default function MyJoinedGameDetails() {
           }`}
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Joined Tournaments
           Back to Joined Tournaments
         </button>
 
@@ -221,7 +218,6 @@ export default function MyJoinedGameDetails() {
             ? 'bg-slate-900 border-slate-700'
             : 'bg-white border-slate-200'
         }`}>
-          <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Tournament Slots</h2>
           <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Tournament Slots</h2>
           {slots.length === 0 ? (
             <p className={isDarkMode ? 'text-slate-400' : 'text-slate-600'}>No slot details available.</p>

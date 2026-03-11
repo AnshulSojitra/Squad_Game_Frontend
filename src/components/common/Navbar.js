@@ -232,7 +232,6 @@ export default function Navbar() {
                           isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
                         }`}
                       >
-                        <span className="text-lg group-hover:scale-110 transition-transform duration-200">Profile</span>
                         <span className="text-sm font-medium">View Profile</span>
                       </button>
 
@@ -249,7 +248,6 @@ export default function Navbar() {
                             : "text-red-600 hover:bg-red-50"
                         }`}
                       >
-                        <span className="text-lg group-hover:scale-110 transition-transform duration-200">Exit</span>
                         <span className="text-sm font-medium">Logout</span>
                       </button>
                     </div>

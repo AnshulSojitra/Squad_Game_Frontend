@@ -262,7 +262,7 @@ const validSlots =
 //================= UI ================= */
   return (
     <>
-    <div className={`min-h-screen overflow-y-auto pt-10 pb-16 transition-colors duration-300 ${
+    <div className={`min-h-screen overflow-y-auto pt-16 pb-16 transition-colors duration-300 ${
       isDarkMode
         ? 'bg-gray-900 text-gray-100'
         : 'bg-white text-gray-900'

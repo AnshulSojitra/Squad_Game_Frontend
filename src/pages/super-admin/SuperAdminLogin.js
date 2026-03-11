@@ -4,6 +4,7 @@ import { useBoxArena } from "../../context/BoxArenaContext";
 import { superAdminLogin } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { useAppData } from "../../context/AppDataContext";
+import Navbar from "../../components/common/Navbar";
 
 export default function SuperAdminLogin() {
   const [form, setForm] = useState({
@@ -76,7 +77,9 @@ export default function SuperAdminLogin() {
 
     {/* ================= HEADER ================= */}
     <header className="bg-gray-900 flex items-center justify-between px-6 py-4 border-b border-gray-800">
-      <h1
+    <Navbar />
+
+      {/* <h1
         className="text-xl font-bold text-indigo-500 cursor-pointer"
         onClick={() => navigate("/")}
       >
@@ -88,7 +91,7 @@ export default function SuperAdminLogin() {
         className="text-sm text-gray-400 hover:text-white transition"
       >
         ← Back to Home
-      </button>
+      </button> */}
     </header>
 
     {/* ================= MAIN ================= */}

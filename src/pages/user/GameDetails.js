@@ -201,8 +201,7 @@ export default function GameDetails() {
 
   if (loading) {
     return <Loader variant="page" text="Loading tournament details..." />;
-    return <Loader variant="page" text="Loading tournament details..." />;
-  }
+   }
 
   if (!game) {
     return (
@@ -223,7 +222,6 @@ export default function GameDetails() {
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Tournaments
-            Back to Tournaments
           </button>
         </div>
         <Toast
@@ -237,7 +235,7 @@ export default function GameDetails() {
   }
 
   return (
-    <div className={`min-h-screen px-4 sm:px-6 lg:px-8 py-6 ${
+    <div className={`min-h-screen px-4 sm:px-6 lg:px-8 py-6 pt-20 ${
       isDarkMode
         ? 'bg-gradient-to-br from-slate-950 to-slate-900'
         : 'bg-gradient-to-br from-white to-slate-50'

@@ -12,7 +12,7 @@ export default function AdminSidebar({
 
   return (
     <aside
-      className={`bg-slate-900 text-white transition-all duration-500 ease-in-out shadow-2xl border-r border-slate-700/50
+      className={`bg-slate-900 text-white transition-all duration-500 ease-in-out shadow-2xl
       ${collapsed ? "w-16" : "w-64"}
       flex-shrink-0 backdrop-blur-sm
       ${isMobileDrawer ? "w-full rounded-r-3xl border-r border-slate-700/60" : ""}`}

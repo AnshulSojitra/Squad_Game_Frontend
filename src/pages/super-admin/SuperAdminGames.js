@@ -141,7 +141,6 @@ export default function SuperAdminGames() {
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">No</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Tournament</th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Tournament</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Creator</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Ground</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase">Players</th>

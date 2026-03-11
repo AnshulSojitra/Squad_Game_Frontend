@@ -53,8 +53,7 @@ export default function MyCreatedGameDetails() {
           setToast({
             show: true,
             type: "error",
-            message: "Created tournament details not found",
-            message: "Created tournament details not found",
+            message: "Created tournament details not found"
           });
           return;
         }
@@ -62,13 +61,11 @@ export default function MyCreatedGameDetails() {
         setGame(foundGame);
       } catch (error) {
         console.error("Failed to fetch created tournament details", error);
-        console.error("Failed to fetch created tournament details", error);
         setToast({
           show: true,
           type: "error",
           message: "Failed to load created tournament details",
-          message: "Failed to load created tournament details",
-        });
+         });
       } finally {
         setLoading(false);
       }
@@ -86,7 +83,6 @@ export default function MyCreatedGameDetails() {
 
   if (loading) {
     return <Loader variant="page" text="Loading created tournament details..." />;
-    return <Loader variant="page" text="Loading created tournament details..." />;
   }
 
   if (!game) {
@@ -103,7 +99,6 @@ export default function MyCreatedGameDetails() {
             }`}
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to My Created Tournaments
             Back to My Created Tournaments
           </button>
         </div>
@@ -130,7 +125,6 @@ export default function MyCreatedGameDetails() {
           }`}
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to My Created Tournaments
           Back to My Created Tournaments
         </button>
 
@@ -205,7 +199,6 @@ export default function MyCreatedGameDetails() {
             ? 'bg-slate-900 border-slate-700'
             : 'bg-white border-slate-200'
         }`}>
-          <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Tournament Slots</h2>
           <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Tournament Slots</h2>
           {slots.length === 0 ? (
             <p className={isDarkMode ? 'text-slate-400' : 'text-slate-600'}>No slot details available.</p>

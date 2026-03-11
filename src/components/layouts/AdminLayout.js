@@ -42,7 +42,7 @@ export default function AdminLayout() {
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Desktop sidebar */}
-      <div className="hidden md:block bg-slate-900">
+      <div className="hidden md:block bg-slate-900 border-r border-slate-700/50 border-opacity-50">
         <AdminSidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       </div>
 
