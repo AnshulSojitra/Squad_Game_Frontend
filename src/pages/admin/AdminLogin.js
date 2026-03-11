@@ -1,11 +1,12 @@
 import { useState } from "react";
-import Input from "../../components/common/Input";
 import Loader from "../../components/utils/Loader";
+import { useBoxArena } from "../../context/BoxArenaContext";
 import { loginAdmin } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+  const { setAdminSession, refreshAdminProfile } = useBoxArena();
 
   const [form, setForm] = useState({
     email: "",
@@ -67,8 +68,8 @@ export default function AdminLogin() {
 
     try {
       const res = await loginAdmin(form);
-
-      localStorage.setItem("adminToken", res.data.token);
+      setAdminSession(res.data.token);
+      await refreshAdminProfile();
       navigate("/admin/dashboard");
     } catch (err) {
       setGeneralError(

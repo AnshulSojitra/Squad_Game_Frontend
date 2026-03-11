@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  getAllUsers,
   toggleUserBlock,
   deleteUser
 } from "../../services/api";
@@ -10,11 +9,11 @@ import ToggleSwitch from "../../components/utils/ToggleSwitch";
 import { Users, UserCheck, UserX, Search } from "lucide-react";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import Loader from "../../components/utils/Loader";
+import { useBoxArena } from "../../context/BoxArenaContext";
 
 
 export default function SuperAdminUsers() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { superAdminUsers: users, loading, refreshSuperAdminUsers, setSuperAdminUsers } = useBoxArena();
   const [loadingId, setLoadingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -25,27 +24,19 @@ const [selectedUserId, setSelectedUserId] = useState(null);
 
 
   /* ---------------- Fetch Users ---------------- */
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const res = await getAllUsers();
-      setUsers(res.data.users);
-    } catch (error) {
-      console.error("Failed to fetch users", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchUsers();
+    refreshSuperAdminUsers();
   }, []);
 
   const handleToggleBlock = async (user) => {
     try {
       setLoadingId(user.id);
       await toggleUserBlock(user.id);
-      await fetchUsers();
+      setSuperAdminUsers((prev) =>
+        prev.map((item) =>
+          item.id === user.id ? { ...item, isBlocked: !item.isBlocked } : item
+        )
+      );
     } catch (error) {
       console.error("Block/unblock failed", error);
     } finally {
@@ -69,7 +60,7 @@ const confirmDelete = async () => {
     await deleteUser(selectedUserId);
 
     // ✅ Remove user instantly from UI
-    setUsers(prev => prev.filter(u => u.id !== selectedUserId));
+    setSuperAdminUsers(prev => prev.filter(u => u.id !== selectedUserId));
 
   } catch (error) {
     console.error("Failed to delete user", error);
@@ -105,7 +96,7 @@ const confirmDelete = async () => {
     blocked: users.filter(u => u.isBlocked).length
   };
 
-  if (loading) {
+  if (loading.superAdminUsers) {
     return <Loader variant="simple" text="Loading users..." />;
   }
 
@@ -113,7 +104,7 @@ const confirmDelete = async () => {
     <>
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">User Management</h1>
           <p className="text-gray-400">Monitor and manage all platform users</p>
@@ -121,7 +112,7 @@ const confirmDelete = async () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-blue-500/20 rounded-lg">
@@ -161,23 +152,23 @@ const confirmDelete = async () => {
 
       {/* Users Table */}
       <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+        <div className="flex flex-col gap-3 border-b border-slate-700 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between">
           <h2 className="text-lg font-semibold text-white">All Users</h2>
 
           {/* Search */}
-          <div className="relative">
+          <div className="relative w-full md:w-auto">
             <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Search users..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full min-w-0 pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent md:w-72"
             />
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full">
             <thead className="bg-slate-700/50 text-center">
               <tr>
@@ -288,6 +279,95 @@ const confirmDelete = async () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        <div className="divide-y divide-slate-700 md:hidden">
+          {paginatedUsers.map((user, index) => (
+            <div
+              key={user.id}
+              onClick={() => navigate(`/super-admin/users/${user.id}/bookings`)}
+              className="space-y-3 px-4 py-4"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <img
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`}
+                    alt={user.name}
+                    className="w-10 h-10 rounded-full border-2 border-slate-600"
+                  />
+                  <div className="min-w-0">
+                    <p className="font-semibold text-white truncate">{user.name}</p>
+                    <p className="text-sm text-gray-400 break-all">{user.email}</p>
+                  </div>
+                </div>
+                <span className="text-xs text-gray-500">
+                  #{(page - 1) * ITEMS_PER_PAGE + index + 1}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 capitalize">
+                  {user.role}
+                </span>
+                <span
+                  className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+                    user.isBlocked
+                      ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                      : "bg-green-500/20 text-green-300 border border-green-500/30"
+                  }`}
+                >
+                  {user.isBlocked ? "Blocked" : "Active"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                {loadingId === user.id ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+                ) : (
+                  <ToggleSwitch
+                    enabled={user.isBlocked}
+                    onToggle={() => handleToggleBlock(user)}
+                  />
+                )}
+
+                <div className="flex flex-wrap justify-end gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/super-admin/users/${user.id}/bookings`);
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-lg hover:bg-blue-500/20 transition-colors"
+                  >
+                    View Bookings
+                  </button>
+                  <button
+                    disabled={loadingId === user.id}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteUser(user.id);
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors disabled:opacity-50"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {paginatedUsers.length === 0 && (
+            <div className="px-6 py-12 text-center">
+              <div className="flex flex-col items-center gap-3">
+                <Users className="w-12 h-12 text-gray-500" />
+                <p className="text-gray-400">
+                  {searchTerm ? "No users found matching your search" : "No users found"}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {searchTerm ? "Try adjusting your search terms" : "Users will appear here once registered"}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {paginatedUsers.length > 0 && (

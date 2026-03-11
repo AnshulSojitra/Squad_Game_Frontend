@@ -71,7 +71,7 @@ export default function GroundDetailsAdmin() {
             {ground.images.map((img, index) => (
               <div key={index} className="relative group">
                 <img
-                  src={`${IMAGE_BASE}${img.imageUrl}`}
+                  src={`${img.imageUrl}`}
                   alt="ground"
                   className="h-48 w-full object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
                 />

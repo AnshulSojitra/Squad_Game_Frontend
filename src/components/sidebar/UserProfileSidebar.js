@@ -1,37 +1,12 @@
 import { NavLink } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getUserProfile } from "../../services/api";
-
-
+import { useBoxArena } from "../../context/BoxArenaContext";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function UserProfileSidebar() {
   const { isDarkMode } = useTheme();
-//   const user = {
-//     name: "Niraj Soni",
-//     email: "dasniru369@gmail.com",
-//     phone: "9999999999",
-//   };
- const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("userToken");
+  const { userProfile: user, loading } = useBoxArena();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await getUserProfile();
-        setUser(res.data);
-      } catch (error) {
-        console.error("Error fetching user profile", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [token]);
-
-    if (loading) {
+    if (loading.userProfile) {
     return (
       <div className="flex items-center justify-center h-full text-gray-400">
         Loading profile...
@@ -48,7 +23,7 @@ export default function UserProfileSidebar() {
   }
 
   return (
-    <div className={`w-72 rounded-xl shadow-lg p-4 ${isDarkMode ? 'bg-gray-800 border border-gray-700 text-gray-200' : 'bg-white border border-gray-200 text-gray-900'}`}>
+    <div className={`w-full md:w-72 rounded-xl shadow-lg p-4 ${isDarkMode ? 'bg-gray-800 border border-gray-700 text-gray-200' : 'bg-white border border-gray-200 text-gray-900'}`}>
       
       {/* User Info */}
       <div className="flex flex-col items-center text-center mb-6">
@@ -58,7 +33,7 @@ export default function UserProfileSidebar() {
           className="w-20 h-20 rounded-full mb-3 border-2 border-gray-600"
         />
         <h3 className="font-semibold">{user.name}</h3>
-        <p className="text-sm ">{user.email}</p>
+        <p className="text-sm break-words">{user.email}</p>
         <p className="text-sm">{user.phoneNumber}</p>
       </div>
 
@@ -112,7 +87,7 @@ export default function UserProfileSidebar() {
             }`
           }
         >
-          My games
+         Hosted Tournaments
         </NavLink>
 
         <NavLink
@@ -125,7 +100,7 @@ export default function UserProfileSidebar() {
             }`
           }
         >
-          My Joined Games
+          Joined Tournaments
         </NavLink>
 
         {/* <NavLink

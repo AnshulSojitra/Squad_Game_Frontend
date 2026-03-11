@@ -1,10 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { useBoxArena } from "../context/BoxArenaContext";
 
 export default function AdminProtectedRoute() {
-  const adminToken = localStorage.getItem("adminToken");
-  // OR: const admin = JSON.parse(localStorage.getItem("admin"));
+  const { tokens } = useBoxArena();
 
-  if (!adminToken) {
+  if (!tokens.adminToken) {
     return <Navigate to="/login" replace />;
   }
 

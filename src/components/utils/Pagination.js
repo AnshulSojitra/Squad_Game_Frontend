@@ -37,13 +37,13 @@ export default function Pagination({
   };
 
   return (
-    <div className="flex justify-center items-center gap-2 mt-8">
+    <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
 
       {/* PREVIOUS */}
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`px-3 py-1 rounded-lg border text-sm transition-colors ${
+        className={`rounded-lg border px-2.5 py-1 text-xs transition-colors sm:px-3 sm:text-sm ${
           currentPage === 1
             ? `${isDarkMode ? 'bg-gray-700 text-gray-500 border-gray-600 cursor-not-allowed' : 'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed'}`
             : `${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300 border-gray-600' : 'bg-white hover:bg-gray-100 text-gray-700 border-gray-300'}`
@@ -57,7 +57,7 @@ export default function Pagination({
         page === "..." ? (
           <span
             key={`dots-${index}`}
-            className="px-2 text-gray-500"
+            className="px-1 text-gray-500 sm:px-2"
           >
             ...
           </span>
@@ -65,7 +65,7 @@ export default function Pagination({
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`px-3 py-1 rounded-lg border text-sm font-medium transition-colors ${
+            className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors sm:px-3 sm:text-sm ${
               page === currentPage
                 ? `${isDarkMode ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-indigo-600 text-white border-indigo-600'}`
                 : `${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300 border-gray-600' : 'bg-white hover:bg-gray-100 text-gray-700 border-gray-300'}`
@@ -80,7 +80,7 @@ export default function Pagination({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`px-3 py-1 rounded-lg border text-sm transition-colors ${
+        className={`rounded-lg border px-2.5 py-1 text-xs transition-colors sm:px-3 sm:text-sm ${
           currentPage === totalPages
             ? `${isDarkMode ? 'bg-gray-700 text-gray-500 border-gray-600 cursor-not-allowed' : 'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed'}`
             : `${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-gray-300 border-gray-600' : 'bg-white hover:bg-gray-100 text-gray-700 border-gray-300'}`

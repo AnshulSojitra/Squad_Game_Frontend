@@ -1,38 +1,34 @@
 import { useEffect, useState } from "react";
-import { getUserProfile, changeUserName } from "../../services/api";
+import { changeUserName } from "../../services/api";
 import Loader from "../../components/utils/Loader";
+import { useBoxArena } from "../../context/BoxArenaContext";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function EditProfile() {
   const { isDarkMode } = useTheme();
+  const { userProfile, cacheUserProfile, refreshUserProfile, loading } = useBoxArena();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
   });
 
-  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState(null); // "success" | "error"
 
   /* ================= FETCH PROFILE ================= */
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await getUserProfile();
-        const user = res.data.user || res.data;
+    if (!userProfile) {
+      refreshUserProfile();
+      return;
+    }
 
-        setFormData({
-          name: user.name || "",
-          email: user.email || "",
-          phone: user.phone || user.phoneNumber || "",
-        });
-      } catch (err) {
-        console.error("Failed to fetch profile", err);
-      }
-    };
-
-    fetchProfile();
-  }, []);
+    setFormData({
+      name: userProfile.name || "",
+      email: userProfile.email || "",
+      phone: userProfile.phone || userProfile.phoneNumber || "",
+    });
+  }, [userProfile]);
 
   /* ================= HANDLE INPUT ================= */
   const handleChange = (e) => {
@@ -42,60 +38,41 @@ export default function EditProfile() {
     }));
   };
 
-  /* ================= SAFE USER PARSER ================= */
-  const getSafeStoredUser = () => {
-    try {
-      const raw = localStorage.getItem("user");
-      if (!raw || raw === "undefined") return {};
-      return JSON.parse(raw);
-    } catch {
-      return {};
-    }
-  };
-
   /* ================= SAVE NAME ================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setSaving(true);
     setStatus(null);
 
     try {
       const res = await changeUserName(formData.name);
-      // HTTP 200 = success
-
-      const storedUser = getSafeStoredUser();
-
       const updatedUser = {
-        ...storedUser,
+        ...(userProfile || {}),
         name: res.data.name,
       };
 
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-
+      cacheUserProfile(updatedUser);
       setFormData((prev) => ({
         ...prev,
         name: res.data.name,
       }));
-
-      // notify navbar/sidebar
-      window.dispatchEvent(new Event("userUpdated"));
 
       setStatus("success");
     } catch (err) {
       console.error("Failed to update name:", err);
       setStatus("error");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
   return (
     <div className={`max-w-2xl mx-auto transition-colors duration-300 ${
-      isDarkMode ? 'bg-gray-900 min-h-screen' : 'bg-white min-h-screen'
+      isDarkMode ? 'bg-gray-800 min-h-screen' : 'bg-white min-h-screen'
     }`}>
       <div className={`rounded-2xl mt-4 p-6 sm:p-8 transition-colors duration-300 ${
         isDarkMode
-          ? 'bg-slate-800/60 border border-slate-700'
+          ? 'bg-slate-900/60 border border-slate-700'
           : 'bg-gray-50 border border-gray-200'
       }`}>
         <h1 className={`text-2xl font-bold mb-6 transition-colors duration-300 ${
@@ -176,14 +153,14 @@ export default function EditProfile() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading.userProfile || saving}
             className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 disabled:opacity-50 ${
               isDarkMode
                 ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white'
                 : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white'
             }`}
           >
-            {loading ? <Loader variant="button" text="Saving..." /> : "Save Changes"}
+            {saving ? <Loader variant="button" text="Saving..." /> : "Save Changes"}
           </button>
         </form>
       </div>

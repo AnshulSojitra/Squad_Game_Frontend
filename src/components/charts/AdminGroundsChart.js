@@ -80,14 +80,21 @@ export default function AdminGroundsChart({ showHeader = true } = {}) {
       ) : (
         <div className="flex-1">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
+            <BarChart
+              data={chartData}
+              margin={{ top: 8, right: 16, left: 0, bottom: 48 }}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
 
               {/* X AXIS */}
               <XAxis
                 dataKey="groundName"
                 stroke="#94a3b8"
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: 10 }}
+                interval={0}
+                angle={-25}
+                textAnchor="end"
+                height={60}
               />
 
               {/* LEFT Y AXIS → BOOKINGS */}

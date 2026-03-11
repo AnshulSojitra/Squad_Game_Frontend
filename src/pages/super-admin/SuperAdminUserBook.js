@@ -11,7 +11,6 @@ import {
   Calendar,
   Clock,
   MapPin,
-  DollarSign,
   CheckCircle,
   XCircle,
   AlertCircle,
@@ -121,7 +120,7 @@ export default function SuperAdminUserBook() {
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+      <div className="p-3 sm:p-4 lg:p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
@@ -135,7 +134,7 @@ export default function SuperAdminUserBook() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+    <div className="p-3 sm:p-4 lg:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header Section */}
         <div className="flex items-center justify-between">
@@ -149,8 +148,8 @@ export default function SuperAdminUserBook() {
         </div>
 
         {/* User Profile Header */}
-        <div className="bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-blue-600/20 border border-blue-500/20 rounded-2xl p-6 backdrop-blur-sm">
-          <div className="flex items-center gap-6">
+        <div className="bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-blue-600/20 border border-blue-500/20 rounded-2xl p-4 sm:p-6 backdrop-blur-sm">
+          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
             <div className="relative">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                 <User className="w-8 h-8 text-white" />
@@ -158,10 +157,10 @@ export default function SuperAdminUserBook() {
               <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-slate-800"></div>
             </div>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent sm:text-3xl">
                 {data.user.name}'s Bookings
               </h1>
-              <div className="flex items-center gap-4 mt-2 text-slate-400">
+              <div className="mt-2 flex flex-col gap-2 text-slate-400 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
                 <div className="flex items-center gap-2">
                   <Mail className="w-4 h-4" />
                   <span>{data.user.email}</span>
@@ -178,7 +177,7 @@ export default function SuperAdminUserBook() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-blue-500/20 rounded-lg">
@@ -230,7 +229,7 @@ export default function SuperAdminUserBook() {
 
         {/* Bookings Section */}
         <div className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-6 backdrop-blur-sm">
-          <div className="flex items-center justify-between mb-6">
+          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-xl font-bold text-white">Booking History</h2>
             <div className="text-sm text-slate-400">
               Showing {paginatedBookings.length} of {totalBookings} bookings
@@ -250,9 +249,9 @@ export default function SuperAdminUserBook() {
                  key={b.bookingId}
                   className="bg-gradient-to-r from-slate-800/50 to-slate-700/50 border border-slate-600/30 rounded-xl p-6 hover:border-slate-500/50 transition-all duration-200 group"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex-1">
-                      <div className="flex items-start gap-4">
+                      <div className="flex items-start gap-3 sm:gap-4">
                         <div className="p-3 bg-slate-700/50 rounded-lg group-hover:bg-slate-600/50 transition-colors duration-200">
                           <MapPin className="w-6 h-6 text-blue-400" />
                         </div>
@@ -261,7 +260,7 @@ export default function SuperAdminUserBook() {
                             {b.groundName}
                           </h3>
 
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+                          <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
                             <div className="flex items-center gap-2 text-slate-300">
                               <Calendar className="w-4 h-4 text-slate-400" />
                               <span className="text-sm">{b.date}</span>

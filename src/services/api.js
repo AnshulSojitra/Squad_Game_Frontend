@@ -138,7 +138,7 @@ export const getSuperAdminDashboard = () => {
 
 export const deleteUser = (userId) => {
   const token = localStorage.getItem("superAdminToken");
-  API.delete(`/super-admin/user/${userId}`, {
+  return API.delete(`/super-admin/user/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

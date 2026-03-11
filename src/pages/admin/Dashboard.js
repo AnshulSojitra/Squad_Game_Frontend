@@ -1,80 +1,41 @@
-﻿import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getAdminDashboard } from "../../services/api";
 import AdminBookingsChart from "../../components/charts/AdminBookingsChart";
 import AdminRevenueChart from "../../components/charts/AdminRevenueChart";
 import AdminGroundsChart from "../../components/charts/AdminGroundsChart";
+import { useBoxArena } from "../../context/BoxArenaContext";
 import { ZoomIn } from "lucide-react";
-
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { adminDashboard: data, refreshAdminDashboard } = useBoxArena();
 
   const [stats, setStats] = useState([]);
   const [animatedValues, setAnimatedValues] = useState([]);
   const [upcomingBookings, setUpcomingBookings] = useState([]);
-  const [expandedChart, setExpandedChart] = useState(null); // 'bookings' | 'revenue' | 'grounds' | null
+  const [expandedChart, setExpandedChart] = useState(null);
 
-  /* ================= FETCH DASHBOARD DATA ================= */
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const res = await getAdminDashboard();
-
-        const data = res.data;
-
-        const dashboardStats = [
-          {
-            title: "Today Bookings",
-            value: data.todayBookings || 0,
-            icon: "📅",
-            color: "from-orange-500 to-orange-600",
-          },
-          {
-            title: "Confirmed",
-            value: data.confirmedBookings || 0,
-            icon: "✅",
-            color: "from-green-400 to-green-500",
-          },
-          {
-            title: "Cancelled",
-            value: data.cancelledBookings || 0,
-            icon: "❌",
-            color: "from-red-400 to-red-500",
-          },
-          {
-            title: "Active Grounds",
-            value: data.activeGrounds || 0,
-            icon: "🏟️",
-            color: "from-blue-500 to-blue-600",
-          },
-          {
-            title: "Total Grounds",
-            value: data.totalGrounds || 0,
-            icon: "📍",
-            color: "from-green-500 to-green-600",
-          },
-          {
-            title: "Today Revenue",
-            value: data.todayRevenue || 0,
-            icon: "💰",
-            color: "from-emerald-500 to-emerald-600",
-            prefix: "₹",
-          },
-        ];
-
-        setStats(dashboardStats);
-        setAnimatedValues(new Array(dashboardStats.length).fill(0));
-        setUpcomingBookings(data.upcomingBookings || []);
-      } catch (error) {
-        console.error("Failed to load dashboard", error);
-      }
-    };
-
-    fetchDashboard();
+    refreshAdminDashboard();
   }, []);
 
-  /* ================= ANIMATE COUNTERS ================= */
+  useEffect(() => {
+    if (!data) return;
+
+    const dashboardStats = [
+      { title: "Today Bookings", value: data.todayBookings || 0, icon: "📅", color: "from-orange-500 to-orange-600" },
+      { title: "Confirmed", value: data.confirmedBookings || 0, icon: "✅", color: "from-green-400 to-green-500" },
+      { title: "Cancelled", value: data.cancelledBookings || 0, icon: "❌", color: "from-red-400 to-red-500" },
+      { title: "Active Grounds", value: data.activeGrounds || 0, icon: "🏟️", color: "from-blue-500 to-blue-600" },
+      { title: "Total Grounds", value: data.totalGrounds || 0, icon: "📍", color: "from-green-500 to-green-600" },
+      { title: "Today Revenue", value: data.todayRevenue || 0, icon: "💰", color: "from-emerald-500 to-emerald-600", prefix: "₹" },
+    ];
+
+    setStats(dashboardStats);
+    setAnimatedValues(new Array(dashboardStats.length).fill(0));
+    setUpcomingBookings(data.upcomingBookings || []);
+  }, [data]);
+
   useEffect(() => {
     if (!stats.length) return;
 
@@ -104,50 +65,33 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* HEADER */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Ground Owner Dashboard
-          </h1>
-          <p className="text-gray-400">
-            Welcome back! Here's what's happening today.
-          </p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Ground Owner Dashboard</h1>
+          <p className="text-gray-400">Welcome back! Here&apos;s what&apos;s happening today.</p>
         </div>
 
         <button
           onClick={() => navigate("/admin/addground")}
-          className="bg-gradient-to-r from-indigo-600 to-indigo-700
-                     hover:from-indigo-700 hover:to-indigo-800
-                     text-white px-6 py-3 rounded-xl font-semibold
-                     transition-all duration-300 transform hover:scale-105"
+          className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white px-6 py-3 rounded-2xl font-semibold transition-all duration-300"
         >
-          ➕ Add Ground
+          Add Ground
         </button>
       </div>
 
-      {/* ================= TOP STATS ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-6">
         {stats.map((item, index) => (
           <div
             key={index}
-            className={`bg-gradient-to-r ${item.color}
-                        rounded-2xl shadow-lg hover:shadow-xl
-                        transition-all duration-300 transform hover:scale-105
-                        p-6 text-white relative overflow-hidden`}
+            className={`bg-gradient-to-r ${item.color} rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 p-5 sm:p-6 text-white relative overflow-hidden`}
           >
             <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
-
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-4xl">{item.icon}</span>
                 <span className="text-xl">📈</span>
               </div>
-
-              <p className="text-white/80 text-sm font-medium">
-                {item.title}
-              </p>
-
+              <p className="text-white/80 text-sm font-medium">{item.title}</p>
               <p className="text-4xl font-bold mt-2">
                 {item.prefix || ""}
                 {animatedValues[index] || 0}
@@ -157,61 +101,47 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* ================= CHARTS GRID (2 PER ROW) ================= */}
-
-      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-y-10"> */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-12">
-        {/* BOOKINGS CHART */}
         <div
           className="bg-slate-900/60 rounded-2xl shadow-lg p-6 cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-transform duration-300"
           onClick={() => setExpandedChart("bookings")}
         >
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold text-white">Bookings Overview</h2>
-            <span className="text-xs text-gray-400 hidden sm:inline">
-              < ZoomIn/>
-            </span>
+            <span className="text-xs text-gray-400 hidden sm:inline"><ZoomIn /></span>
           </div>
-          <div className="h-80">
+          <div className="h-64 sm:h-80">
             <AdminBookingsChart showHeader={false} />
           </div>
         </div>
 
-        {/* REVENUE CHART */}
         <div
           className="bg-slate-900/60 rounded-2xl shadow-lg p-6 cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-transform duration-300"
           onClick={() => setExpandedChart("revenue")}
         >
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold text-white">Revenue Overview</h2>
-            <span className="text-xs text-gray-400 hidden sm:inline">
-              < ZoomIn/>
-            </span>
+            <span className="text-xs text-gray-400 hidden sm:inline"><ZoomIn /></span>
           </div>
-          <div className="h-80">
+          <div className="h-64 sm:h-80">
             <AdminRevenueChart showHeader={false} />
           </div>
         </div>
-        
 
-        {/* GROUNDS CHART */}
         <div
           className="bg-slate-900/60 rounded-2xl shadow-lg p-6 cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-transform duration-300 lg:col-span-2 mt-4"
           onClick={() => setExpandedChart("grounds")}
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-white">Grounds Overview</h2>
-            <span className="text-xs text-gray-400 hidden sm:inline">
-              < ZoomIn/>
-            </span>
+            <span className="text-xs text-gray-400 hidden sm:inline"><ZoomIn /></span>
           </div>
-          <div className="h-96">
+          <div className="h-72 sm:h-96">
             <AdminGroundsChart showHeader={false} />
           </div>
         </div>
       </div>
 
-      {/* ================= EXPANDED CHART MODAL ================= */}
       {expandedChart && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
@@ -235,36 +165,20 @@ const Dashboard = () => {
             </div>
 
             <div className="flex-1 min-h-0">
-              {expandedChart === "bookings" && (
-                <div className="w-full h-full">
-                  <AdminBookingsChart showHeader={true} />
-                </div>
-              )}
-              {expandedChart === "revenue" && (
-                <div className="w-full h-full">
-                  <AdminRevenueChart showHeader={true} />
-                </div>
-              )}
-              {expandedChart === "grounds" && (
-                <div className="w-full h-full">
-                  <AdminGroundsChart showHeader={true} />
-                </div>
-              )}
+              {expandedChart === "bookings" && <div className="w-full h-full"><AdminBookingsChart showHeader={true} /></div>}
+              {expandedChart === "revenue" && <div className="w-full h-full"><AdminRevenueChart showHeader={true} /></div>}
+              {expandedChart === "grounds" && <div className="w-full h-full"><AdminGroundsChart showHeader={true} /></div>}
             </div>
           </div>
         </div>
       )}
-      
-            {/* ================= UPCOMING BOOKINGS ================= */}
+
       <div className="bg-slate-900/60 rounded-2xl shadow-lg p-6 mt-8">
         <h2 className="text-xl font-semibold text-white mb-4">Upcoming Bookings</h2>
         {upcomingBookings.length > 0 ? (
           <div className="space-y-3 max-h-80 overflow-auto">
             {upcomingBookings.map((b) => (
-              <div
-                key={b.bookingId}
-                className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg"
-              >
+              <div key={b.bookingId} className="flex justify-between items-center bg-slate-800/50 p-3 rounded-lg">
                 <div>
                   <p className="text-white font-medium">
                     Date : {b.date} <br />
@@ -274,7 +188,6 @@ const Dashboard = () => {
                     {b.groundName} • {b.userName}
                   </p>
                 </div>
-                {/* <span className="text-xs text-gray-300">#{b.bookingId}</span> */}
               </div>
             ))}
           </div>
@@ -282,7 +195,6 @@ const Dashboard = () => {
           <p className="text-gray-400">No upcoming bookings in the next 24 hours.</p>
         )}
       </div>
-
     </div>
   );
 };

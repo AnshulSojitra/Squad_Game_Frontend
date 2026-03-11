@@ -113,7 +113,7 @@ export default function SuperAdminAdminDetails() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-start gap-3 sm:items-center sm:gap-4">
           <button
             onClick={() => navigate(-1)}
             className="p-2 text-gray-400 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors"
@@ -121,7 +121,7 @@ export default function SuperAdminAdminDetails() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Admin Details</h1>
+            <h1 className="text-2xl font-bold text-white sm:text-3xl mb-2">Admin Details</h1>
             <p className="text-gray-400">View admin information and manage their grounds</p>
           </div>
         </div>
@@ -131,21 +131,21 @@ export default function SuperAdminAdminDetails() {
       {admin && (
         <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
           <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-slate-700 p-6">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <img
                 src={`https://ui-avatars.com/api/?name=${encodeURIComponent(admin.name)}&background=6366f1&color=fff&size=64`}
                 alt={admin.name}
                 className="w-16 h-16 rounded-full border-2 border-slate-600"
               />
-              <div>
-                <h2 className="text-2xl font-bold text-white">{admin.name}</h2>
+              <div className="min-w-0">
+                <h2 className="text-xl font-bold text-white sm:text-2xl break-words">{admin.name}</h2>
                 <p className="text-gray-400">Ground Administrator</p>
               </div>
             </div>
           </div>
 
           <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <div className="flex items-center gap-3 p-3 bg-slate-700/30 rounded-lg">
                 <Mail className="w-5 h-5 text-blue-400" />
                 <div>
@@ -183,7 +183,7 @@ export default function SuperAdminAdminDetails() {
       )}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-blue-500/20 rounded-lg">
@@ -235,23 +235,23 @@ export default function SuperAdminAdminDetails() {
 
       {/* Grounds Table */}
       <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+        <div className="flex flex-col gap-3 border-b border-slate-700 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between">
           <h2 className="text-lg font-semibold text-white">Managed Grounds</h2>
 
           {/* Search */}
-          <div className="relative">
+          <div className="relative w-full md:w-auto">
             <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Search grounds..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full min-w-0 pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent md:w-72"
             />
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full">
             <thead className="bg-slate-700/50">
               <tr>
@@ -356,6 +356,80 @@ export default function SuperAdminAdminDetails() {
               )}
             </tbody>
           </table>
+        </div>
+
+        <div className="divide-y divide-slate-700 md:hidden">
+          {paginatedGrounds.map((ground, index) => (
+            <div key={ground.id} className="space-y-3 px-4 py-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-semibold text-white">{ground.name}</p>
+                  <p className="text-sm text-gray-400">{ground.contactNo}</p>
+                  <p className="text-sm text-gray-400">{ground.city}</p>
+                </div>
+                <span className="text-xs text-gray-500">
+                  #{(page - 1) * ITEMS_PER_PAGE + index + 1}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <span className="px-2 py-1 text-xs font-medium bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-full">
+                  {ground.game}
+                </span>
+                <span className="text-sm font-semibold text-green-400">
+                  Rs {ground.pricePerSlot}
+                </span>
+                <span
+                  className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+                    ground.isBlocked
+                      ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                      : "bg-green-500/20 text-green-300 border border-green-500/30"
+                  }`}
+                >
+                  {ground.isBlocked ? "Blocked" : "Active"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <ToggleSwitch
+                  enabled={ground.isBlocked}
+                  onToggle={() => handleToggleGroundBlock(ground)}
+                />
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => navigate(`/super-admin/grounds/${ground.id}/bookings`)}
+                    className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                    title="View Bookings"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={() => openDeleteConfirm(ground.id)}
+                    className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                    title="Delete Ground"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {paginatedGrounds.length === 0 && (
+            <div className="px-6 py-12 text-center">
+              <div className="flex flex-col items-center gap-3">
+                <Building2 className="w-12 h-12 text-gray-500" />
+                <p className="text-gray-400">
+                  {searchTerm ? "No grounds found matching your search" : "No grounds found"}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {searchTerm ? "Try adjusting your search terms" : "This admin hasn't added any grounds yet"}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {paginatedGrounds.length > 0 && (

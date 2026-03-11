@@ -52,18 +52,18 @@ export default function GameDetails() {
         setToast({
           show: true,
           type: "error",
-          message: "Game not found",
+          message: "tournament not found",
         });
         return;
       }
 
       setGame(found);
     } catch (error) {
-      console.error("Failed to load game details", error);
+      console.error("Failed to load tournament details", error);
       setToast({
         show: true,
         type: "error",
-        message: "Failed to load game details",
+        message: "Failed to load tournament details",
       });
     } finally {
       setLoading(false);
@@ -109,7 +109,7 @@ export default function GameDetails() {
           .map((id) => String(id));
         setJoinedGameIds(ids);
       } catch (error) {
-        console.error("Failed to fetch joined games", error);
+        console.error("Failed to fetch joined tournaments", error);
       }
     };
 
@@ -138,7 +138,7 @@ export default function GameDetails() {
       setToast({
         show: true,
         type: "error",
-        message: "Please login to join this game",
+        message: "Please login to join this tournament",
       });
       navigate("/user/login");
       return;
@@ -148,7 +148,7 @@ export default function GameDetails() {
       setToast({
         show: true,
         type: "error",
-        message: "You cannot join your own game",
+        message: "You cannot join your own tournament",
       });
       return;
     }
@@ -166,7 +166,7 @@ export default function GameDetails() {
       setToast({
         show: true,
         type: "error",
-        message: "This game is already full",
+        message: "This tournament is already full",
       });
       return;
     }
@@ -177,12 +177,12 @@ export default function GameDetails() {
       setToast({
         show: true,
         type: "success",
-        message: "Joined game successfully",
+        message: "Joined tournament successfully",
       });
       setJoinedGameIds((prev) => (prev.includes(currentGameId) ? prev : [...prev, currentGameId]));
       await fetchGameById();
     } catch (error) {
-      const message = error?.response?.data?.message || "Failed to join game";
+      const message = error?.response?.data?.message || "Failed to join tournament";
       setToast({
         show: true,
         type: "error",
@@ -194,12 +194,12 @@ export default function GameDetails() {
   };
 
   if (loading) {
-    return <Loader variant="page" text="Loading game details..." />;
+    return <Loader variant="page" text="Loading tournament details..." />;
   }
 
   if (!game) {
     return (
-      <div className={`min-h-screen p-6 mt-8 ${
+      <div className={`min-h-screen px-4 sm:px-6 lg:px-8 py-6 ${
         isDarkMode
           ? 'bg-gradient-to-br from-slate-950 to-slate-900'
           : 'bg-gradient-to-br from-white to-slate-50'
@@ -215,7 +215,7 @@ export default function GameDetails() {
             }`}
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Games
+            Back to Tournaments
           </button>
         </div>
         <Toast
@@ -229,7 +229,7 @@ export default function GameDetails() {
   }
 
   return (
-    <div className={`min-h-screen p-6 pt-20 ${
+    <div className={`min-h-screen px-4 sm:px-6 lg:px-8 py-6 ${
       isDarkMode
         ? 'bg-gradient-to-br from-slate-950 to-slate-900'
         : 'bg-gradient-to-br from-white to-slate-50'
@@ -255,7 +255,7 @@ export default function GameDetails() {
         }`}>
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
             <div>
-              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game.name}</h1>
+              <h1 className={`text-2xl sm:text-3xl font-bold break-words ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game.name}</h1>
             </div>
             <span className="px-3 py-1 rounded-md text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
               {game.status || "Open"}
@@ -278,12 +278,14 @@ export default function GameDetails() {
                 <Users className="w-4 h-4 text-indigo-400" />
                 Players: {joinedPlayers}/{totalPlayers} joined ({spotsLeft} spots left)
               </p>
-              <p className="text-xl font-bold text-white">Rs {game.pricePerPlayer} / player</p>
+              <p className={`text-lg sm:text-xl font-bold ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+                Rs {game.pricePerPlayer} / player
+              </p>
               <button
                 type="button"
                 onClick={handleJoinGame}
                 disabled={joining || isAlreadyJoined || isOwner || isGameFull}
-                className={`mt-2 px-4 py-2 rounded-lg font-semibold transition-all ${
+                className={`mt-2 w-full sm:w-auto px-4 py-2 rounded-xl font-semibold transition-all ${
                   joining || isAlreadyJoined || isOwner || isGameFull
                     ? isDarkMode ? "bg-slate-700 text-slate-300 cursor-not-allowed" : "bg-slate-200 text-slate-600 cursor-not-allowed"
                     : "bg-indigo-600 hover:bg-indigo-700 text-white"
@@ -294,10 +296,10 @@ export default function GameDetails() {
                   : isOwner
                     ? "Owner cannot join"
                     : isGameFull
-                      ? "Game Full"
+                      ? "Tournament Full"
                       : joining
                         ? "Joining..."
-                        : "Join Game"}
+                        : "Join Tournament"}
               </button>
             </div>
 
@@ -305,7 +307,7 @@ export default function GameDetails() {
               <p className="font-semibold text-white">Ground Details</p>
               <p className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-indigo-400" />
-                {ground.name || "Unknown ground"} Ground
+                <span className="break-words">{ground.name || "Unknown ground"} Ground</span>
               </p>
               <p className={isDarkMode ? 'text-slate-300' : 'text-slate-600'}>
                 {[ground.area, ground.City?.name, ground.State?.name, ground.Country?.name, ground.city, ground.state, ground.country]
@@ -335,7 +337,7 @@ export default function GameDetails() {
             ? 'bg-slate-900 border-slate-700'
             : 'bg-white border-slate-200'
         }`}>
-          <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Game Slots</h2>
+          <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Tournament Slots</h2>
           {slots.length === 0 ? (
             <p className={isDarkMode ? 'text-slate-400' : 'text-slate-600'}>No slot details available.</p>
           ) : (

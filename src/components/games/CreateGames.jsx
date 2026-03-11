@@ -230,7 +230,7 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
       setToast({
         show: true,
         type: "error",
-        message: "Please enter game name, select sport, ground, and at least one slot",
+        message: "Please enter tournament name, select sport, ground, and at least one slot",
       });
       return;
     }
@@ -256,7 +256,7 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
       const response = await createGameApi(payload);
       const order = response?.data?.order;
 
-      if (!order?.id) throw new Error("Invalid order response from create game API");
+      if (!order?.id) throw new Error("Invalid order response from create tournament API");
 
       const selectedSlotLabels = availableSlots
         .filter((slot) => formData.slotIds.includes(Number(slot.id)))
@@ -280,8 +280,8 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
         selectedSlotLabels,
       });
     } catch (error) {
-      console.error("Error creating game", error);
-      setToast({ show: true, type: "error", message: "Failed to create game" });
+      console.error("Error creating tournament", error);
+      setToast({ show: true, type: "error", message: "Failed to create tournament" });
     } finally {
       setLoading(false);
     }
@@ -326,7 +326,7 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
               razorpay_signature: paymentResponse.razorpay_signature,
             });
 
-            setToast({ show: true, type: "success", message: "Payment successful. Game created!" });
+            setToast({ show: true, type: "success", message: "Payment successful. Tournament created!" });
             onGameCreated?.();
             handleClose();
           } catch (verifyError) {
@@ -384,11 +384,11 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
             : 'bg-white border-slate-200'
         }`}>
           {createStep === 1 && (
-            <div className="p-8">
-              <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Select Sport</h2>
-              <p className={isDarkMode ? 'text-slate-400 mb-6' : 'text-slate-600 mb-6'}>Choose a sport for your game</p>
+            <div className="p-5 sm:p-8">
+              <h2 className={`text-xl sm:text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Select Sport</h2>
+              <p className={isDarkMode ? 'text-slate-400 mb-6' : 'text-slate-600 mb-6'}>Choose a sport for your tournament</p>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
                 {gamesList.map((game) => (
                   <button
                     key={game.id}
@@ -419,8 +419,8 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
           )}
 
           {createStep === 2 && (
-            <div className="p-8">
-              <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Select Ground</h2>
+            <div className="p-5 sm:p-8">
+              <h2 className={`text-xl sm:text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Select Ground</h2>
               <p className={isDarkMode ? 'text-slate-400 mb-6' : 'text-slate-600 mb-6'}>
                 Choose a ground for <span className="text-indigo-400 font-semibold">{formData.sport}</span>
               </p>
@@ -477,21 +477,21 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
           )}
 
           {createStep === 3 && selectedGround && (
-            <div className="p-8">
-              <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Game Details</h2>
+            <div className="p-5 sm:p-8">
+              <h2 className={`text-xl sm:text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Tournament Details</h2>
               <p className={isDarkMode ? 'text-slate-400 mb-6' : 'text-slate-600 mb-6'}>
                 Ground: <span className="text-indigo-400 font-semibold">{selectedGround.name}</span>
               </p>
 
               <form onSubmit={handleCreateGame} className="space-y-6">
                 <div>
-                  <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Game Name</label>
+                  <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Tournament Name</label>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="Enter game name"
+                    placeholder="Enter tournament name"
                     className={`w-full px-4 py-2 rounded-lg focus:outline-none focus:border-indigo-500 ${
                       isDarkMode
                         ? 'bg-slate-800 border border-slate-700 text-white'
@@ -528,7 +528,7 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
                 {formData.date && (
                   <div>
                     <label className={`block font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Select Slots</label>
-                    <p className={`text-sm mb-3 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Select time slots for your game</p>
+                    <p className={`text-sm mb-3 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Select time slots for your tournament</p>
 
                     {slotsLoading ? (
                       <Loader variant="simple" text="Loading slots..." fullScreen={false} />
@@ -626,7 +626,7 @@ export default function CreateGames({ open, onClose, onGameCreated }) {
                   disabled={loading}
                   className="w-full px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 text-white rounded-lg font-semibold transition-all"
                 >
-                  {loading ? <Loader variant="button" text="Creating game..." /> : "Create Game"}
+                  {loading ? <Loader variant="button" text="Creating tournament..." /> : "Create Tournament"}
                 </button>
 
                 <div className="flex gap-3">

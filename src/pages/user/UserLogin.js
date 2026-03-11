@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { completeProfile, sendOtp, verifyOtp } from "../../services/api";
 import Loader from "../../components/utils/Loader";
 import Toast from "../../components/utils/Toast";
+import { useBoxArena } from "../../context/BoxArenaContext";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function UserLogin({ onClose }) {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
+  const { setUserSession, cacheUserProfile } = useBoxArena();
   const [step, setStep] = useState("LOGIN");
   const [login, setLogin] = useState("");
   const [otp, setOtp] = useState("");
@@ -62,8 +64,7 @@ export default function UserLogin({ onClose }) {
       setIsVerifyingOtp(true);
       const res = await verifyOtp({ login, otp });
 
-      localStorage.setItem("userToken", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      setUserSession(res.data.token, res.data.user);
 
       if (!res.data.isNewUser) {
         onClose?.();
@@ -96,11 +97,7 @@ export default function UserLogin({ onClose }) {
 
     try {
       const res = await completeProfile(payload);
-      const existingUser = JSON.parse(localStorage.getItem("user")) || {};
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ ...existingUser, ...res.data.user })
-      );
+      cacheUserProfile(res.data.user);
 
       onClose?.();
       navigate("/");

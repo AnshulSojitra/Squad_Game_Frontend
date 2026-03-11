@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { createAdmin } from "../../services/api";
 import Loader from "../../components/utils/Loader";
+import { useBoxArena } from "../../context/BoxArenaContext";
 import { UserPlus, Mail, Phone, Lock, Eye, EyeOff, CheckCircle, AlertCircle, User } from "lucide-react";
 
 export default function SuperAdminCreateAdmin() {
+  const { refreshSuperAdminAdmins } = useBoxArena();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -66,6 +68,7 @@ export default function SuperAdminCreateAdmin() {
     try {
       setLoading(true);
       await createAdmin(form);
+      await refreshSuperAdminAdmins();
       setSuccess("Admin created successfully");
 
       setForm({
@@ -87,7 +90,7 @@ export default function SuperAdminCreateAdmin() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Create New Admin</h1>
           <p className="text-gray-400">Add a new administrator to the platform</p>
@@ -108,8 +111,8 @@ export default function SuperAdminCreateAdmin() {
       <div className="max-w-2xl mx-auto">
         <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-slate-700 p-6">
-            <div className="flex items-center gap-4">
+          <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-slate-700 p-4 sm:p-6">
+            <div className="flex items-start gap-4 sm:items-center">
               <div className="p-3 bg-blue-500/20 rounded-lg">
                 <UserPlus className="w-6 h-6 text-blue-400" />
               </div>
@@ -121,7 +124,7 @@ export default function SuperAdminCreateAdmin() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-6">
             {/* Name */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">

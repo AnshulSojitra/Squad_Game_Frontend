@@ -5,7 +5,10 @@ export default function PublicLayout() {
   return (
     <>
       <Navbar />
-      <Outlet />
+      {/* Fixed navbar offset */}
+      <div>
+        <Outlet />
+      </div>
     </>
   );
 }

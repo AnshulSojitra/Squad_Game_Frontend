@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { getUserBookings, cancelUserBooking } from "../../services/api";
+import { cancelUserBooking } from "../../services/api";
 import Loader from "../../components/utils/Loader";
+import { useBoxArena } from "../../context/BoxArenaContext";
 import { useTheme } from "../../context/ThemeContext";
 import Pagination from "../../components/utils/Pagination";
 import Toast from "../../components/utils/Toast";
@@ -9,8 +10,7 @@ import SearchInput from "../../components/utils/SearchInput";
 
 
 export default function MyBookings() {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { userBookings: bookings, loading, refreshUserBookings, setUserBookings } = useBoxArena();
   const [cancelLoading, setCancelLoading] = useState(null);
   const { isDarkMode } = useTheme();
   const ITEMS_PER_PAGE = 10;
@@ -36,19 +36,8 @@ const showToast = (type, message) => {
 
 // <------------fetching Bookings----------------->
   useEffect(() => {
-    fetchBookings();
+    refreshUserBookings();
   }, []);
-
-  const fetchBookings = async () => {
-    try {
-      const res = await getUserBookings();
-      setBookings(res.data.data); // backend response structure
-    } catch (err) {
-      console.error("Failed to fetch bookings", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const openCancelModal = (bookingId) => {
   setSelectedBookingId(bookingId);
@@ -61,7 +50,7 @@ const confirmCancelBooking = async () => {
     setCancelLoading(selectedBookingId);
     await cancelUserBooking(selectedBookingId);
 
-    setBookings((prev) =>
+    setUserBookings((prev) =>
       prev.map((b) =>
         b.bookingId === selectedBookingId
           ? { ...b, status: "cancelled" }
@@ -198,7 +187,7 @@ const confirmCancelBooking = async () => {
                 <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-600'}`}>Time</p>
                 <p className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                   {/* {formatTime(booking.startTime)} - {formatTime(booking.endTime)} */}
-                  {booking.startTime}-{booking.endTime}
+                  {booking.slot.startTime}-{booking.slot.endTime}
                 </p>
               </div>
               <div>
@@ -411,7 +400,7 @@ const confirmCancelBooking = async () => {
       </div>
     </>
   );
-  if (loading) {
+  if (loading.userBookings) {
     return <Loader variant="simple" text="Loading your bookings..." fullScreen={false} />;
   }
 

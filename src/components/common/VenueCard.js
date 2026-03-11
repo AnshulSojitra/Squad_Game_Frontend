@@ -28,7 +28,7 @@ export default function VenueCard({ ground }) {
   }, [ground?.id]);
 
   const image = ground.images?.[0]
-    ? `${process.env.REACT_APP_IMAGE_URL}${ground.images[0].imageUrl}`
+    ? `${ground.images[0].imageUrl}`
     : "/placeholder.png";
 
   return (
@@ -43,14 +43,6 @@ export default function VenueCard({ ground }) {
       <div className="relative h-44 sm:h-52 md:h-40 lg:h-48 w-full overflow-hidden">
         <img src={image} alt={ground.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[800ms] ease-out" />
 
-        {/* <div className="absolute top-3 left-3 bg-white/10 backdrop-blur rounded-full px-3 py-1 text-xs text-indigo-500 font-semibold">
-          {ground.game}
-        </div>
-
-        <div className="absolute top-3 right-3 bg-white/10 backdrop-blur rounded-full px-3 py-1 text-xs text-indigo-500 font-semibold">
-          ₹{ground.pricePerSlot}/slot
-        </div> */}
-
         <div className="absolute bottom-3 left-3 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full px-3 py-1 text-xs text-white flex items-center gap-2">
           <Star size={14} /> <span className="font-semibold">{typeof avgRating === 'number' ? avgRating.toFixed(1) : (ground?.avgRating ? Number(ground.avgRating).toFixed(1) : "—")}</span>
         </div>
@@ -63,10 +55,7 @@ export default function VenueCard({ ground }) {
           <MapPin size={14} />
           <span className="truncate">{[ground.area, ground.city, ground.state].filter(Boolean).join(", ")}</span>
         </p>
-
-        {/* <div className="bg-white/10 backdrop-blur rounded-full px-4 py-2 text-xs text-indigo-500 font-semibold">
-          {ground.game}  ₹{ground.pricePerSlot}/slot
-        </div> */}
+        
 
           <div className="flex flex-wrap gap-2 text-sm mt-3">
                   <span className={`px-3 py-1 font-bold rounded-full border transition-colors duration-200 ${isDarkMode ? 'bg-indigo-500/20 text-indigo-500 border-indigo-500/30' : 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100'}`}>

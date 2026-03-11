@@ -1,34 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUserProfile } from "../../services/api";
+import { useBoxArena } from "../../context/BoxArenaContext";
 import BackButton from "../utils/BackButton";
 
 export default function UserHeader({ collapsed, setCollapsed }) {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-
-  const token = localStorage.getItem("userToken");
-
-  /* ================= FETCH USER ================= */
-  useEffect(() => {
-    if (!token) return;
-
-    const fetchUser = async () => {
-      try {
-        const res = await getUserProfile();
-        setUser(res.data);
-
-        // optional but recommended
-        localStorage.setItem("user", JSON.stringify(res.data));
-      } catch (error) {
-        console.error("Failed to fetch user profile");
-      }
-    };
-
-    fetchUser();
-  }, [token]);
+  const { userProfile: user, logoutUser } = useBoxArena();
 
   /* ================= CLOSE DROPDOWN ================= */
   useEffect(() => {
@@ -43,8 +22,7 @@ export default function UserHeader({ collapsed, setCollapsed }) {
 
   /* ================= LOGOUT ================= */
   const logout = () => {
-    localStorage.removeItem("userToken");
-    localStorage.removeItem("user");
+    logoutUser();
     navigate("/");
   };
 

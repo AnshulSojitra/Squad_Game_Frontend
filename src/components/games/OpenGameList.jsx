@@ -36,14 +36,14 @@ export default function OpenGameList({ games = [], onCreateGame, joinedGameIds =
         <div className="w-20 h-20 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full flex items-center justify-center mb-4">
           <GamepadIcon className="w-10 h-10 text-indigo-500" />
         </div>
-        <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No games available</h2>
-        <p className={`mb-6 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Create your first game to get started</p>
+        <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No tournaments available</h2>
+        <p className={`mb-6 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>Host your first Tournament to get started</p>
         <button
           type="button"
           onClick={onCreateGame}
           className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-all"
         >
-          Create First Game
+          Create First Tournament
         </button>
       </div>
     );
@@ -54,7 +54,7 @@ export default function OpenGameList({ games = [], onCreateGame, joinedGameIds =
       items={games}
       initialCount={12}
       increment={12}
-      containerClassName="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6"
+      containerClassName="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pb-6"
       renderItem={(game) => {
         const gameId = game.id ?? game._id;
         const gameDisplayName = game?.name || game?.sport || "Game";
@@ -83,14 +83,14 @@ export default function OpenGameList({ games = [], onCreateGame, joinedGameIds =
                 navigate(`/games/${gameId}`, { state: { game } });
               }
             }}
-            className={`rounded-xl p-6 hover:border-indigo-500 transition-all cursor-pointer ${
+            className={`rounded-xl p-4 sm:p-6 hover:border-indigo-500 transition-all cursor-pointer ${
               isDarkMode
                 ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700'
                 : 'bg-gradient-to-br from-white to-slate-50 border border-slate-200'
             }`}
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{gameDisplayName}</h3>
+              <h3 className={`text-lg sm:text-xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{gameDisplayName}</h3>
               <span
                 className={`px-2 py-1 rounded-md text-xs font-semibold border ${
                   isFull
@@ -128,7 +128,7 @@ export default function OpenGameList({ games = [], onCreateGame, joinedGameIds =
             <div className={`mt-4 pt-4 flex items-center justify-between ${
               isDarkMode ? 'border-t border-slate-700' : 'border-t border-slate-200'
             }`}>
-              <p className={`font-semibold ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>Rs {game.pricePerPlayer} / player</p>
+              <p className={`font-semibold text-sm sm:text-base ${isDarkMode ? 'text-slate-200' : 'text-slate-800'}`}>Rs {game.pricePerPlayer} / player</p>
               <button
                 type="button"
                 onClick={(e) => {
@@ -136,13 +136,13 @@ export default function OpenGameList({ games = [], onCreateGame, joinedGameIds =
                   navigate(`/games/${gameId}`, { state: { game } });
                 }}
                 disabled={isAlreadyJoined || isFull}
-                className={`px-4 py-2 rounded-lg font-semibold transition-all text-sm ${
+                className={`px-4 py-2 rounded-xl font-semibold transition-all text-sm ${
                   isAlreadyJoined || isFull
                     ? isDarkMode ? "bg-slate-700 text-slate-300 cursor-not-allowed" : "bg-slate-200 text-slate-600 cursor-not-allowed"
                     : "bg-indigo-600 hover:bg-indigo-700 text-white"
                 }`}
               >
-                {isAlreadyJoined ? "You have already joined" : isFull ? "Game Full" : "Join"}
+                {isAlreadyJoined ? "You have already joined" : isFull ? "Tournament Full" : "Join"}
               </button>
             </div>
           </div>

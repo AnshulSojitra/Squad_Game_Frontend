@@ -1,71 +1,44 @@
 import { useEffect, useState } from "react";
-import { getAdminBookings } from "../../services/api";
 import Pagination from "../../components/utils/Pagination";
 import SearchInput from "../../components/utils/SearchInput";
+import { useBoxArena } from "../../context/BoxArenaContext";
 
 export default function AdminBookings() {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { adminBookings: bookings, loading, refreshAdminBookings } = useBoxArena();
 
   const ITEMS_PER_PAGE = 10;
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-const [groundFilter, setGroundFilter] = useState("all");
-
+  const [groundFilter, setGroundFilter] = useState("all");
 
   useEffect(() => {
-    fetchBookings();
+    refreshAdminBookings();
   }, []);
 
-  const fetchBookings = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await getAdminBookings();
-      setBookings(res.data || []);
-    } catch (err) {
-      console.error("Failed to fetch bookings", err);
-      setError("Unable to load bookings. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const uniqueGrounds = Array.from(
+    new Set(bookings.map((b) => b.ground?.name).filter(Boolean))
+  );
 
+  const filteredBookings = bookings.filter((booking) => {
+    if (!booking) return false;
 
-const uniqueGrounds = Array.from(
-  new Set(
-    bookings
-      .map((b) => b.ground?.name)
-      .filter(Boolean)
-  )
-);
+    const searchText = search.toLowerCase();
 
+    const matchesSearch =
+      (booking.user?.name || "").toLowerCase().includes(searchText) ||
+      (booking.user?.email || "").toLowerCase().includes(searchText) ||
+      (booking.ground?.name || "").toLowerCase().includes(searchText) ||
+      (booking.status || "").toLowerCase().includes(searchText);
 
+    const matchesStatus =
+      statusFilter === "all" || booking.status?.toLowerCase() === statusFilter;
 
-const filteredBookings = bookings.filter((booking) => {
-  if (!booking) return false;
+    const matchesGround =
+      groundFilter === "all" || booking.ground?.name === groundFilter;
 
-  const searchText = search.toLowerCase();
-
-  const matchesSearch =
-    (booking.user?.name || "").toLowerCase().includes(searchText) ||
-    (booking.user?.email || "").toLowerCase().includes(searchText) ||
-    (booking.ground?.name || "").toLowerCase().includes(searchText) ||
-    (booking.status || "").toLowerCase().includes(searchText);
-
-  const matchesStatus =
-    statusFilter === "all" ||
-    booking.status?.toLowerCase() === statusFilter;
-
-  const matchesGround =
-    groundFilter === "all" ||
-    booking.ground?.name === groundFilter;
-
-  return matchesSearch && matchesStatus && matchesGround;
-});
-
+    return matchesSearch && matchesStatus && matchesGround;
+  });
 
   useEffect(() => {
     setPage(1);
@@ -95,8 +68,8 @@ const filteredBookings = bookings.filter((booking) => {
     if (!dateString) return "N/A";
     try {
       return new Date(dateString).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
+        hour: "2-digit",
+        minute: "2-digit",
       });
     } catch {
       return dateString;
@@ -116,22 +89,20 @@ const filteredBookings = bookings.filter((booking) => {
     }
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusLabel = (status) => {
     switch (status?.toLowerCase()) {
       case "confirmed":
-        return "✅";
+        return "Confirmed";
       case "cancelled":
-        return "❌";
+        return "Cancelled";
       case "pending":
-        return "⏳";
+        return "Pending";
       default:
-        return "";
+        return status || "Unknown";
     }
   };
 
-
-
-  if (loading) {
+  if (loading.adminBookings) {
     return (
       <div className="space-y-6 animate-fade-in">
         <div className="flex items-center justify-between">
@@ -142,7 +113,7 @@ const filteredBookings = bookings.filter((booking) => {
         </div>
         <div className="flex items-center justify-center min-h-96">
           <div className="text-center">
-            <div className="animate-spin text-4xl mb-4">⏳</div>
+            <div className="mb-4 text-4xl">Loading...</div>
             <p className="text-gray-400">Loading bookings...</p>
           </div>
         </div>
@@ -150,137 +121,130 @@ const filteredBookings = bookings.filter((booking) => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="space-y-6 animate-fade-in">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">User Bookings</h1>
-            <p className="text-gray-400">Manage all booking requests</p>
-          </div>
-        </div>
-        <div className="bg-red-500/20 border border-red-500/30 rounded-2xl p-6 text-center">
-          <div className="text-6xl mb-4">⚠️</div>
-          <p className="text-red-300 text-lg font-semibold mb-2">Error Loading Bookings</p>
-          <p className="text-red-400 mb-4">{error}</p>
-          <button
-            onClick={fetchBookings}
-            className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-xl transition-colors duration-200"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">User Bookings</h1>
+          <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">User Bookings</h1>
           <p className="text-gray-400">Manage all booking requests</p>
         </div>
         <div className="text-sm text-gray-400">
-          Total: {filteredBookings.length} booking{filteredBookings.length !== 1 ? 's' : ''}
+          Total: {filteredBookings.length} booking
+          {filteredBookings.length !== 1 ? "s" : ""}
         </div>
       </div>
 
-      <div className="mb-6 flex flex-col lg:flex-row gap-4">
-      {/* Search */}
-      <div className="flex-1">
-        <SearchInput
-          value={search}
-          placeholder="Search by user, email, ground, status..."
-          onChange={setSearch}
-        />
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row">
+        <div className="min-w-0 flex-1">
+          <SearchInput
+            value={search}
+            placeholder="Search by user, email, ground, status..."
+            onChange={setSearch}
+          />
+        </div>
+
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 lg:w-auto"
+        >
+          <option value="all">All Bookings</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="completed">Completed</option>
+        </select>
+
+        <select
+          value={groundFilter}
+          onChange={(e) => setGroundFilter(e.target.value)}
+          className="w-full rounded-xl border border-gray-700 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 lg:w-auto"
+        >
+          <option value="all">All Grounds</option>
+          {uniqueGrounds.map((groundName) => (
+            <option key={groundName} value={groundName}>
+              {groundName}
+            </option>
+          ))}
+        </select>
       </div>
 
-      {/* Status Filter */}
-      <select
-        value={statusFilter}
-        onChange={(e) => setStatusFilter(e.target.value)}
-        className="bg-gray-800 border border-gray-700 text-white px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
-      >
-        <option value="all">All Bookings</option>
-        <option value="confirmed">Confirmed</option>
-        <option value="cancelled">Cancelled</option>
-        <option value="completed">Completed</option>
-      </select>
-
-      {/* Ground Filter */}
-      <select
-        value={groundFilter}
-        onChange={(e) => setGroundFilter(e.target.value)}
-        className="bg-gray-800 border border-gray-700 text-white px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
-      >
-        <option value="all">All Grounds</option>
-        {/* {uniqueGrounds.map((ground) => (
-          <option key={ground.id} value={ground.id}>
-            {ground.name}
-          </option>
-        ))} */}
-        {uniqueGrounds.map((groundName) => (
-        <option key={groundName} value={groundName}>
-          {groundName}
-        </option>
-      ))}
-      </select>
-    </div>
-
-
-      {/* Mobile Card View */}
-      <div className="block md:hidden space-y-4">
+      <div className="block space-y-4 md:hidden">
         {filteredBookings.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">📅</div>
-            <p className="text-gray-400 text-lg">No bookings found</p>
-            <p className="text-gray-500 text-sm">Try adjusting your search terms</p>
+          <div className="py-12 text-center">
+            <div className="mb-4 text-5xl">No Data</div>
+            <p className="text-lg text-gray-400">No bookings found</p>
+            <p className="text-sm text-gray-500">Try adjusting your search terms</p>
           </div>
         ) : (
           paginatedBookings.map((booking, index) => (
             <div
               key={booking?.bookingId || index}
-              className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700"
+              className="overflow-hidden rounded-2xl border border-gray-700 bg-gray-800/50 p-4 backdrop-blur-sm"
             >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+              <div className="mb-4 flex flex-col gap-3">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-500 font-semibold text-white">
                     {(booking?.user?.name?.charAt(0) || "?").toUpperCase()}
                   </div>
-                  <div>
-                    <h3 className="text-white font-semibold">{booking?.user?.name || "Unknown User"}</h3>
-                    <p className="text-gray-400 text-sm">{booking?.user?.email || "No email"}</p>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <h3 className="break-words font-semibold text-white">
+                          {booking?.user?.name || "Unknown User"}
+                        </h3>
+                        <p className="break-all text-sm text-gray-400">
+                          {booking?.user?.email || "No email"}
+                        </p>
+                      </div>
+                      <span className="shrink-0 text-[11px] text-gray-500">
+                        #{(page - 1) * ITEMS_PER_PAGE + index + 1}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(booking?.status)}`}>
-                  {getStatusIcon(booking?.status)} {booking?.status || "Unknown"}
+
+                <span
+                  className={`inline-flex w-fit max-w-full rounded-full border px-3 py-1 text-[11px] font-semibold ${getStatusColor(booking?.status)}`}
+                >
+                  {getStatusLabel(booking?.status)}
                 </span>
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-green-400">🏟️</span>
-                  <span className="text-white">{booking?.ground?.name || "Unknown Ground"}</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-indigo-400">⏰</span>
-                  <span className="text-gray-300 text-sm">
-                    {booking?.slot?.startTime || "??:??"} – {booking?.slot?.endTime || "??:??"}
+                <div className="flex items-start gap-2">
+                  <span className="mt-0.5 text-green-400">Ground</span>
+                  <span className="break-words text-white">
+                    {booking?.ground?.name || "Unknown Ground"}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-purple-400">📅</span>
-                  <span className="text-gray-300 text-sm">
+                <div className="flex items-start gap-2">
+                  <span className="mt-0.5 text-indigo-400">Slot</span>
+                  <span className="break-words text-sm text-gray-300">
+                    {booking?.slot?.startTime || "??:??"} - {booking?.slot?.endTime || "??:??"}
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-2">
+                  <span className="mt-0.5 text-purple-400">Date</span>
+                  <span className="text-sm text-gray-300">
                     {formatDate(booking?.bookingDate)}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                  <span>🕒</span>
-                  <span>Booked {formatTime(booking?.createdAt)}</span>
+                <div className="flex items-start gap-2 text-xs text-gray-500">
+                  <span className="mt-0.5">Booked</span>
+                  <span className="break-words">
+                    {formatDate(booking?.createdAt)} {formatTime(booking?.createdAt)}
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-2 text-xs text-gray-400">
+                  <span className="mt-0.5">Phone</span>
+                  <span className="break-words">
+                    {booking?.user?.phoneNumber || "No phone number"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -288,28 +252,27 @@ const filteredBookings = bookings.filter((booking) => {
         )}
       </div>
 
-      {/* Desktop Table View */}
-      <div className="hidden md:block bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl">
+      <div className="hidden overflow-hidden rounded-2xl bg-gray-800/50 shadow-xl backdrop-blur-sm md:block">
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead className="bg-gradient-to-r from-gray-700 to-gray-800 text-white">
               <tr>
-                <th className="px-4 lg:px-6 py-4 text-left font-semibold">No</th>
-                <th className="px-4 lg:px-6 py-4 text-left font-semibold">User</th>
-                <th className="px-4 lg:px-6 py-4 text-left font-semibold">phoneNumber</th>
-                <th className="px-4 lg:px-6 py-4 text-left font-semibold">Ground</th>
-                <th className="px-4 lg:px-6 py-4 text-left font-semibold">Slot</th>
-                <th className="px-4 lg:px-6 py-4 text-left font-semibold">Date</th>
-                <th className="px-4 lg:px-6 py-4 text-left font-semibold">Status</th>
-                <th className="px-4 lg:px-6 py-4 text-left font-semibold">Booked At</th>
+                <th className="px-4 py-4 text-left font-semibold lg:px-6">No</th>
+                <th className="px-4 py-4 text-left font-semibold lg:px-6">User</th>
+                <th className="px-4 py-4 text-left font-semibold lg:px-6">phoneNumber</th>
+                <th className="px-4 py-4 text-left font-semibold lg:px-6">Ground</th>
+                <th className="px-4 py-4 text-left font-semibold lg:px-6">Slot</th>
+                <th className="px-4 py-4 text-left font-semibold lg:px-6">Date</th>
+                <th className="px-4 py-4 text-left font-semibold lg:px-6">Status</th>
+                <th className="px-4 py-4 text-left font-semibold lg:px-6">Booked At</th>
               </tr>
             </thead>
 
             <tbody>
               {filteredBookings.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="text-center py-12 text-gray-400">
-                    <div className="text-4xl mb-2">📅</div>
+                  <td colSpan="8" className="py-12 text-center text-gray-400">
+                    <div className="mb-2 text-4xl">No Data</div>
                     <p>No bookings found</p>
                     <p className="text-sm">Try adjusting your search terms</p>
                   </td>
@@ -318,58 +281,59 @@ const filteredBookings = bookings.filter((booking) => {
                 paginatedBookings.map((booking, index) => (
                   <tr
                     key={booking?.bookingId || index}
-                    className="border-t border-gray-700 hover:bg-gray-700/50 transition-colors duration-200 text-white"
+                    className="border-t border-gray-700 text-white transition-colors duration-200 hover:bg-gray-700/50"
                   >
-                    <td className="px-4 lg:px-6 py-4 font-medium">
+                    <td className="px-4 py-4 font-medium lg:px-6">
                       {(page - 1) * ITEMS_PER_PAGE + index + 1}
                     </td>
 
-                    <td className="px-4 lg:px-6 py-4">
+                    <td className="px-4 py-4 lg:px-6">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-xs">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-xs font-semibold text-white">
                           {(booking?.user?.name?.charAt(0) || "?").toUpperCase()}
                         </div>
-                         <div className="flex flex-col min-w-0">
-                        <span className="font-medium text-white truncate max-w-32">
-                          {booking?.user?.name || "Unknown"}
-                        </span>
-                        <span className="text-sm text-gray-400 truncate max-w-32">
-                          {booking?.user?.email}
-                        </span>
-                      </div>
-                      </div>
-                    </td>
-
-                    <td className="px-4 lg:px-6 py-4 text-gray-300 truncate max-w-48">
-                      {booking?.user?.phoneNumber || "No email"}
-                    </td>
-
-                    <td className="px-4 lg:px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-green-400">🏟️</span>
-                        <span className="truncate max-w-32">{booking?.ground?.name || "Unknown"}</span>
+                        <div className="min-w-0 flex flex-col">
+                          <span className="max-w-32 truncate font-medium text-white">
+                            {booking?.user?.name || "Unknown"}
+                          </span>
+                          <span className="max-w-32 truncate text-sm text-gray-400">
+                            {booking?.user?.email}
+                          </span>
+                        </div>
                       </div>
                     </td>
 
-                    <td className="px-4 lg:px-6 py-4">
-                      <span className="bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full text-xs border border-indigo-500/30 whitespace-nowrap">
-                        ⏰ {booking?.slot?.startTime || "??:??"} – {booking?.slot?.endTime || "??:??"}
+                    <td className="max-w-48 truncate px-4 py-4 text-gray-300 lg:px-6">
+                      {booking?.user?.phoneNumber || "No phone"}
+                    </td>
+
+                    <td className="px-4 py-4 lg:px-6">
+                      <span className="max-w-32 truncate">
+                        {booking?.ground?.name || "Unknown"}
                       </span>
                     </td>
 
-                    <td className="px-4 lg:px-6 py-4">
-                      <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-xs border border-purple-500/30 whitespace-nowrap">
-                        📅 {formatDate(booking?.bookingDate)}
+                    <td className="px-4 py-4 lg:px-6">
+                      <span className="whitespace-nowrap rounded-full border border-indigo-500/30 bg-indigo-500/20 px-3 py-1 text-xs text-indigo-300">
+                        {booking?.slot?.startTime || "??:??"} - {booking?.slot?.endTime || "??:??"}
                       </span>
                     </td>
 
-                    <td className="px-4 lg:px-6 py-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border whitespace-nowrap ${getStatusColor(booking?.status)}`}>
-                        {getStatusIcon(booking?.status)} {booking?.status || "Unknown"}
+                    <td className="px-4 py-4 lg:px-6">
+                      <span className="whitespace-nowrap rounded-full border border-purple-500/30 bg-purple-500/20 px-3 py-1 text-xs text-purple-300">
+                        {formatDate(booking?.bookingDate)}
                       </span>
                     </td>
 
-                    <td className="px-4 lg:px-6 py-4 text-gray-400 text-sm whitespace-nowrap">
+                    <td className="px-4 py-4 lg:px-6">
+                      <span
+                        className={`whitespace-nowrap rounded-full border px-3 py-1 text-xs font-semibold ${getStatusColor(booking?.status)}`}
+                      >
+                        {getStatusLabel(booking?.status)}
+                      </span>
+                    </td>
+
+                    <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-400 lg:px-6">
                       {formatDate(booking?.createdAt)}
                     </td>
                   </tr>

@@ -1,29 +1,19 @@
-import { useEffect, useState } from "react";
-import { getAdminProfile } from "../../services/api";
+import { useEffect } from "react";
 import BackButton from "../../components/utils/BackButton";
 import { useNavigate } from "react-router-dom";
+import { useBoxArena } from "../../context/BoxArenaContext";
 
 export default function AdminProfile() {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { adminProfile: profile, loading, refreshAdminProfile } = useBoxArena();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await getAdminProfile();
-        setProfile(res.data);
-      } catch (err) {
-        console.error("Failed to load admin profile", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
+    if (!profile) {
+      refreshAdminProfile();
+    }
   }, []);
 
-  if (loading) {
+  if (loading.adminProfile) {
     return (
       <div className="flex items-center justify-center min-h-96">
         <div className="animate-spin text-4xl">⏳</div>

@@ -1,33 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAdminProfile } from "../../services/api";
+import { useBoxArena } from "../../context/BoxArenaContext";
 import BackButton from "../utils/BackButton";
 
-export default function AdminHeader() {
+export default function AdminHeader({ onMenuClick }) {
   const [open, setOpen] = useState(false);
-  const [admin, setAdmin] = useState(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const { adminProfile: admin, logoutAdmin } = useBoxArena();
 
   const profileImg =
     "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
-
-  /* ================= FETCH ADMIN PROFILE ================= */
-  useEffect(() => {
-    const fetchAdmin = async () => {
-      try {
-        const res = await getAdminProfile();
-        setAdmin(res.data);
-
-        // optional: cache for reuse
-        localStorage.setItem("admin", JSON.stringify(res.data));
-      } catch (err) {
-        console.error("Failed to fetch admin profile", err);
-      }
-    };
-
-    fetchAdmin();
-  }, []);
 
   /* ================= CLOSE DROPDOWN ON OUTSIDE CLICK ================= */
   useEffect(() => {
@@ -42,20 +25,37 @@ export default function AdminHeader() {
 
   /* ================= LOGOUT ================= */
   const handleLogout = () => {
-    localStorage.removeItem("adminToken");
-    localStorage.removeItem("admin");
+    logoutAdmin();
     navigate("/");
   };
 
   return (
-    <header className="h-16 bg-[#0b1220] border-b shadow-sm flex items-center justify-between px-6 text-white">
-      <BackButton />
+    <header className="h-16 bg-[#0b1220] border-b shadow-sm flex items-center justify-between px-4 sm:px-6 text-white">
       {/* Left */}
-      <div className="flex items-center gap-4">
-        <h1 className="text-lg font-semibold"> Ground Owner</h1>
+      <div className="flex items-center gap-3 min-w-0">
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="md:hidden p-2 rounded-xl hover:bg-white/10 transition-colors"
+          aria-label="Open menu"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
+        <div className="hidden sm:block">
+          <BackButton />
+        </div>
+        <h1 className="text-sm sm:text-lg font-semibold truncate">Ground Owner</h1>
       </div>
 
-      {/* Right */}
+      {/* Left */}
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setOpen(!open)}
@@ -69,7 +69,7 @@ export default function AdminHeader() {
           />
 
           {/* Admin Name */}
-          <span className="font-medium text-white">
+          <span className="hidden sm:inline font-medium text-white">
             {admin ? admin.name : "Admin"}
           </span>
         </button>

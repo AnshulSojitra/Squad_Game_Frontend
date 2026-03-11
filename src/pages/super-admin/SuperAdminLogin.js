@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useBoxArena } from "../../context/BoxArenaContext";
 import { superAdminLogin } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 
@@ -13,6 +14,7 @@ export default function SuperAdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { setSuperAdminSession, refreshSuperAdminProfile } = useBoxArena();
 
   /* ================= VALIDATION ================= */
   const validate = () => {
@@ -53,7 +55,8 @@ export default function SuperAdminLogin() {
       // 🔐 API CALL HERE
       // await superAdminLogin(form);
       const res = await superAdminLogin(form);
-        localStorage.setItem("superAdminToken",res.data.token);
+      setSuperAdminSession(res.data.token);
+      await refreshSuperAdminProfile();
       setTimeout(() => {
         console.log("SuperAdmin logged in:", form);
         setLoading(false);

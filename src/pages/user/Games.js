@@ -1,22 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, GamepadIcon } from "lucide-react";
-import { getMyJoinedGames, getOpenGames } from "../../services/api";
 import Loader from "../../components/utils/Loader";
 import Toast from "../../components/utils/Toast";
 import OpenGameList from "../../components/games/OpenGameList";
 import CreateGames from "../../components/games/CreateGames";
 import StickySearch from "../../components/common/StickySearch";
 import Footer from "../../components/common/Footer";
+import { useBoxArena } from "../../context/BoxArenaContext";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function Games() {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
-  const [games, setGames] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const {
+    auth,
+    openGames: games,
+    myJoinedGames,
+    loading,
+    refreshOpenGames,
+    refreshMyJoinedGames,
+    refreshMyCreatedGames,
+  } = useBoxArena();
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [joinedGameIds, setJoinedGameIds] = useState([]);
   const [search, setSearch] = useState("");
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
@@ -72,89 +78,58 @@ export default function Games() {
   };
 
   const handleAddGameClick = () => {
-    const token = localStorage.getItem("userToken");
-    if (!token) {
+    if (!auth.isUserAuthenticated) {
       navigate("/user/login");
       return;
     }
     setShowCreateModal(true);
   };
 
-  const fetchGames = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("userToken");
-      const [openGamesResponse, joinedGamesResponse] = await Promise.all([
-        getOpenGames(),
-        token ? getMyJoinedGames() : Promise.resolve(null),
-      ]);
-
-      const data = openGamesResponse?.data;
-      const gamesArray = Array.isArray(data)
-        ? data
-        : Array.isArray(data?.games)
-          ? data.games
-          : [];
-      setGames(gamesArray);
-
-      if (joinedGamesResponse) {
-        const joinedData = joinedGamesResponse?.data;
-        const joinedArray = Array.isArray(joinedData)
-          ? joinedData
-          : Array.isArray(joinedData?.games)
-            ? joinedData.games
-            : [];
-        const ids = joinedArray
-          .map((item) => item?.id ?? item?._id)
-          .filter(Boolean)
-          .map((id) => String(id));
-        setJoinedGameIds(ids);
-      } else {
-        setJoinedGameIds([]);
-      }
-    } catch (error) {
-      console.error("Failed to fetch games", error);
-      setToast({
-        show: true,
-        type: "error",
-        message: "Failed to load games",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchGames();
-  }, []);
+    refreshOpenGames();
+    if (auth.isUserAuthenticated) {
+      refreshMyJoinedGames();
+    }
+  }, [auth.isUserAuthenticated]);
 
-  if (loading && games.length === 0) {
-    return <Loader variant="page" text="Loading games..." />;
+  const joinedGameIds = useMemo(
+    () =>
+      myJoinedGames
+        .map((item) => item?.id ?? item?._id)
+        .filter(Boolean)
+        .map((id) => String(id)),
+    [myJoinedGames]
+  );
+
+  if (loading.openGames && games.length === 0) {
+    return <Loader variant="page" text="Loading tournaments..." />;
   }
 
   return (
     <>
-    <div className={`min-h-screen p-6 pt-20 ${
+    <div className={`min-h-screen px-4 sm:px-6 lg:px-8 py-6 pt-20 ${
       isDarkMode
         ? 'bg-gradient-to-br from-slate-950 to-slate-900'
         : 'bg-gradient-to-br from-white to-slate-50'
     }`}>
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-10">
           <div>
-            <h1 className={`text-4xl font-bold mb-2 flex items-center gap-3 ${
+            <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2 flex items-center gap-3 ${
               isDarkMode ? 'text-white' : 'text-slate-900'
             }`}>
-              <GamepadIcon className="w-10 h-10 text-indigo-500" />
+              <GamepadIcon className="w-7 h-7 sm:w-9 sm:h-9 text-indigo-500" />
               Explore Tournaments
             </h1>
-            <p className={isDarkMode ? 'text-slate-400' : 'text-slate-600'}>Create and manage your sports games</p>
+            <p className={`text-sm sm:text-base ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+              Create and manage your sports tournaments
+            </p>
           </div>
 
           <button
             type="button"
             onClick={handleAddGameClick}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg font-semibold transition-all transform hover:scale-105"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all"
           >
             <Plus className="w-5 h-5" />
             Host Tournament
@@ -185,14 +160,14 @@ export default function Games() {
               ? 'text-slate-300 border-slate-800 bg-slate-900/40'
               : 'text-slate-600 border-slate-200 bg-slate-50/40'
           }`}>
-            <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No matching games found</h3>
+            <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No matching tournaments found</h3>
             <p className={`mb-4 ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-              Try changing search text or filters to find your game.
+              Try changing search text or filters to find your sport.
             </p>
             <button
               type="button"
               onClick={clearFilters}
-              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-semibold"
+              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-semibold"
             >
               Clear Filters
             </button>
@@ -210,7 +185,13 @@ export default function Games() {
       <CreateGames
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
-        onGameCreated={fetchGames}
+        onGameCreated={async () => {
+          await Promise.all([
+            refreshOpenGames(),
+            refreshMyCreatedGames(),
+            refreshMyJoinedGames(),
+          ]);
+        }}
       />
 
       <Toast

@@ -53,18 +53,18 @@ export default function MyJoinedGameDetails() {
           setToast({
             show: true,
             type: "error",
-            message: "Joined game details not found",
+            message: "Joined tournament details not found",
           });
           return;
         }
 
         setGame(foundGame);
       } catch (error) {
-        console.error("Failed to fetch joined game details", error);
+        console.error("Failed to fetch joined tournament details", error);
         setToast({
           show: true,
           type: "error",
-          message: "Failed to load joined game details",
+          message: "Failed to load joined tournament details",
         });
       } finally {
         setLoading(false);
@@ -82,17 +82,13 @@ export default function MyJoinedGameDetails() {
   const spotsLeft = Math.max(totalPlayers - joinedPlayers, 0);
 
   if (loading) {
-    return <Loader variant="page" text="Loading joined game details..." />;
+    return <Loader variant="page" text="Loading joined tournament details..." />;
   }
 
   if (!game) {
     return (
-      <div className={`min-h-screen p-6 pt-20 ${
-        isDarkMode
-          ? 'bg-gradient-to-br from-slate-950 to-slate-900'
-          : 'bg-gradient-to-br from-white to-slate-50'
-      }`}>
-        <div className="max-w-5xl mx-auto">
+      <div className="p-0">
+        <div className="space-y-4">
           <button
             type="button"
             onClick={() => navigate("/profile/joinedgames")}
@@ -103,7 +99,7 @@ export default function MyJoinedGameDetails() {
             }`}
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Joined Games
+            Back to Joined Tournaments
           </button>
         </div>
         <Toast
@@ -117,12 +113,8 @@ export default function MyJoinedGameDetails() {
   }
 
   return (
-    <div className={`min-h-screen p-6 pt-20 ${
-      isDarkMode
-        ? 'bg-gradient-to-br from-slate-950 to-slate-900'
-        : 'bg-gradient-to-br from-white to-slate-50'
-    }`}>
-      <div className="max-w-5xl mx-auto space-y-6">
+    <div className="p-0">
+      <div className="space-y-6">
         <button
           type="button"
           onClick={() => navigate("/profile/joinedgames")}
@@ -133,7 +125,7 @@ export default function MyJoinedGameDetails() {
           }`}
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Joined Games
+          Back to Joined Tournaments
         </button>
 
         <div className={`bg-gradient-to-br border rounded-2xl p-6 md:p-8 ${
@@ -142,7 +134,7 @@ export default function MyJoinedGameDetails() {
             : 'from-white to-slate-50 border-slate-200'
         }`}>
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-            <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game?.name || "Game"}</h1>
+            <h1 className={`text-2xl sm:text-3xl font-bold break-words ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>{game?.name || "Game"}</h1>
             <span className="px-3 py-1 rounded-md text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
               {game?.status || "Open"}
             </span>
@@ -223,7 +215,7 @@ export default function MyJoinedGameDetails() {
             ? 'bg-slate-900 border-slate-700'
             : 'bg-white border-slate-200'
         }`}>
-          <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Game Slots</h2>
+          <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>Tournament Slots</h2>
           {slots.length === 0 ? (
             <p className={isDarkMode ? 'text-slate-400' : 'text-slate-600'}>No slot details available.</p>
           ) : (

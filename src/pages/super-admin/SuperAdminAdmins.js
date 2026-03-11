@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllAdmins, toggleAdminBlock , deleteAdminBySuperAdmin} from "../../services/api";
+import { toggleAdminBlock , deleteAdminBySuperAdmin} from "../../services/api";
 import Pagination from "../../components/utils/Pagination";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import { ShieldCheck, Activity, Search } from "lucide-react";
 import Loader from "../../components/utils/Loader";
+import { useBoxArena } from "../../context/BoxArenaContext";
 
 
 
 
 export default function SuperAdminAdmins() {
-  const [admins, setAdmins] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { superAdminAdmins: admins, loading, refreshSuperAdminAdmins, setSuperAdminAdmins } = useBoxArena();
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 10;
   const [page, setPage] = useState(1);
@@ -59,28 +59,15 @@ const paginatedAdmins = filteredAdmins.slice(
 
   /* ---------------- Fetch Admins ---------------- */
   useEffect(() => {
-    fetchAdmins();
+    refreshSuperAdminAdmins();
   }, []);
-
-  const fetchAdmins = async () => {
-    try {
-      setLoading(true);
-      const res = await getAllAdmins();
-      setAdmins(res.data.admins);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   /* ---------------- Toggle Block / Unblock ---------------- */
   const handleToggleBlock = async (admin) => {
     try {
       await toggleAdminBlock(admin.id);
 
-      // Optimistic UI update
-      setAdmins((prev) =>
+      setSuperAdminAdmins((prev) =>
         prev.map((a) =>
           a.id === admin.id
             ? { ...a, isBlocked: !a.isBlocked }
@@ -107,7 +94,9 @@ const paginatedAdmins = filteredAdmins.slice(
       try {
         setLoadingId(selectedAdminId);
         await deleteAdminBySuperAdmin(selectedAdminId);
-        await fetchAdmins(); // refresh list
+        setSuperAdminAdmins((prev) =>
+          prev.filter((admin) => admin.id !== selectedAdminId)
+        );
       } catch (err) {
         alert(err.response?.data?.message || "Failed to delete admin");
       } finally {
@@ -122,7 +111,7 @@ const paginatedAdmins = filteredAdmins.slice(
       setSelectedAdminId(null);
     };
 
-  if (loading) {
+  if (loading.superAdminAdmins) {
     return <Loader variant="simple" text="Loading ground owners..." />;
   }
 
@@ -131,7 +120,7 @@ const paginatedAdmins = filteredAdmins.slice(
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Ground Owner Management</h1>
           <p className="text-gray-400">Manage and monitor all admin accounts</p>
@@ -140,7 +129,7 @@ const paginatedAdmins = filteredAdmins.slice(
         <button
           onClick={() => navigate("/super-admin/admins/create")}
           className="
-            inline-flex items-center gap-2
+            inline-flex w-full items-center justify-center gap-2
             bg-gradient-to-r from-blue-600 to-indigo-600
             hover:from-blue-700 hover:to-indigo-700
             text-white px-6 py-3 rounded-xl
@@ -148,7 +137,7 @@ const paginatedAdmins = filteredAdmins.slice(
             shadow-lg hover:shadow-xl
             transition-all duration-200
             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-            transform hover:scale-105
+            transform hover:scale-105 sm:w-auto
           "
         >
           <span className="text-lg leading-none">+</span>
@@ -157,7 +146,7 @@ const paginatedAdmins = filteredAdmins.slice(
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-blue-500/20 rounded-lg">
@@ -223,7 +212,7 @@ const paginatedAdmins = filteredAdmins.slice(
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="hidden w-full md:table">
             <thead className="bg-slate-700/50">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">
@@ -350,6 +339,96 @@ const paginatedAdmins = filteredAdmins.slice(
               )}
             </tbody>
           </table>
+        </div>
+
+        <div className="divide-y divide-slate-700 md:hidden">
+          {paginatedAdmins.map((admin, index) => (
+            <div
+              key={admin.id}
+              onClick={() => navigate(`/super-admin/admins/${admin.id}`)}
+              className="space-y-3 px-4 py-4"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <img
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(admin.name)}&background=random`}
+                    alt={admin.name}
+                    className="w-10 h-10 rounded-full border-2 border-slate-600"
+                  />
+                  <div className="min-w-0">
+                    <p className="font-semibold text-white truncate">{admin.name}</p>
+                    <p className="text-sm text-gray-400 break-all">{admin.email}</p>
+                  </div>
+                </div>
+                <span className="text-xs text-gray-500">
+                  #{(page - 1) * ITEMS_PER_PAGE + index + 1}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                  {admin.planType}
+                </span>
+                <span className="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                  {admin.role}
+                </span>
+                <span
+                  className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
+                    admin.isBlocked
+                      ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                      : "bg-green-500/20 text-green-300 border border-green-500/30"
+                  }`}
+                >
+                  {admin.isBlocked ? "Blocked" : "Active"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <ToggleSwitch
+                  enabled={admin.isBlocked}
+                  onToggle={() => handleToggleBlock(admin)}
+                />
+
+                <div className="flex flex-wrap justify-end gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/super-admin/admins/${admin.id}`);
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-lg hover:bg-blue-500/20 transition-colors"
+                  >
+                    View
+                  </button>
+
+                  <button
+                    onClick={(e) => openDeleteConfirm(e, admin.id)}
+                    disabled={loadingId === admin.id}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                      loadingId === admin.id
+                        ? "bg-red-500/50 text-red-300 cursor-not-allowed"
+                        : "bg-red-500/10 text-red-300 border border-red-500/20 hover:bg-red-500/20"
+                    }`}
+                  >
+                    {loadingId === admin.id ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {filteredAdmins.length === 0 && (
+            <div className="px-6 py-12 text-center">
+              <div className="flex flex-col items-center gap-3">
+                <ShieldCheck className="w-12 h-12 text-gray-500" />
+                <p className="text-gray-400">
+                  {searchQuery ? "No admins found matching your search" : "No admins found"}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {searchQuery ? "Try adjusting your search terms" : "Get started by adding your first admin"}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {filteredAdmins.length > 0 && (

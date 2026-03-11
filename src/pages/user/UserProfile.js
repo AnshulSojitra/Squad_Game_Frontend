@@ -1,32 +1,19 @@
-import { useEffect, useState } from "react";
-import { getUserProfile } from "../../services/api";
+import { useEffect } from "react";
 import Loader from "../../components/utils/Loader";
+import { useBoxArena } from "../../context/BoxArenaContext";
 import { useTheme } from "../../context/ThemeContext";
-import BackButton from "../../components/utils/BackButton";
 
 export default function UserProfile() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { userProfile: user, loading, refreshUserProfile } = useBoxArena();
   const { isDarkMode } = useTheme();
-
-  const token = localStorage.getItem("userToken");
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await getUserProfile();
-        setUser(res.data);
-      } catch (error) {
-        console.error("Error fetching user profile", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [token]);
   
-  if (loading) {
+  useEffect(() => {
+    if (!user) {
+      refreshUserProfile();
+    }
+  }, [user]);
+  
+  if (loading.userProfile) {
     return <Loader variant="page" text="Loading profile..." fullScreen={false} />;
   }
 
