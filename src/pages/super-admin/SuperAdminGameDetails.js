@@ -331,7 +331,6 @@ export default function SuperAdminGameDetails() {
         isOpen={Boolean(removeTarget)}
         title="Remove Participant"
         message={`Remove ${removeTarget?.participantName || "this participant"} from this tournament?`}
-        message={`Remove ${removeTarget?.participantName || "this participant"} from this tournament?`}
         onConfirm={handleConfirmRemoveParticipant}
         onCancel={() => setRemoveTarget(null)}
       />

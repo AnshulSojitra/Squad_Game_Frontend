@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar, Clock3, MapPin, Users, Trophy, GamepadIcon } from "lucide-react";
 import { deleteMyGameApi } from "../../services/api";
-import { deleteMyGameApi } from "../../services/api";
 import ConfirmModal from "../utils/ConfirmModal";
 import Toast from "../utils/Toast";
 import ShowMore from "../utils/ShowMore";
@@ -86,9 +85,8 @@ export default function MyCreatedGamesList({
       showToast(
         "error",
         error?.response?.data?.message || "Failed to delete tournament"
-        error?.response?.data?.message || "Failed to delete tournament"
       );
-      refreshUserCreatedGames({ silent: true }).catch(() => {});
+      // refreshUserCreatedGames({ silent: true }).catch(() => {});
     } finally {
       setDeletingGameId(null);
       setShowDeleteConfirm(false);
@@ -163,8 +161,6 @@ export default function MyCreatedGamesList({
         <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No Created Tournaments</h3>
         <p className={`text-center max-w-md ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
           {loggedIn
-            ? "You have not created any tournaments yet."
-            : "Login to view tournaments created by you."}
             ? "You have not created any tournaments yet."
             : "Login to view tournaments created by you."}
         </p>
@@ -289,8 +285,6 @@ export default function MyCreatedGamesList({
       />
       <ConfirmModal
         isOpen={showDeleteConfirm}
-        title="Delete Tournament"
-        message="Are you sure you want to delete this tournament?"
         title="Delete Tournament"
         message="Are you sure you want to delete this tournament?"
         onConfirm={handleConfirmDelete}

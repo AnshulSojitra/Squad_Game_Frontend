@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar, Clock3, MapPin, Users, Trophy, GamepadIcon, User, Phone } from "lucide-react";
 import { leaveGameApi } from "../../services/api";
-import { leaveGameApi } from "../../services/api";
 import ConfirmModal from "../utils/ConfirmModal";
 import Toast from "../utils/Toast";
 import ShowMore from "../utils/ShowMore";
@@ -171,8 +170,6 @@ export default function MyJoinedGamesList({
           {loggedIn
             ? "You have not joined any tournaments created by other users yet."
             : "Login to view tournaments you joined."}
-            ? "You have not joined any tournaments created by other users yet."
-            : "Login to view tournaments you joined."}
         </p>
         {!loggedIn && (
           <button
@@ -297,8 +294,6 @@ export default function MyJoinedGamesList({
       {content}
       <ConfirmModal
         isOpen={showLeaveConfirm}
-        title="Leave Tournament"
-        message="Are you sure you want to leave this tournament?"
         title="Leave Tournament"
         message="Are you sure you want to leave this tournament?"
         onConfirm={handleConfirmLeave}

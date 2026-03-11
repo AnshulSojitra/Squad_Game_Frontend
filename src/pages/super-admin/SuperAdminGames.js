@@ -191,8 +191,6 @@ export default function SuperAdminGames() {
         isOpen={Boolean(deleteTarget)}
         title="Delete Tournament"
         message={`Are you sure you want to delete ${deleteTarget?.sport || "this tournament"}?`}
-        title="Delete Tournament"
-        message={`Are you sure you want to delete ${deleteTarget?.sport || "this tournament"}?`}
         onConfirm={handleConfirmDeleteGame}
         onCancel={() => setDeleteTarget(null)}
       />

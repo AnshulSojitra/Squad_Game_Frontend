@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState , useCallback } from "react";
 import { cancelUserBooking } from "../../services/api";
 import Loader from "../../components/utils/Loader";
 import { useBoxArena } from "../../context/BoxArenaContext";
@@ -72,6 +72,8 @@ const confirmCancelBooking = async () => {
 
 
   const normalize = useCallback((value) => String(value ?? "").toLowerCase(), []);
+  
+  
   const bookingMatchesSearch = useCallback((booking, query) => {
     const q = normalize(query).trim();
     if (!q) return true;

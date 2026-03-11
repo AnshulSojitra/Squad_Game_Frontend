@@ -189,7 +189,6 @@ export default function GameDetails() {
       await fetchGameById();
     } catch (error) {
       const message = error?.response?.data?.message || "Failed to join tournament";
-      const message = error?.response?.data?.message || "Failed to join tournament";
       setToast({
         show: true,
         type: "error",
@@ -306,10 +305,8 @@ export default function GameDetails() {
                     ? "Owner cannot join"
                     : isGameFull
                       ? "Tournament Full"
-                      ? "Tournament Full"
                       : joining
                         ? "Joining..."
-                        : "Join Tournament"}
                         : "Join Tournament"}
               </button>
             </div>

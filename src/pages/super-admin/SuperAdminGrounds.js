@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toggleGroundBlock, deleteGroundBySuperAdmin } from "../../services/api";
-import { toggleGroundBlock, deleteGroundBySuperAdmin } from "../../services/api";
 import Loader from "../../components/utils/Loader";
 import Pagination from "../../components/utils/Pagination";
 import ToggleSwitch from "../../components/utils/ToggleSwitch";
@@ -80,13 +79,7 @@ export default function SuperAdminGrounds() {
       statusFilter === "all" ||
       (statusFilter === "blocked" && ground.isBlocked) ||
       (statusFilter === "active" && !ground.isBlocked);
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "blocked" && ground.isBlocked) ||
-      (statusFilter === "active" && !ground.isBlocked);
-
-    return matchesSearch && matchesStatus;
-  });
+ 
     return matchesSearch && matchesStatus;
   });
 
