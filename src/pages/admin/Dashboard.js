@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import AdminBookingsChart from "../../components/charts/AdminBookingsChart";
 import AdminRevenueChart from "../../components/charts/AdminRevenueChart";
 import AdminGroundsChart from "../../components/charts/AdminGroundsChart";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { ZoomIn } from "lucide-react";
 
 const Dashboard = () => {
@@ -200,3 +200,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

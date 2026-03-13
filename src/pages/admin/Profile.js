@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import BackButton from "../../components/utils/BackButton";
 import { useNavigate } from "react-router-dom";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 
 export default function AdminProfile() {
   const { adminProfile: profile, loading, refreshAdminProfile } = useBoxArena();
@@ -109,3 +109,4 @@ export default function AdminProfile() {
     </div>
   );
 }
+

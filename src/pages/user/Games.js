@@ -7,7 +7,7 @@ import OpenGameList from "../../components/games/OpenGameList";
 import CreateGames from "../../components/games/CreateGames";
 import StickySearch from "../../components/common/StickySearch";
 import Footer from "../../components/common/Footer";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function Games() {
@@ -206,3 +206,4 @@ export default function Games() {
     </>
   );
 }
+

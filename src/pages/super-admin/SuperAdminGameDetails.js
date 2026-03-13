@@ -153,10 +153,15 @@ export default function SuperAdminGameDetails() {
     );
   }
 
-  const firstSlot = Array.isArray(game.GameSlots) ? game.GameSlots[0]?.Slot : null;
-  const timeRange = firstSlot?.startTime
-    ? `${formatTime(firstSlot.startTime)} - ${formatTime(firstSlot.endTime)}`
-    : "N/A";
+  const slotRanges = Array.isArray(game?.GameSlots)
+    ? game.GameSlots
+        .map((gameSlot) => {
+          const slot = gameSlot?.Slot;
+          if (!slot?.startTime) return null;
+          return `${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}`;
+        })
+        .filter(Boolean)
+    : [];
   const locationText =
     [
       game?.Ground?.area,
@@ -212,11 +217,25 @@ export default function SuperAdminGameDetails() {
             </p>
           </div>
           <div className="rounded-lg border border-slate-700 bg-slate-900/30 p-4">
-            <p className="text-xs text-gray-400">Time</p>
-            <p className="text-white mt-1 inline-flex items-center gap-2">
-              <Clock className="w-4 h-4 text-blue-400" />
-              {timeRange}
-            </p>
+            <p className="text-xs text-gray-400">Slots</p>
+            <div className="mt-2 space-y-2">
+              {slotRanges.length > 0 ? (
+                slotRanges.map((range, index) => (
+                  <p
+                    key={`${range}-${index}`}
+                    className="text-white inline-flex items-center gap-2"
+                  >
+                    <Clock className="w-4 h-4 text-blue-400" />
+                    {range}
+                  </p>
+                ))
+              ) : (
+                <p className="text-white inline-flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-blue-400" />
+                  N/A
+                </p>
+              )}
+            </div>
           </div>
           <div className="rounded-lg border border-slate-700 bg-slate-900/30 p-4">
             <p className="text-xs text-gray-400">Players</p>

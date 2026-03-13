@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { User, Mail, Shield, Hash, Calendar } from "lucide-react";
 
 export default function SuperAdminProfile() {
@@ -176,3 +176,4 @@ export default function SuperAdminProfile() {
     </div>
   );
 }
+

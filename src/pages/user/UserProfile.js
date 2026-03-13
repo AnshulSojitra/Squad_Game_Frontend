@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import Loader from "../../components/utils/Loader";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function UserProfile() {
@@ -113,3 +113,4 @@ export default function UserProfile() {
 </>
   );
 }
+

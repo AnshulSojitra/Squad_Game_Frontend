@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { superAdminLogin } from "../../services/api";
 import { useNavigate } from "react-router-dom";
-import { useAppData } from "../../context/AppDataContext";
 import Navbar from "../../components/common/Navbar";
 
 export default function SuperAdminLogin() {
@@ -210,3 +209,4 @@ export default function SuperAdminLogin() {
 
   );
 }
+

@@ -3,9 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { completeProfile, sendOtp, verifyOtp } from "../../services/api";
 import Loader from "../../components/utils/Loader";
 import Toast from "../../components/utils/Toast";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { useTheme } from "../../context/ThemeContext";
-import { useAppData } from "../../context/AppDataContext";
 
 export default function UserLogin({ onClose }) {
   const navigate = useNavigate();
@@ -41,13 +40,67 @@ export default function UserLogin({ onClose }) {
     return () => clearInterval(t);
   }, [resendCooldown]);
 
+  // const handleSendOtp = async () => {
+  //   if (!login) return showToast("error", "Enter email or mobile");
+  //   if (isSendingOtp || resendCooldown > 0) return;
+
+  //   try {
+  //     setIsSendingOtp(true);
+  //     await sendOtp(login);
+  //     setStep("OTP");
+  //     setResendCooldown(45);
+  //   } catch (err) {
+  //     showToast("error", err.response?.data?.message || "Failed to send OTP");
+  //   } finally {
+  //     setIsSendingOtp(false);
+  //   }
+  // };
+
+
+  const validateLogin = (value) => {
+    const trimmed = value.trim(); // allow spaces at start/end
+
+    // Check internal spaces
+    if (/\s/.test(trimmed)) {
+      return { valid: false, message: "Spaces inside email or number are not allowed" };
+    }
+
+    // Email validation
+    if (trimmed.includes("@")) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(trimmed)) {
+        return { valid: false, message: "Enter a valid email address" };
+      }
+      return { valid: true, value: trimmed };
+    }
+
+    // Phone validation
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(trimmed)) {
+      return { valid: false, message: "Enter a valid 10 digit mobile number" };
+    }
+
+    return { valid: true, value: trimmed };
+  };
+
+
   const handleSendOtp = async () => {
     if (!login) return showToast("error", "Enter email or mobile");
+
+    const validation = validateLogin(login);
+
+    if (!validation.valid) {
+      return showToast("error", validation.message);
+    }
+
+    const cleanLogin = validation.value;
+
     if (isSendingOtp || resendCooldown > 0) return;
 
     try {
       setIsSendingOtp(true);
-      await sendOtp(login);
+      await sendOtp(cleanLogin);
+      setLogin(cleanLogin); // store cleaned value
       setStep("OTP");
       setResendCooldown(45);
     } catch (err) {
@@ -56,6 +109,7 @@ export default function UserLogin({ onClose }) {
       setIsSendingOtp(false);
     }
   };
+
 
   const handleVerifyOtp = async () => {
     if (!otp) return showToast("error", "Enter OTP");
@@ -134,11 +188,19 @@ export default function UserLogin({ onClose }) {
             <div className="bg-white rounded-xl p-4">
               {step === "LOGIN" && (
                 <>
-                  <input
+                  {/* <input
                     type="text"
                     placeholder="Enter email or mobile number"
                     value={login}
                     onChange={(e) => setLogin(e.target.value)}
+                    className="w-full border rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  /> */}
+
+                  <input
+                    type="text"
+                    placeholder="Enter email or mobile number"
+                    value={login}
+                    onChange={(e) => setLogin(e.target.value.replace(/\s{2,}/g, " "))}
                     className="w-full border rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
 
@@ -285,3 +347,4 @@ export default function UserLogin({ onClose }) {
     </>
   );
 }
+

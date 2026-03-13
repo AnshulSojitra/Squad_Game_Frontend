@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import BackButton from "../utils/BackButton";
 
 export default function AdminHeader({ onMenuClick }) {
@@ -105,3 +105,4 @@ export default function AdminHeader({ onMenuClick }) {
     </header>
   );
 }
+

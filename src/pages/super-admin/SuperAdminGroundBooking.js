@@ -18,6 +18,35 @@ export default function SuperAdminGroundsBooking() {
     fetchBookings();
   }, []);
 
+  const normalizeStatus = (status) => String(status || "").trim().toLowerCase();
+
+  const getStatusConfig = (status) => {
+    const normalizedStatus = normalizeStatus(status);
+
+    switch (normalizedStatus) {
+      case "cancelled":
+        return {
+          label: "Cancelled",
+          badgeClass:
+            "bg-red-500/20 text-red-300 border border-red-500/30",
+        };
+      case "completed":
+        return {
+          label: "Completed",
+          badgeClass:
+            "bg-blue-500/20 text-blue-300 border border-blue-500/30",
+        };
+      default:
+        return {
+          label: "Confirmed",
+          badgeClass:
+            "bg-green-500/20 text-green-300 border border-green-500/30",
+        };
+    }
+  };
+
+  const canCancelBooking = (status) => normalizeStatus(status) === "confirmed";
+
   const handleOpenCancelModal = (booking) => {
     setSelectedBooking(booking);
     setIsConfirmOpen(true);
@@ -30,10 +59,9 @@ export default function SuperAdminGroundsBooking() {
       setLoadingId(selectedBooking.bookingId);
       await cancelBookingBySuperAdmin(selectedBooking.bookingId);
 
-      // Update UI
       setBookings((prev) =>
         prev.map((b) =>
-          b.id === selectedBooking.id
+          b.bookingId === selectedBooking.bookingId
             ? { ...b, status: "cancelled" }
             : b
         )
@@ -61,21 +89,23 @@ export default function SuperAdminGroundsBooking() {
 
   // Filter bookings based on search term
   const filteredBookings = bookings.filter(booking =>
-    booking.User?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.User?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    booking.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    booking.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     booking.date?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const stats = {
     total: bookings.length,
-    active: bookings.filter(b => b.status !== "cancelled").length,
-    cancelled: bookings.filter(b => b.status === "cancelled").length,
+    active: bookings.filter(b => normalizeStatus(b.status) === "confirmed").length,
+    cancelled: bookings.filter(b => normalizeStatus(b.status) === "cancelled").length,
+    completed: bookings.filter(b => normalizeStatus(b.status) === "completed").length,
     revenue: bookings
-      .filter(b => b.status !== "cancelled")
+      .filter(b => normalizeStatus(b.status) !== "cancelled")
       .reduce((sum, b) => sum + (b.price || 0), 0)
   };
 
   return (
+    <>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -94,7 +124,7 @@ export default function SuperAdminGroundsBooking() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-blue-500/20 rounded-lg">
@@ -127,6 +157,18 @@ export default function SuperAdminGroundsBooking() {
             <div>
               <p className="text-sm text-gray-400">Cancelled</p>
               <p className="text-2xl font-bold text-white">{stats.cancelled}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-cyan-500/10 to-cyan-600/10 border border-cyan-500/20 rounded-xl p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-cyan-500/20 rounded-lg">
+              <Clock className="w-6 h-6 text-cyan-400" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">Completed</p>
+              <p className="text-2xl font-bold text-white">{stats.completed}</p>
             </div>
           </div>
         </div>
@@ -178,6 +220,11 @@ export default function SuperAdminGroundsBooking() {
             <tbody className="divide-y divide-slate-700">
               {filteredBookings.map((booking, index) => (
                 <tr key={booking.bookingId} className="hover:bg-slate-700/30 transition-colors">
+                  {(() => {
+                    const statusConfig = getStatusConfig(booking.status);
+
+                    return (
+                      <>
                   <td className="px-6 py-4 text-sm text-gray-400 font-medium">
                     {index + 1}
                   </td>
@@ -219,24 +266,20 @@ export default function SuperAdminGroundsBooking() {
 
                   <td className="px-6 py-4">
                     <span
-                      className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
-                        booking.status === "cancelled"
-                          ? "bg-red-500/20 text-red-300 border border-red-500/30"
-                          : "bg-green-500/20 text-green-300 border border-green-500/30"
-                      }`}
+                      className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${statusConfig.badgeClass}`}
                     >
-                      {booking.status === "cancelled" ? "Cancelled" : "Active"}
+                      {statusConfig.label}
                     </span>
                   </td>
 
                   <td className="px-6 py-4">
-                    {booking.status !== "cancelled" ? (
+                    {canCancelBooking(booking.status) ? (
                       <button
                         onClick={() => handleOpenCancelModal(booking)}
-                        disabled={loadingId === booking.id}
+                        disabled={loadingId === booking.bookingId}
                         className="px-3 py-1.5 text-xs font-medium text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors disabled:opacity-50"
                       >
-                        {loadingId === booking.id ? (
+                        {loadingId === booking.bookingId ? (
                           <div className="flex items-center gap-1">
                             <div className="animate-spin rounded-full h-3 w-3 border-b border-red-400"></div>
                             Cancelling...
@@ -246,9 +289,12 @@ export default function SuperAdminGroundsBooking() {
                         )}
                       </button>
                     ) : (
-                      <span className="text-xs text-gray-500">Cancelled</span>
+                      <span className="text-xs text-gray-500">{statusConfig.label}</span>
                     )}
                   </td>
+                      </>
+                    );
+                  })()}
                 </tr>
               ))}
 
@@ -274,6 +320,11 @@ export default function SuperAdminGroundsBooking() {
         <div className="divide-y divide-slate-700 md:hidden">
           {filteredBookings.map((booking, index) => (
             <div key={booking.bookingId} className="space-y-3 px-4 py-4">
+              {(() => {
+                const statusConfig = getStatusConfig(booking.status);
+
+                return (
+                  <>
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">
                   <img
@@ -297,27 +348,26 @@ export default function SuperAdminGroundsBooking() {
 
               <div className="flex items-center justify-between gap-3">
                 <span
-                  className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
-                    booking.status === "cancelled"
-                      ? "bg-red-500/20 text-red-300 border border-red-500/30"
-                      : "bg-green-500/20 text-green-300 border border-green-500/30"
-                  }`}
+                  className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${statusConfig.badgeClass}`}
                 >
-                  {booking.status === "cancelled" ? "Cancelled" : "Active"}
+                  {statusConfig.label}
                 </span>
 
-                {booking.status !== "cancelled" ? (
+                {canCancelBooking(booking.status) ? (
                   <button
                     onClick={() => handleOpenCancelModal(booking)}
-                    disabled={loadingId === booking.id}
+                    disabled={loadingId === booking.bookingId}
                     className="px-3 py-1.5 text-xs font-medium text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg hover:bg-red-500/20 transition-colors disabled:opacity-50"
                   >
-                    {loadingId === booking.id ? "Cancelling..." : "Cancel"}
+                    {loadingId === booking.bookingId ? "Cancelling..." : "Cancel"}
                   </button>
                 ) : (
-                  <span className="text-xs text-gray-500">Cancelled</span>
+                  <span className="text-xs text-gray-500">{statusConfig.label}</span>
                 )}
               </div>
+                  </>
+                );
+              })()}
             </div>
           ))}
 
@@ -337,7 +387,9 @@ export default function SuperAdminGroundsBooking() {
         </div>
       </div>
 
-      <ConfirmModal
+      
+    </div>
+    <ConfirmModal
         isOpen={isConfirmOpen}
         title="Cancel Booking"
         message="Are you sure you want to cancel this booking? This action cannot be undone."
@@ -347,6 +399,6 @@ export default function SuperAdminGroundsBooking() {
         }}
         onConfirm={handleConfirmCancel}
       />
-    </div>
+      </>
   );
 }

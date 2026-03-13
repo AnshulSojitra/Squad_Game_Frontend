@@ -21,14 +21,14 @@
 import { BrowserRouter } from "react-router-dom";
 import "./App.css";
 import { AppRoutes } from "./routes/AppRoutes";
-import { BoxArenaProvider } from "./context/BoxArenaContext";
+import { BoxArenaProvider } from "./context/AppDataContext";
 import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
   return (
     <ThemeProvider>
       <BoxArenaProvider>
-        <BrowserRouter>
+        <BrowserRouter basename="/projects/box-arena/">
           <AppRoutes />
         </BrowserRouter>
       </BoxArenaProvider>
@@ -37,3 +37,4 @@ function App() {
 }
 
 export default App;
+

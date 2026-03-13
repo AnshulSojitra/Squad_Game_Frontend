@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { changeUserName } from "../../services/api";
 import Loader from "../../components/utils/Loader";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function EditProfile() {
@@ -167,3 +167,4 @@ export default function EditProfile() {
     </div>
   );
 }
+

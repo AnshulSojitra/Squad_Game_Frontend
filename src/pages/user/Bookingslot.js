@@ -126,7 +126,6 @@ export default function Bookingslot() {
           ) : filteredGrounds.length === 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
               <div className="col-span-full text-center py-12 sm:py-16">
-                <div className="text-4xl sm:text-5xl mb-4">No Results</div>
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-300 mb-2">No grounds found</h3>
                 <p className="text-gray-400 text-sm sm:text-base mb-4 max-w-md mx-auto">
                   Try adjusting your search criteria or clearing the filters to see more results.

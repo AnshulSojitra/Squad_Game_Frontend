@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useBoxArena } from "../context/BoxArenaContext";
+import { useBoxArena } from "../context/AppDataContext";
 
 export default function SuperAdminProtectedRoute({ children }) {
   const { tokens } = useBoxArena();
@@ -10,3 +10,4 @@ export default function SuperAdminProtectedRoute({ children }) {
 
   return children;
 }
+

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Pagination from "../../components/utils/Pagination";
 import SearchInput from "../../components/utils/SearchInput";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 
 export default function AdminBookings() {
   const { adminBookings: bookings, loading, refreshAdminBookings } = useBoxArena();
@@ -356,3 +356,4 @@ export default function AdminBookings() {
     </div>
   );
 }
+

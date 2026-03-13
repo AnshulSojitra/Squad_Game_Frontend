@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useBoxArena } from "../context/BoxArenaContext";
+import { useBoxArena } from "../context/AppDataContext";
 
 export default function UserProtectedRoute() {
   const { tokens } = useBoxArena();
@@ -17,3 +17,4 @@ export default function UserProtectedRoute() {
 
   return <Outlet />;
 }
+

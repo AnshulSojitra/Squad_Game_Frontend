@@ -1,9 +1,8 @@
 import { useState } from "react";
 import Loader from "../../components/utils/Loader";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { loginAdmin } from "../../services/api";
 import { useNavigate } from "react-router-dom";
-import { useAppData } from "../../context/AppDataContext";
 import Navbar from "../../components/common/Navbar";
 
 export default function AdminLogin() {
@@ -217,3 +216,4 @@ export default function AdminLogin() {
 
   );
 }
+

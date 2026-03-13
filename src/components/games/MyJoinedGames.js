@@ -5,7 +5,7 @@ import { leaveGameApi } from "../../services/api";
 import ConfirmModal from "../utils/ConfirmModal";
 import Toast from "../utils/Toast";
 import ShowMore from "../utils/ShowMore";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { useTheme } from "../../context/ThemeContext";
 
 const formatDate = (date) => {
@@ -309,3 +309,4 @@ export default function MyJoinedGamesList({
     </>
   );
 }
+

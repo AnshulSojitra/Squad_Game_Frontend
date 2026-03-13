@@ -6,7 +6,7 @@ import Pagination from "../../components/utils/Pagination";
 import ToggleSwitch from "../../components/utils/ToggleSwitch";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import { MapPin, Clock, Users, Search, Trash2 } from "lucide-react";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 
 const IMAGE_BASE = process.env.REACT_APP_IMAGE_URL;
 
@@ -295,3 +295,4 @@ export default function SuperAdminGrounds() {
     </div>
   );
 }
+

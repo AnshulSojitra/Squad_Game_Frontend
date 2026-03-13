@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState , useCallback } from "react";
 import { cancelUserBooking } from "../../services/api";
 import Loader from "../../components/utils/Loader";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { useTheme } from "../../context/ThemeContext";
 import Pagination from "../../components/utils/Pagination";
 import Toast from "../../components/utils/Toast";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import SearchInput from "../../components/utils/SearchInput";
-import { useAppData } from "../../context/AppDataContext";
 
 
 export default function MyBookings() {
@@ -593,3 +592,4 @@ const confirmCancelBooking = async () => {
     </div>
   );
 }
+

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import ToggleSwitch from "../../components/utils/ToggleSwitch";
 import Pagination from "../../components/utils/Pagination";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 
 export default function Grounds() {
   const navigate = useNavigate();
@@ -218,3 +218,4 @@ export default function Grounds() {
     </div>
   );
 }
+

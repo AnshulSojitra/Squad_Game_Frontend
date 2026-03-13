@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function UserProfileSidebar() {
@@ -119,3 +119,4 @@ export default function UserProfileSidebar() {
     </div>
   );
 }
+

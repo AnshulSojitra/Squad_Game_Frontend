@@ -5,7 +5,7 @@ import Pagination from "../../components/utils/Pagination";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import { ShieldCheck, Activity, Search } from "lucide-react";
 import Loader from "../../components/utils/Loader";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 
 
 
@@ -452,3 +452,4 @@ const paginatedAdmins = filteredAdmins.slice(
     </div>
   );
 }
+

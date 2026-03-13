@@ -1,4 +1,4 @@
-import { useState , useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addGround , updateGround , getGroundById } from "../../services/api"; // make sure this import exists
 import { getCountries, getStatesByCountry, getCitiesByState } from "../../services/api";
@@ -61,6 +61,18 @@ const [form, setForm] = useState({
   const [location, setLocation] = useState(null);
 
   const [advanceBookingDays, setAdvanceBookingDays] = useState("");
+
+  const imagePreviews = useMemo(
+    () =>
+      images.map((img, index) => ({
+        id: img.id || img.name || `preview-${index}`,
+        src:
+          img instanceof File
+            ? URL.createObjectURL(img)
+            : `${IMAGE_BASE || ""}${img.imageUrl || ""}`,
+      })),
+    [IMAGE_BASE, images]
+  );
 
 
 const showToast = (type, message) => {
@@ -146,6 +158,16 @@ useEffect(() => {
   getCountries().then((res) => setCountries(res.data));
 }, []);
 
+useEffect(() => {
+  return () => {
+    imagePreviews.forEach((img) => {
+      if (img.src.startsWith("blob:")) {
+        URL.revokeObjectURL(img.src);
+      }
+    });
+  };
+}, [imagePreviews]);
+
 
 
 useEffect(() => {
@@ -201,7 +223,7 @@ console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
          }))
       );
 
-      setImages(g.images);
+      setImages([]);
     setExistingImages(g.images || []);
   
 
@@ -413,12 +435,12 @@ const handleSubmit = async (e) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 px-4 text-black animate-fade-in">
-      <div className="w-full max-w-2xl bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-white/20 transform transition-all duration-500 hover:shadow-3xl">
+      <div className="w-full max-w-2xl bg-gray-900 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-white/20 transform transition-all duration-500 hover:shadow-3xl text-white">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+          <h2 className="text-3xl font-bold text-white mb-2">
             {groundId ? "Edit Ground" : "Add New Ground"}
           </h2>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-white">
             {groundId ? "Update ground details carefully" : "Enter ground details carefully"}
           </p>
         </div>
@@ -427,12 +449,12 @@ const handleSubmit = async (e) => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Ground Name */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-700">Ground Name</label>
+            <label className="block text-sm font-semibold text-white">Ground Name</label>
             <input
               type="text"
               name="groundName"
               placeholder="Ground Name"
-              className="input-style"
+              className="input-style bg-gray-800 text-white"
               value={form.groundName}
                onChange={handleFormChange}
             />
@@ -447,7 +469,7 @@ const handleSubmit = async (e) => {
             type="tel"
             name="contact"
             placeholder="Contact Number"
-            className="input-style"
+            className="input-style bg-gray-800 text-white"
             value={form.contact}
             onChange={handleFormChange}
           />
@@ -461,22 +483,14 @@ const handleSubmit = async (e) => {
             Game Type
           </label>
 
-          {/* <input
-            type="text"
-            name="game"
-            placeholder="e.g. Cricket, Pickleball, Tennis"
-            className="input-style"
-            value={form.game}
-            onChange={handleFormChange}
-          /> */}
-
           <GameDropdown value={form.game} 
           onChange={(value) => handleFormChange({ target: { name: "game", value } })} 
           placeholder="e.g. Cricket, Pickleball, Tennis"
+          className="w-full bg-gray-800 text-white"
           />
 
           {errors.game && (
-            <p className="text-red-500 text-xs mt-1">
+            <p className="text-red-500 text-xs mt-1 ">
               {errors.game}
             </p>
           )}
@@ -491,7 +505,7 @@ const handleSubmit = async (e) => {
             type="text"
             name="area"
             placeholder="Area Name"
-            className="input-style"
+            className="input-style bg-gray-800 text-white"
             value={form.area}
             onChange={handleFormChange}
           />
@@ -500,7 +514,7 @@ const handleSubmit = async (e) => {
           <label className="block text-sm font-medium mb-1">Location</label>
           <select
                 name="country"
-                className="input-style"
+                className="input-style bg-gray-800 text-white"
                 onChange={handleCountryChange}
                 value={form.country}
               >
@@ -514,7 +528,7 @@ const handleSubmit = async (e) => {
 
           <select
           name="state"
-          className="input-style"
+          className="input-style bg-gray-800 text-white"
           onChange={handleStateChange}
           value={form.state}
           disabled={!states.length}
@@ -529,7 +543,7 @@ const handleSubmit = async (e) => {
 
           <select
             name="city"
-            className="input-style"
+            className="input-style bg-gray-800 text-white"
             onChange={handleFormChange}
             disabled={!cities.length}
             value={form.city}
@@ -551,7 +565,7 @@ const handleSubmit = async (e) => {
             type="url"
             name="locationUrl"
             placeholder="https://maps.google.com/?q=..."
-            className="input-style"
+            className="input-style bg-gray-800 text-white"
             value={form.locationUrl}
             onChange={handleFormChange}
           />
@@ -586,7 +600,7 @@ const handleSubmit = async (e) => {
                     setErrors((prev) => ({ ...prev, amenities: "" }));
                   }}
                   placeholder="e.g. Parking, Washroom"
-                  className="input-style flex-1"
+                  className="input-style flex-1 bg-gray-800 text-white"
                 />
 
                 <button
@@ -608,7 +622,7 @@ const handleSubmit = async (e) => {
                   {amenities.map((a, index) => (
                     <span
                       key={index}
-                      className="flex items-center gap-2 bg-gray-200 px-3 py-1 rounded-full text-sm"
+                      className="flex items-center gap-2 bg-gray-800 px-3 py-1 rounded-full text-sm"
                     >
                       {a}
                       <button
@@ -637,7 +651,7 @@ const handleSubmit = async (e) => {
                       setOpeningTime(e.target.value);
                       setErrors((prev) => ({ ...prev, openingTime: "" }));
                     }}
-                    className="input-style"
+                    className="input-style bg-gray-800 text-white"
                   />
                   {errors.openingTime && (
                     <p className="text-red-500 text-xs mt-1">{errors.openingTime}</p>
@@ -653,11 +667,11 @@ const handleSubmit = async (e) => {
                       setClosingTime(e.target.value);
                       setErrors((prev) => ({ ...prev, closingTime: "" }));
                     }}
-                    className="input-style"
+                    className="input-style bg-gray-800 text-white"
                   />
-                  {errors.openingTime && (
-                  <p className="text-red-500 text-xs mt-1">{errors.openingTime}</p>
-                )}
+                  {errors.closingTime && (
+                    <p className="text-red-500 text-xs mt-1">{errors.closingTime}</p>
+                  )}
                 </div>
               </div>
 
@@ -681,8 +695,8 @@ const handleSubmit = async (e) => {
                           setSlotStart(e.target.value);
                           setErrors((prev) => ({ ...prev, slots: "" }));
                         }}
-                        className={`input-style ${
-                          slots.length > 0 ? "bg-gray-100 cursor-not-allowed" : ""
+                        className={`input-style bg-gray-800 text-white ${
+                          slots.length > 0 ? " cursor-not-allowed" : ""
                         }`}
                       />
 
@@ -697,7 +711,7 @@ const handleSubmit = async (e) => {
                         setSlotEnd(e.target.value);
                         setErrors((prev) => ({ ...prev, slots: "" }));
                       }}
-                      className="input-style"
+                      className="input-style bg-gray-800 text-white"
                     />
                   </div>
 
@@ -726,9 +740,9 @@ const handleSubmit = async (e) => {
                     {slots.map((slot,index) => (
                       <div
                         key={index}
-                        className="flex justify-between items-center bg-gray-100 px-4 py-2 border border-gray-300 rounded-lg"
+                        className="flex justify-between items-center bg-gray-800 px-4 py-2 border border-gray-300 rounded-lg"
                       >
-                        <span className="text-sm">
+                        <span className="text-sm bg-gray-800 text-white">
                           {slot.start} - {slot.end}
                         </span>
 
@@ -758,7 +772,7 @@ const handleSubmit = async (e) => {
                 placeholder="e.g. 7"
                 value={advanceBookingDays}
                 onChange={(e) => setAdvanceBookingDays(e.target.value)}
-                className="input-style"
+                className="input-style bg-gray-800 text-white"
               />
 
               <p className="text-xs text-gray-500">
@@ -776,7 +790,7 @@ const handleSubmit = async (e) => {
             type="number"
             name="pricePerHour"
             placeholder="Price per slot (₹)"
-            className="input-style"
+            className="input-style bg-gray-800 text-white"
             value={form.pricePerHour}
             onChange={handleFormChange}
           />
@@ -791,7 +805,7 @@ const handleSubmit = async (e) => {
 
             <select
               name="gstPercentage"
-              className="input-style"
+              className="input-style bg-gray-800 text-white"
               value={form.gstPercentage}
               onChange={handleFormChange}
             >
@@ -814,22 +828,35 @@ const handleSubmit = async (e) => {
             accept="image/*"
             multiple
             onChange={handleImages}
-            className="input-style"
+            className="input-style bg-gray-800 text-white"
           />
           {errors.images && (
             <p className="text-red-500 text-xs mt-1">{errors.images}</p>
           )}
          
           {/* New Image Previews */}
-          {images.length > 0 && (
+          {imagePreviews.length > 0 && (
               <div className="grid grid-cols-3 gap-3 mt-3">
-                {images.map((img) => (
+                {imagePreviews.map((img) => (
                   <img
                     key={img.id}
-                    src={`${IMAGE_BASE}${img.imageUrl}`}
-                    className="h-24 w-full object-cover rounded-lg border"
+                    src={img.src}
+                    className="h-32 w-full rounded-xl border border-gray-200 bg-gray-100 object-cover object-center shadow-sm"
                     alt="preview"
                     />
+                ))}
+              </div>
+            )}
+
+            {images.length === 0 && existingImages.length > 0 && (
+              <div className="grid grid-cols-2 gap-3 mt-3 sm:grid-cols-3">
+                {existingImages.map((img, index) => (
+                  <img
+                    key={img.id || `existing-${index}`}
+                    src={`${IMAGE_BASE || ""}${img.imageUrl || ""}`}
+                    className="h-32 w-full rounded-xl border border-gray-200 bg-gray-100 object-cover object-center shadow-sm"
+                    alt="ground preview"
+                  />
                 ))}
               </div>
             )}

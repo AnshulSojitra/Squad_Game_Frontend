@@ -3,7 +3,6 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL, // your backend base URL
-  // baseURL: "https://indissolubly-unadmonitory-pinkie.ngrok-free.dev/api",
   headers: {
     "ngrok-skip-browser-warning": "true",
     "Content-Type": "application/json",

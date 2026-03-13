@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createAdmin } from "../../services/api";
 import Loader from "../../components/utils/Loader";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { UserPlus, Mail, Phone, Lock, Eye, EyeOff, CheckCircle, AlertCircle, User } from "lucide-react";
 
 export default function SuperAdminCreateAdmin() {
@@ -354,3 +354,4 @@ export default function SuperAdminCreateAdmin() {
     </div>
   );
 }
+

@@ -5,9 +5,8 @@ import { deleteMyGameApi } from "../../services/api";
 import ConfirmModal from "../utils/ConfirmModal";
 import Toast from "../utils/Toast";
 import ShowMore from "../utils/ShowMore";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import { useTheme } from "../../context/ThemeContext";
-import { useAppData } from "../../context/AppDataContext";
 const formatDate = (date) => {
   if (!date) return "N/A";
   const d = new Date(date);
@@ -297,3 +296,4 @@ export default function MyCreatedGamesList({
     </>
   );
 }
+

@@ -9,7 +9,7 @@ import ToggleSwitch from "../../components/utils/ToggleSwitch";
 import { Users, UserCheck, UserX, Search } from "lucide-react";
 import ConfirmModal from "../../components/utils/ConfirmModal";
 import Loader from "../../components/utils/Loader";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 
 
 export default function SuperAdminUsers() {
@@ -396,3 +396,4 @@ const confirmDelete = async () => {
     </>
   );
 }
+

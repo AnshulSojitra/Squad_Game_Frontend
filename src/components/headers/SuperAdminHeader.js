@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import BackButton from "../utils/BackButton";
 
 export default function SuperAdminHeader({ onMenuClick }) {
@@ -80,3 +80,4 @@ export default function SuperAdminHeader({ onMenuClick }) {
     </header>
   );
 }
+

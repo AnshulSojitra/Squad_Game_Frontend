@@ -27,7 +27,7 @@ export default function GameDropdown({ value, onChange }) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full p-2 border rounded"
+        className="w-full p-2 border border-gray-800 rounded-lg text-gray-400 bg-gray-800"
       >
         <option value="">Select Game</option>
 

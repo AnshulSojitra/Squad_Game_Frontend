@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { useBoxArena } from "../../context/BoxArenaContext";
+import { useBoxArena } from "../../context/AppDataContext";
 import ThemeToggle from "../utils/ThemeToggle";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -424,3 +424,4 @@ export default function Navbar() {
     </nav>
   );
 }
+
