@@ -1,37 +1,43 @@
 import { useNavigate } from "react-router-dom";
 import ScrollReveal from "../common/ScrollReveal";
 import { useTheme } from "../../context/ThemeContext";
+import ahemdabad from "../../assets/cities/ahmedabad.jpg"
+import surat from "../../assets/cities/surat.jpg"
+import vadodra from "../../assets/cities/vadodara.jpg"
+import rajkot from "../../assets/cities/rajkot.jpg"
+import gandhinagar from "../../assets/cities/gandhinagar.jpg"
+import bharuch from "../../assets/cities/bharuch.jpg"
 
 const cities = [
   {
     name: "Ahmedabad",
     // grounds: 125,
-    image: "/assets/cities/ahmedabad.jpg",
+    image: ahemdabad,
   },
   {
     name: "Surat",
    // grounds: 89,
-    image: "/assets/cities/surat.jpg",
+    image: surat,
   },
   {
     name: "Vadodara",
    // grounds: 67,
-    image: "/assets/cities/vadodara.jpg",
+    image: vadodra,
   },
   {
     name: "Rajkot",
    // grounds: 45,
-    image: "/assets/cities/rajkot.jpg",
+    image: rajkot,
   },
   {
     name: "Gandhinagar",
    // grounds: 38,
-    image: "/assets/cities/gandhinagar.jpg",
+    image: gandhinagar,
   },
   {
     name: "Bharuch",
    // grounds: 22,
-    image: "/assets/cities/bharuch.jpg",
+    image: bharuch,
   },
 ];
 

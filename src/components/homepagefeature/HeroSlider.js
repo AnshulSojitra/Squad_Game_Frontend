@@ -2,24 +2,27 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import { getLandingStats } from "../../services/api";
+import hero1 from "../../images/hero1.jpeg";
+import hero2 from "../../images/hero2.jpg";
+import hero3 from "../../images/hero3.jpeg";
 
 const slides = [
   {
-    image: "/images/hero1.jpeg",
+    image: hero1,
     title: "Book Your Game.",
     highlight: "Build Your Team.",
     subtitle:
       "Book sports grounds instantly and manage games with ease on BoxArena.",
   },
   {
-    image: "/images/hero2.jpg",
+    image: hero2,
     title: "Play More.",
     highlight: "Stress Less.",
     subtitle:
       "Find verified grounds and flexible slots near you in seconds.",
   },
   {
-    image: "/images/hero3.jpeg",
+    image: hero3,
     title: "Multiple Games.",
     highlight: "Multiple Grounds.",
     subtitle:
