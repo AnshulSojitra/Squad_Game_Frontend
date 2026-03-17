@@ -28,7 +28,7 @@ function App() {
   return (
     <ThemeProvider>
       <BoxArenaProvider>
-        <BrowserRouter basename="/projects/box-arena/">
+        <BrowserRouter basename="/projects/box-arena">
           <AppRoutes />
         </BrowserRouter>
       </BoxArenaProvider>

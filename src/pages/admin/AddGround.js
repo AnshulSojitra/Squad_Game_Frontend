@@ -63,15 +63,47 @@ const [form, setForm] = useState({
   const [advanceBookingDays, setAdvanceBookingDays] = useState("");
 
   const imagePreviews = useMemo(
-    () =>
-      images.map((img, index) => ({
-        id: img.id || img.name || `preview-${index}`,
-        src:
-          img instanceof File
-            ? URL.createObjectURL(img)
-            : `${IMAGE_BASE || ""}${img.imageUrl || ""}`,
-      })),
-    [IMAGE_BASE, images]
+    () => {
+      const resolveImageSrc = (image) => {
+        if (!image) return "";
+
+        if (image instanceof File) {
+          return URL.createObjectURL(image);
+        }
+
+        const rawImageUrl =
+          typeof image === "string" ? image : image.imageUrl || image.url || "";
+
+        if (!rawImageUrl) return "";
+
+        if (/^https?:\/\//i.test(rawImageUrl) || rawImageUrl.startsWith("blob:")) {
+          return rawImageUrl;
+        }
+
+        if (!IMAGE_BASE) {
+          return rawImageUrl;
+        }
+
+        const normalizedBase = IMAGE_BASE.endsWith("/")
+          ? IMAGE_BASE.slice(0, -1)
+          : IMAGE_BASE;
+        const normalizedPath = rawImageUrl.startsWith("/")
+          ? rawImageUrl
+          : `/${rawImageUrl}`;
+
+        return `${normalizedBase}${normalizedPath}`;
+      };
+
+      return (
+      (images.length > 0 ? images : existingImages)
+        .map((img, index) => ({
+          id: img.id || img.name || `preview-${index}`,
+          src: resolveImageSrc(img),
+        }))
+        .filter((img) => img.src)
+      );
+    },
+    [IMAGE_BASE, existingImages, images]
   );
 
 
@@ -188,9 +220,6 @@ useEffect(() => {
 
 setSlots(normalizedSlots);
 
-
-    console.log("EDIT DATA", res.data);
-console.log(`${process.env.REACT_APP_IMAGE_URL}${res.data.images[0].imageUrl}`);
     setForm({
       groundName: g.name,
       contact: g.contactNo,
@@ -834,7 +863,7 @@ const handleSubmit = async (e) => {
             <p className="text-red-500 text-xs mt-1">{errors.images}</p>
           )}
          
-          {/* New Image Previews */}
+          {/* Image Preview */}
           {imagePreviews.length > 0 && (
               <div className="grid grid-cols-3 gap-3 mt-3">
                 {imagePreviews.map((img) => (
@@ -844,19 +873,6 @@ const handleSubmit = async (e) => {
                     className="h-32 w-full rounded-xl border border-gray-200 bg-gray-100 object-cover object-center shadow-sm"
                     alt="preview"
                     />
-                ))}
-              </div>
-            )}
-
-            {images.length === 0 && existingImages.length > 0 && (
-              <div className="grid grid-cols-2 gap-3 mt-3 sm:grid-cols-3">
-                {existingImages.map((img, index) => (
-                  <img
-                    key={img.id || `existing-${index}`}
-                    src={`${IMAGE_BASE || ""}${img.imageUrl || ""}`}
-                    className="h-32 w-full rounded-xl border border-gray-200 bg-gray-100 object-cover object-center shadow-sm"
-                    alt="ground preview"
-                  />
                 ))}
               </div>
             )}

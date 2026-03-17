@@ -74,7 +74,7 @@ const showToast = (type, message) => {
             );
 
             showToast("success","Payment Successful 🎉");
-            window.location.href = "/profile/mybooking";
+            window.location.href = "/projects/box-arena/profile/mybooking";
           } catch (err) {
             console.error("Verification failed", err);
             showToast("error","Payment verification failed");
